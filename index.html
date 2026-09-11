@@ -1,92 +1,172 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" href="style.css">
     <title>UniVerse</title>
 </head>
 
 <body>
 
     <header>
-        <h1>UniVerse</h1>
-        <p>Student Organization Management System</p>
+        <div id="header">
+            <div class="header-left">
+                <div class="logo unselectable">
+                    <img src="assets/logo2.svg" alt="UniVerse Logo">
+                    <span class="logo-text">
+                        <span class="uni">Uni</span><span class="verse">Verse</span>
+                    </span>
+                </div>
+                <!--<div class="logo">
+                    <img src="assets/header_logo.svg" alt="UniVerse Logo">
+                </div>-->
+                <nav>
+                    <a class="active" href="index.html">Home</a>
+                    <a href="organizations.html">Orgs</a>
+                    <a href="events.html">Events</a>
+                    <a href="announcements.html">Announcements</a>
+                    <a href="dashboard.html">Dashboard</a>
+                </nav>
+            </div>
+
+            <div class="header-right">
+                <button class="button fill-button">
+                    Login
+                </button>
+            </div>
+        </div>
     </header>
 
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="organizations.html">Organizations</a>
-        <a href="events.html">Events</a>
-        <a href="announcements.html">Announcements</a>
-        <a href="dashboard.html">Dashboard</a>
-    </nav>
-
     <main>
+        <section id="home-banner">
+            <img src="assets/sun.svg">
 
-        <section>
-            <h2>Welcome to UniVerse!</h2>
-            <p>
-                Discover student organizations, activities, events,
-                and announcements in one place.
-            </p>
+            <div class="content">
+                <h1 class="welcome">Welcome to <span>Uni</span>Verse!</h1>
+                <p class="sub-welcome">
+                    Discover student organizations, activities, events, and announcements in one place.
+                </p>
+                
+                <div class="search-box">
+                    <div class="search-bar">
+                        <img src="assets/magnifying_glass.svg">
+                        <input type="text" placeholder="Search events, organizations, announcements...">
+                    </div>
+                    <div class="search-button clickable">Search</div>
+                </div>
+            
+            </div>
         </section>
 
-        <section>
-            <h2>Featured Organizations</h2>
+        <div id="home-contents">
+            <div id="home-contents-left">
+                <section id="home-upcoming-events">
+                    <div class="section-top">
+                        <h2 class="section-name">Upcoming School Events</h2>
+                        <p class="see-more">See More</p>
+                    </div>
+                    <div class="home-upcoming-events-con">
+                        <div class="up-child">
+                            <div class="event-photo">
+                                <!--img here-->
+                            </div>
+                            <div class="event-details">
+                                <p class="event-title">Student Organization Fair</p>
+                                <div class="event-time"> <img src="assets/up_event_clock.svg"> <span>8:00AM - 5:00PM</span> </div>
+                                <div class="event-location"> <img src="assets/up_event_location.svg"> <span>Mapua Malayan Digital College Luzon Hub</span> </div>
+                            </div>
+                        </div>
+                        <div class="up-child">
+                            <div class="event-photo">
+                                <!--img here-->
+                            </div>
+                            <div class="event-details">
+                                <p class="event-title">Introduction to Web Systems & Technology</p>
+                                <div class="event-time"> <img src="assets/up_event_clock.svg"> <span>9:00AM</span> </div>
+                                <div class="event-location"> <img src="assets/up_event_location.svg"> <span>Computer Lab</span> </div>
+                            </div>
+                        </div>
+                        <div class="up-child">
+                            <div class="event-photo">
+                                <!--img here-->
+                            </div>
+                            <div class="event-details">
+                                <p class="event-title">Introduction to Web Systems & Technology</p>
+                                <div class="event-time"> <img src="assets/up_event_clock.svg"> <span>9:00AM</span> </div>
+                                <div class="event-location"> <img src="assets/up_event_location.svg"> <span>Computer Lab</span> </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
-            <article>
-                <h3>The Digital Fort</h3>
-                <p>The official journalism club of MMDC where you can be updated with the current news, holidays, articles, announcements,
-                     and other such relevant information in and out of the university.</p>
-                <a href="digital-fort.html">View Organization</a>
-            </article>
+                <section id="home-featured-orgs">
+                    <div class="section-top">
+                        <h2 class="section-name">Featured School Orgs</h2>
+                        <p class="see-more">See More</p>
+                    </div>
+                    <div class="home-featured-orgs-con">
+                        <div class="feat-child">
+                            <div class="org-photo">
+                                <!--img here-->
+                            </div>
+                            <div class="org-details">
+                                <p class="org-title">The Digital Fort</p>
+                                <p class="org-desc">The official journalism club of MMDC where you can be updated with the current news, holidays, articles, announcements, and other such relevant information in and out of the university.</p>
+                                <a class="org-link" href="digital-fort.html">View Organization →</a>
+                            </div>
+                        </div>
+                        <div class="feat-child">
+                            <div class="org-photo">
+                                <!--img here-->
+                            </div>
+                            <div class="org-details">
+                                <p class="org-title">The Digital Fort</p>
+                                <p class="org-desc">The official journalism club of MMDC where you can be updated with the current news, holidays, articles, announcements, and other such relevant information in and out of the university.</p>
+                                <a class="org-link" href="digital-fort.html">View Organization →</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
-            <article>
-                <h3>Disenyo Malaya</h3>
-                <p>An organization dedicated to aspiring designers, for students who wish to explore and express their creativity in visual arts.</p>
-                <a href="disenyo-malaya.html">View Organization</a>
-            </article>
+            </div>
 
-            <article>
-                <h3>Scholars Club</h3>
-                <p>A place for MMDC scholars to connect and collaborate with each other, improving their leadership and academic achievements while establishing a strong support network.</p>
-                <a href="scholars-club.html">View Organization</a>
-            </article>
-        </section>
+            <div id="home-contents-right">
+                <div class="section-top">
+                    <div class="section-top recent-announce">
+                        <img src="assets/megaphone.svg">
+                        <h2 class="section-name">Recent Announcements</h2>
+                    </div>
+                    <p class="see-more">See More</p>
+                </div>
+                <div class="home-recent-announce-con">
+                    <div class="recent-child">
+                        <div class="announce-header">
+                            <p class="announce-title">Organization Registrations Now Open!</p>
+                            <p class="announce-date">Oct 6, 2025</p>
+                        </div>
+                        <p class="announce-desc">Students may now browse and join registered organizations. Register until November 10, 2026 at the student lounge. Find vice president at table...</p>
+                    </div>
+                    <div class="recent-child">
+                        <div class="announce-header">
+                            <p class="announce-title">Organization Registrations Now Open!</p>
+                            <p class="announce-date">Oct 6, 2025</p>
+                        </div>
+                        <p class="announce-desc">Students may now browse and join registered organizations. Register until November 10, 2026 at the student lounge. Find vice president at table...</p>
+                    </div>
+                </div>
+            </div>
 
-        <section>
-            <h2>Upcoming Events</h2>
+        </div>
 
-            <article>
-                <h3>Student Organization Fair</h3>
-                <p>Date: September 15, 2026</p>
-                <p>Location: Mapua Malayan Digital College Luzon Hub</p>
-            </article>
-
-            <article>
-                <h3>Introduction to Web Systems & Technology</h3>
-                <p>Date: September 20, 2026</p>
-                <p>Location: Computer Laboratory</p>
-            </article>
-        </section>
-
-        <section>
-            <h2>Recent Announcements</h2>
-
-            <article>
-                <h3>Organization Registration is Noew Open!</h3>
-                <p>Students may now browse and join registered organizations.</p>
-            </article>
-
-            <article>
-                <h3>Upcoming Organization Fair</h3>
-                <p>Visit the organization fair to learn more about student activities.</p>
-            </article>
-        </section>
 
     </main>
+
+    
 
     <footer>
         <p>&copy; 2026 UniVerse</p>
     </footer>
+
+    
 
 </body>
 </html>
