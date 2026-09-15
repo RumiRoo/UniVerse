@@ -1,74 +1,213 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Organization</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>The Digital Fort — UniVerse</title>
 </head>
 
 <body>
 
-    <header>
-        <h1>UniVerse</h1>
-        <p>Student Organization Management System</p>
+    <header id="header">
+        <div class="header-left">
+            <div class="logo unselectable">
+                <img src="assets/logo2.svg" alt="UniVerse Logo">
+                <span class="logo-text">
+                    <span class="uni">Uni</span><span class="verse">Verse</span>
+                </span>
+            </div>
+            <nav>
+                <a href="index.html">Home</a>
+                <a class="active" href="organizations.html">Organizations</a>
+                <a href="events.html">Events</a>
+                <a href="announcements.html">Announcements</a>
+                <a href="dashboard.html">Dashboard</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <button class="button fill-button">Login</button>
+        </div>
     </header>
-
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="organizations.html">Organizations</a>
-        <a href="events.html">Events</a>
-        <a href="announcements.html">Announcements</a>
-        <a href="dashboard.html">Dashboard</a>
-    </nav>
 
     <main>
 
-        <section>
-            <h2>The Digital Fort</h2>
+        <section id="org-profile-banner">
+            <div class="org-profile-content">
+                <p class="org-profile-category">Journalism</p>
+                <h1 class="org-profile-title">The Digital Fort</h1>
 
-            <p>
-                The official journalism club of MMDC where you can be
-                updated with current news, holidays, articles,
-                announcements, and other relevant information in and
-                out of the university.
-            </p>
+                <p class="org-profile-desc">
+                    The official journalism club of MMDC where you can be updated with current news, articles,
+                    announcements, and other relevant information in and out of the university.
+                </p>
 
-            <p>Category: Journalism</p>
-            
-            <form>
-                <button type="submit">Join Organization</button>
-            </form>
-        
+                <div class="org-profile-stats">
+                    <span>📅 Founded 2019</span>
+                    <span>👥 42 Members</span>
+                    <span>📍 MMDC Luzon Hub, Journalism Office</span>
+                </div>
+
+                <form>
+                    <button type="submit" class="button join-button">Join Organization</button>
+                </form>
+            </div>
+
+            <img class="org-profile-picture" src="assets/the-digital-fort.jpeg" alt="The Digital Fort logo">
         </section>
 
-        <section>
-            <h3>Officers</h3>
+        <div class="page-content">
 
-            <ul>
-                <li>Editor-in-Chief: Rhynne Gracelle Pontanilla</li>
-                <li>Art Director: Eldan Sinsuan</li>
-                <li>Column Editor: Francesca Baniqued</li>
-                <li>Graphic Artist: Kachina Shen Pascual</li>
-            </ul>
-        </section>
+            <section class="org-section">
+                <h2>About Us</h2>
+                <p class="org-about">
+                    The Digital Fort exists to inform, engage, and empower the MMDC community through responsible and accurate student-led journalism. We cover campus news, shed a light on student voices, and train the next
+                    generation of writers, editors, and visual storytellers through one publication at a time.
+                </p>
+            </section>
 
-        <section>
-            <h3>Activities</h3>
+            <section class="org-section">
+                <h2>How to Join</h2>
+                <div class="join-steps">
+                    <div class="join-step">
+                        <div class="step-number">1</div>
+                        <p class="step-title">Attend a Session</p>
+                        <p class="step-desc">Drop by any open house or club fair booth to learn what we do.</p>
+                    </div>
+                    <div class="join-step">
+                        <div class="step-number">2</div>
+                        <p class="step-title">Submit an Application</p>
+                        <p class="step-desc">Fill out a short form detailing your interests, be it writing, art, or editing.</p>
+                    </div>
+                    <div class="join-step">
+                        <div class="step-number">3</div>
+                        <p class="step-title">Join Onboarding</p>
+                        <p class="step-desc">Attend a quick orientation covering our workflow and club style.</p>
+                    </div>
+                    <div class="join-step">
+                        <div class="step-number">4</div>
+                        <p class="step-title">Start Contributing</p>
+                        <p class="step-desc">Pick your first assignment and get to publishing.</p>
+                    </div>
+                </div>
+            </section>
 
-            <ul>
-                <li>Campus News Coverage</li>
-                <li>Student Journalism Workshop</li>
-                <li>University Publication</li>
-            </ul>
-        </section>
+            <section class="org-section">
+                <h2>Activities</h2>
+                <div class="activities-grid">
+                    <div class="activity-card">
+                        <div class="activity-icon">📰</div>
+                        <p class="activity-title">Campus News Coverage</p>
+                        <p class="activity-desc">Reporting on events, announcements, and student life across MMDC.</p>
+                    </div>
+                    <div class="activity-card">
+                        <div class="activity-icon">✍️</div>
+                        <p class="activity-title">Student Journalism Workshop</p>
+                        <p class="activity-desc">Hands-on training in writing, interviewing, and editing for new members.</p>
+                    </div>
+                    <div class="activity-card">
+                        <div class="activity-icon">📖</div>
+                        <p class="activity-title">University Publication</p>
+                        <p class="activity-desc">Our flagship print and digital release, published every term.</p>
+                    </div>
+                </div>
+            </section>
 
-        <section>
-            <h3>Upcoming Events</h3>
+            <section class="org-section">
+                <h2>Officers</h2>
+                <ul class="org-list">
+                    <li><span class="officer-role">Editor-in-Chief:</span> Rhynne Gracelle Pontanilla</li>
+                    <li><span class="officer-role">Art Director:</span> Eldan Sinsuan</li>
+                    <li><span class="officer-role">Column Editor:</span> Francesca Baniqued</li>
+                    <li><span class="officer-role">Graphic Artist:</span> Kachina Shen Pascual</li>
+                </ul>
+            </section>
 
-            <p>Student Organization Fair - September 15, 2026</p>
-        </section>
+            <section class="org-section">
+                <h2>Upcoming Events</h2>
+                <div class="event-calendar">
+                    <div class="calendar-card">
+                        <p class="calendar-month">September 2026</p>
+                        <div class="calendar-grid">
+                            <span class="calendar-weekday">Sun</span>
+                            <span class="calendar-weekday">Mon</span>
+                            <span class="calendar-weekday">Tue</span>
+                            <span class="calendar-weekday">Wed</span>
+                            <span class="calendar-weekday">Thu</span>
+                            <span class="calendar-weekday">Fri</span>
+                            <span class="calendar-weekday">Sat</span>
 
-        <p>
-            <a href="organizations.html">Back to Organizations</a>
-        </p>
+                            <span class="calendar-day empty"></span>
+                            <span class="calendar-day empty"></span>
+                            <span class="calendar-day">1</span>
+                            <span class="calendar-day">2</span>
+                            <span class="calendar-day">3</span>
+                            <span class="calendar-day">4</span>
+                            <span class="calendar-day">5</span>
+
+                            <span class="calendar-day">6</span>
+                            <span class="calendar-day">7</span>
+                            <span class="calendar-day">8</span>
+                            <span class="calendar-day">9</span>
+                            <span class="calendar-day">10</span>
+                            <span class="calendar-day">11</span>
+                            <span class="calendar-day">12</span>
+
+                            <span class="calendar-day">13</span>
+                            <span class="calendar-day">14</span>
+                            <span class="calendar-day calendar-day-event">15</span>
+                            <span class="calendar-day">16</span>
+                            <span class="calendar-day">17</span>
+                            <span class="calendar-day">18</span>
+                            <span class="calendar-day">19</span>
+
+                            <span class="calendar-day">20</span>
+                            <span class="calendar-day">21</span>
+                            <span class="calendar-day">22</span>
+                            <span class="calendar-day">23</span>
+                            <span class="calendar-day">24</span>
+                            <span class="calendar-day">25</span>
+                            <span class="calendar-day">26</span>
+
+                            <span class="calendar-day">27</span>
+                            <span class="calendar-day">28</span>
+                            <span class="calendar-day">29</span>
+                            <span class="calendar-day">30</span>
+                            <span class="calendar-day empty"></span>
+                            <span class="calendar-day empty"></span>
+                            <span class="calendar-day empty"></span>
+                        </div>
+                    </div>
+
+                    <div class="event-info-card">
+                        <p class="event-title">Student Organization Fair</p>
+                        <div class="event-meta">
+                            <span><img src="assets/up_event_clock.svg" alt=""> 8:00AM – 5:00PM</span>
+                            <span><img src="assets/up_event_location.svg" alt=""> MMDC Luzon Hub</span>
+                        </div>
+                        <p class="event-desc">Visit our booth to learn about membership and pick up the latest issue.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="org-section">
+                <h2>Connect With Us</h2>
+                <div class="connect-links">
+                    <a class="connect-icon-link" href="https://www.facebook.com/mmdcdigitalfort/" target="_blank" rel="noopener" aria-label="Facebook">
+                        <img src="assets/facebook.svg" alt="">
+                    </a>
+                    <a class="connect-icon-link" href="https://www.instagram.com/thedigitalfort/" target="_blank" rel="noopener" aria-label="Instagram">
+                        <img src="assets/instagram.svg" alt="">
+                    </a>
+                    <a class="connect-icon-link" href="https://www.tiktok.com/en/" target="_blank" rel="noopener" aria-label="TikTok">
+                        <img src="assets/tiktok.svg" alt="">
+                    </a>
+                </div>
+            </section>
+
+            <a class="back-link" href="organizations.html">Back to Organizations</a>
+
+        </div>
 
     </main>
 

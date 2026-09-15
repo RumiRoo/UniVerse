@@ -1,81 +1,112 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="style.css">
     <title>Organizations</title>
 </head>
 
 <body>
 
-    <header>
-        <h1>UniVerse</h1>
-        <p>Student Organization Management System</p>
+    <header id="header">
+        <div class="header-left">
+            <div class="logo">
+            <img src="assets/logo2.svg" alt="UniVerse logo">
+            <span class="logo-text">
+                <span class="uni">Uni</span><span class="verse">Verse</span>
+            </span>
+        </div>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="organizations.html" class="active">Organizations</a>
+                <a href="events.html">Events</a>
+                <a href="announcements.html">Announcements</a>
+                <a href="dashboard.html">Dashboard</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <button class="button light-button">Log In</button>
+            <button class="button fill-button">Sign Up</button>
+        </div>
     </header>
-
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="organizations.html">Organizations</a>
-        <a href="events.html">Events</a>
-        <a href="announcements.html">Announcements</a>
-        <a href="dashboard.html">Dashboard</a>
-    </nav>
 
     <main>
 
-        <h2>Student Organizations</h2>
+        <section id="organizations-banner">
+            <h2 class="page-title">Student <span>Organizations</span></h2>
+            <p class="page-description">MMDC hosts a diverse and growing number of organizations, for the students and by the students.</p>
 
-        <form>
-            <label for="organization-search">Search Organizations:</label>
-            <input type="text" id="organization-search" name="organization-search">
+            <form>
+                <label for="organization-search" class="sr-only">Search Organizations</label>
+                <div class="search-bar">
+                    <img src="assets/magnifying_glass.svg" alt="">
+                    <input type="text" id="organization-search" name="organization-search" placeholder="Search organizations...">
+                </div>
 
-            <button type="submit">Search</button>
+                <label for="category" class="sr-only">Filter by Category</label>
+                <select id="category" name="category">
+                    <option value="all">All Organizations</option>
+                    <option value="academic">Academics</option>
+                    <option value="arts">Arts and Design</option>
+                    <option value="journalism">Journalism</option>
+                    <option value="sports">Sports</option>
+                    <option value="technology">Technology</option>
+                </select>
 
-        </form>
+                <button type="submit" class="search-button">Search</button>
+            </form>
+        </section>
 
-        <form>
-            <label for="category">Filter by Category</label>
+        <div id="organizations-page">
 
-            <select id="category" name="category">
-                <option value="all">All Organizations</option>
-                <option value="academic">Academics</option>
-                <option value="arts">Arts and Design</option>
-                <option value="journalism">Journalism</option>
-                <option value="sports">Sports</option>
-                <option value="technology">Technology</option>
-            </select>
+            <div class="organizations-list">
 
-        </form>
+                <article class="organization-card">
+                    <img class="org-photo" src="assets/the-digital-fort.jpeg" alt="The Digital Fort img">
+                    <div class="org-body">
+                        <h3 class="org-title">The Digital Fort</h3>
+                        <p class="org-category">Journalism</p>
+                        <p class="org-description">
+                            The official journalism club of MMDC where you can be updated with current news, articles, announcements, and
+                            other relevant information in and out of the university.
+                        </p>
+                        <a class="org-link" href="digital-fort.html">View Organization</a>
+                    </div>
+                </article>
 
-        <article>
-            <h3>The Digital Fort</h3>
-            <p>
-                The official journalism club of MMDC where you can be updated
-                with current news, holidays, articles, announcements, and
-                other relevant information in and out of the university.
-            </p>
-            <p>Category: Journalism</p>
-            <a href="digital-fort.html">View Organization</a>
-        </article>
+                <article class="organization-card">
+                    <img class="org-photo" src="assets/disenyo-malaya.jpg" alt="Disenyo Malaya img">
+                    
+                    <div class="org-body">
+                        <h3 class="org-title">Disenyo Malaya</h3>
+                        <p class="org-category">Arts and Design</p>
+                        <p class="org-description">
+                            An organization dedicated to aspiring designers and students who wish to explore and express their creativity in visual arts.
+                        </p>
+                        <a class="org-link" href="disenyo-malaya.html">View Organization</a>
+                    </div>
+                </article>
 
-        <article>
-            <h3>Disenyo Malaya</h3>
-            <p>
-                An organization dedicated to aspiring designers and students
-                who wish to explore and express their creativity in visual arts.
-            </p>
-            <p>Category: Arts and Design</p>
-            <a href="disenyo-malaya.html">View Organization</a>
-        </article>
+                <article class="organization-card">
+                    <img class="org-photo" src="assets/scholars-club.jpg" alt="Scholars Club img">
+                    
+                    <div class="org-body">
+                        <h3 class="org-title">Scholars Club</h3>
+                        <p class="org-category">Academic</p>
+                        <p class="org-description">
+                            A place for MMDC scholars to connect and collaborate with each
+                            other, improving their leadership and academic achievements
+                            while establishing a strong support network.
+                        </p>
+                        <a class="org-link" href="scholars-club.html">View Organization</a>
+                    </div>
+                </article>
 
-        <article>
-            <h3>Scholars Club</h3>
-            <p>
-                A place for MMDC scholars to connect and collaborate with each
-                other, improving their leadership and academic achievements
-                while establishing a strong support network.
-            </p>
-            <p>Category: Academic</p>
-            <a href="scholars-club.html">View Organization</a>
-        </article>
+            </div>
+
+        </div>
 
     </main>
 

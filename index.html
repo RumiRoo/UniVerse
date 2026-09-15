@@ -1,44 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="stylesheet" href="style.css">
     <title>UniVerse</title>
 </head>
 
 <body>
 
-    <header>
-        <div id="header">
-            <div class="header-left">
-                <div class="logo unselectable">
-                    <img src="assets/logo2.svg" alt="UniVerse Logo">
-                    <span class="logo-text">
-                        <span class="uni">Uni</span><span class="verse">Verse</span>
-                    </span>
-                </div>
-                <!--<div class="logo">
-                    <img src="assets/header_logo.svg" alt="UniVerse Logo">
-                </div>-->
-                <nav>
-                    <a class="active" href="index.html">Home</a>
-                    <a href="organizations.html">Orgs</a>
-                    <a href="events.html">Events</a>
-                    <a href="announcements.html">Announcements</a>
-                    <a href="dashboard.html">Dashboard</a>
-                </nav>
+    <header id="header">
+        <div class="header-left">
+            <div class="logo unselectable">
+                <img src="assets/logo2.svg" alt="UniVerse Logo">
+                <span class="logo-text">
+                    <span class="uni">Uni</span><span class="verse">Verse</span>
+                </span>
             </div>
-
-            <div class="header-right">
-                <button class="button fill-button">
-                    Login
-                </button>
-            </div>
+            <nav>
+                <a class="active" href="index.html">Home</a>
+                <a href="organizations.html">Organizations</a>
+                <a href="events.html">Events</a>
+                <a href="announcements.html">Announcements</a>
+                <a href="dashboard.html">Dashboard</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <button class="button light-button">Log In</button>
+            <button class="button fill-button">Sign Up</button>
         </div>
     </header>
 
     <main>
         <section id="home-banner">
-            <img src="assets/sun.svg">
+            <img src="assets/sun.svg" alt="">
 
             <div class="content">
                 <h1 class="welcome">Welcome to <span>Uni</span>Verse!</h1>
@@ -46,13 +42,13 @@
                     Discover student organizations, activities, events, and announcements in one place.
                 </p>
                 
-                <div class="search-box">
+                <form class="search-box" action="search-results.html" method="get">
                     <div class="search-bar">
-                        <img src="assets/magnifying_glass.svg">
-                        <input type="text" placeholder="Search events, organizations, announcements...">
+                        <img src="assets/magnifying_glass.svg" alt="">
+                        <input type="text" name="q" placeholder="Search events, organizations, announcements...">
                     </div>
-                    <div class="search-button clickable">Search</div>
-                </div>
+                    <button type="submit" class="search-button">Search</button>
+                </form>
             
             </div>
         </section>
@@ -66,19 +62,16 @@
                     </div>
                     <div class="home-upcoming-events-con">
                         <div class="up-child">
-                            <div class="event-photo">
-                                <!--img here-->
-                            </div>
+                            <img class="event-photo" src="assets/student-fair.jpg" alt="Students and Booths">
                             <div class="event-details">
                                 <p class="event-title">Student Organization Fair</p>
-                                <div class="event-time"> <img src="assets/up_event_clock.svg"> <span>8:00AM - 5:00PM</span> </div>
-                                <div class="event-location"> <img src="assets/up_event_location.svg"> <span>Mapua Malayan Digital College Luzon Hub</span> </div>
+                                <div class="event-time">
+                                    <img src="assets/up_event_clock.svg" alt=""> <span>8:00AM - 5:00PM</span> </div>
+                                <div class="event-location"> <img src="assets/up_event_location.svg" alt=""> <span>Mapua Malayan Digital College Luzon Hub</span> </div>
                             </div>
                         </div>
                         <div class="up-child">
-                            <div class="event-photo">
-                                <!--img here-->
-                            </div>
+                            <img class="event-photo" src="assets/web-system.jpg" alt="Website-Creation">
                             <div class="event-details">
                                 <p class="event-title">Introduction to Web Systems & Technology</p>
                                 <div class="event-time"> <img src="assets/up_event_clock.svg"> <span>9:00AM</span> </div>
@@ -86,13 +79,11 @@
                             </div>
                         </div>
                         <div class="up-child">
-                            <div class="event-photo">
-                                <!--img here-->
-                            </div>
+                            <img class="event-photo" src="assets/art-exhibit.jpg" alt="Art Exhibition img">
                             <div class="event-details">
-                                <p class="event-title">Introduction to Web Systems & Technology</p>
-                                <div class="event-time"> <img src="assets/up_event_clock.svg"> <span>9:00AM</span> </div>
-                                <div class="event-location"> <img src="assets/up_event_location.svg"> <span>Computer Lab</span> </div>
+                                <p class="event-title">Digital Consumption: Art Exhibition</p>
+                                <div class="event-time"> <img src="assets/up_event_clock.svg"> <span>11:00AM</span> </div>
+                                <div class="event-location"> <img src="assets/up_event_location.svg"> <span>University Mezzanine</span> </div>
                             </div>
                         </div>
                     </div>
@@ -100,28 +91,28 @@
 
                 <section id="home-featured-orgs">
                     <div class="section-top">
-                        <h2 class="section-name">Featured School Orgs</h2>
+                        <h2 class="section-name">Featured Organizations</h2>
                         <p class="see-more">See More</p>
                     </div>
                     <div class="home-featured-orgs-con">
                         <div class="feat-child">
                             <div class="org-photo">
-                                <!--img here-->
+                                <img class="org-photo" src="assets/the-digital-fort.jpeg" alt="The Digital Fort img">
                             </div>
                             <div class="org-details">
                                 <p class="org-title">The Digital Fort</p>
                                 <p class="org-desc">The official journalism club of MMDC where you can be updated with the current news, holidays, articles, announcements, and other such relevant information in and out of the university.</p>
-                                <a class="org-link" href="digital-fort.html">View Organization →</a>
+                                <a class="org-link" href="digital-fort.html">View More</a>
                             </div>
                         </div>
                         <div class="feat-child">
                             <div class="org-photo">
-                                <!--img here-->
+                                <img class="org-photo" src="assets/disenyo-malaya.jpg" alt="Disenyo Malaya img">
                             </div>
                             <div class="org-details">
-                                <p class="org-title">The Digital Fort</p>
-                                <p class="org-desc">The official journalism club of MMDC where you can be updated with the current news, holidays, articles, announcements, and other such relevant information in and out of the university.</p>
-                                <a class="org-link" href="digital-fort.html">View Organization →</a>
+                                <p class="org-title">Disenyo Malaya</p>
+                                <p class="org-desc">An organization dedicated to aspiring designers and students who wish to explore and express their creativity in visual arts.</p>
+                                <a class="org-link" href=" ">View More</a>
                             </div>
                         </div>
                     </div>
@@ -132,7 +123,7 @@
             <div id="home-contents-right">
                 <div class="section-top">
                     <div class="section-top recent-announce">
-                        <img src="assets/megaphone.svg">
+                        <img src="assets/megaphone.svg" alt="">
                         <h2 class="section-name">Recent Announcements</h2>
                     </div>
                     <p class="see-more">See More</p>
@@ -141,16 +132,16 @@
                     <div class="recent-child">
                         <div class="announce-header">
                             <p class="announce-title">Organization Registrations Now Open!</p>
-                            <p class="announce-date">Oct 6, 2025</p>
+                            <p class="announce-date">Sept. 6, 2026</p>
                         </div>
-                        <p class="announce-desc">Students may now browse and join registered organizations. Register until November 10, 2026 at the student lounge. Find vice president at table...</p>
+                        <p class="announce-desc">Students may now browse and join registered organizations. Register until November 10, 2026 at the student lounge.</p>
                     </div>
                     <div class="recent-child">
                         <div class="announce-header">
-                            <p class="announce-title">Organization Registrations Now Open!</p>
-                            <p class="announce-date">Oct 6, 2025</p>
+                            <p class="announce-title">Leadership Workshop Registration</p>
+                            <p class="announce-date">Sept 6, 2026</p>
                         </div>
-                        <p class="announce-desc">Students may now browse and join registered organizations. Register until November 10, 2026 at the student lounge. Find vice president at table...</p>
+                        <p class="announce-desc">Registration is now open on Scholars Club's webpage for the upcoming leadership development workshop.</p>
                     </div>
                 </div>
             </div>
