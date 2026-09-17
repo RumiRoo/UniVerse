@@ -4,70 +4,211 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
 
+    <link rel="stylesheet" href="style.css">
     <title>Disenyo Malaya</title>
 </head>
 
 <body>
 
-    <header>
-        <h1>UniVerse</h1>
-        <p>Student Organization Management System</p>
+    <header id="header">
+        <div class="header-left">
+            <div class="logo">
+                <img src="assets/logo2.svg" alt="UniVerse Logo">
+                <span class="logo-text">
+                    <span class="uni">Uni</span><span class="verse">Verse</span>
+                </span>
+            </div>
+            <nav>
+                <a href="index.html">Home</a>
+                <a class="active" href="organizations.html">Organizations</a>
+                <a href="events.html">Events</a>
+                <a href="announcements.html">Announcements</a>
+                <a href="dashboard.html">Dashboard</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <button class="button light-button">Login</button>
+            <button class="button fill-button">Sign Up</button>
+        </div>
     </header>
-
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="organizations.html">Organizations</a>
-        <a href="events.html">Events</a>
-        <a href="announcements.html">Announcements</a>
-        <a href="dashboard.html">Dashboard</a>
-    </nav>
 
     <main>
 
-        <section>
-            <h2>Disenyo Malaya</h2>
+        <section id="org-profile-banner">
+            <div class="org-profile-content">
+                <p class="org-profile-category">Arts and Design</p>
+                <h1 class="org-profile-title">Disenyo Malaya</h1>
 
-            <p>
-                An organization dedicated to aspiring designers and students
-                who wish to explore and express their creativity in visual arts.
-            </p>
+                <p class="org-profile-desc">
+                    An organization dedicated to aspiring designers and students who wish to explore and express their creativity in the visual arts.
+                </p>
 
-            <p>Category: Arts and Design</p>
+                <div class="org-profile-stats">
+                    <span>📅 Founded 2025</span>
+                    <span>🎨 42 Members</span>
+                    <span>➤ &nbsp;MMDC Main Bld., Art Room 1</span>
+                </div>
 
-            <form>
-                <button type="submit">Join Organization</button>
-            </form>
+                <form>
+                    <button type="submit" class="button join-button">Join Organization</button>
+                </form>
+            </div>
+
+            <img class="org-profile-picture" src="assets/disenyo-malaya.jpg" alt="The Digital Fort logo">
         </section>
 
-        <section>
-            <h3>Officers</h3>
+        <div class="page-content">
 
-            <ul>
-                <li>President: Sophia Sanchez</li>
-                <li>Vice President: Miguel Legazpi</li>
-                <li>Secretary: Andrea Agoncillo</li>
-            </ul>
-        </section>
+            <section class="org-section">
+                <h2>About Us</h2>
+                <p class="org-about">
+                    Disenyo Malaya is a community for MMDC students who see design as a form of expression and medium for one's imagination, not just a skill or a tool. From Fine Arts and Animation, to UI/UX and branding, we give creatives the paltform to experiment, collaborate, and grow.
+                </p>
+            </section>
 
-        <section>
-            <h3>Activities</h3>
+            <section class="org-section">
+                <h2>How to Join</h2>
+                <div class="join-steps">
+                    <div class="join-step">
+                        <div class="step-number">1</div>
+                        <p class="step-title">Visit the Studio</p>
+                        <p class="step-desc">Sit in on any open session to see how everything works and meet the team.</p>
+                    </div>
+                    <div class="join-step">
+                        <div class="step-number">2</div>
+                        <p class="step-title">Submit a Request Form</p>
+                        <p class="step-desc">Tell us what kind of design excites you.</p>
+                    </div>
+                    <div class="join-step">
+                        <div class="step-number">3</div>
+                        <p class="step-title">Attend Orientation</p>
+                        <p class="step-desc">We'll introduce our tools, workflow, and ongoing projects.</p>
+                    </div>
+                    <div class="join-step">
+                        <div class="step-number">4</div>
+                        <p class="step-title">Join a Project Team</p>
+                        <p class="step-desc">Illustrator, Editor, 2D/3D Animation, UI/UX, Branding, Painter, Photography, Digital Art, and many more! Let's start creating.</p>
+                    </div>
+                </div>
+            </section>
 
-            <ul>
-                <li>Digital Art Workshop</li>
-                <li>Campus Design Exhibition</li>
-                <li>Creative Portfolio Workshop</li>
-            </ul>
-        </section>
+            <section class="org-section">
+                <h2>Activities</h2>
+                <div class="activities-grid">
+                    <div class="activity-card">
+                        <div class="activity-icon">🎨</div>
+                        <p class="activity-title">Creative Workshops</p>
+                        <p class="activity-desc">Hands-on sessions that cover typography, illustration, and layout basics.</p>
+                    </div>
+                    <div class="activity-card">
+                        <div class="activity-icon">🖼️</div>
+                        <p class="activity-title">Campus Exhibits</p>
+                        <p class="activity-desc">Showcasing member artworks in pop-up displays.</p>
+                    </div>
+                    <div class="activity-card">
+                        <div class="activity-icon">📖</div>
+                        <p class="activity-title">Critique Nights</p>
+                        <p class="activity-desc">Peer feedback sessions for current design projects.</p>
+                    </div>
+                </div>
+            </section>
 
-        <section>
-            <h3>Upcoming Events</h3>
+            <section class="org-section">
+                <h2>Officers</h2>
+                <ul class="org-list">
+                    <li><span class="officer-role">Presidetn:</span> Alessa Marie Cruz</li>
+                    <li><span class="officer-role">Creative Director:</span> Joaquin Reyes</li>
+                    <li><span class="officer-role">Events Coordinator:</span> Beth Ramos</li>
+                    <li><span class="officer-role">Social Media Manager:</span> Miguel Santiago</li>
+                </ul>
+            </section>
 
-            <p>Campus Design Exhibition - September 18, 2026</p>
-        </section>
+            <section class="org-section">
+                <h2>Upcoming Events</h2>
+                <div class="event-calendar">
+                    <div class="calendar-card">
+                        <p class="calendar-month">October 2026</p>
+                        <div class="calendar-grid">
+                            <span class="calendar-weekday">Sun</span>
+                            <span class="calendar-weekday">Mon</span>
+                            <span class="calendar-weekday">Tue</span>
+                            <span class="calendar-weekday">Wed</span>
+                            <span class="calendar-weekday">Thu</span>
+                            <span class="calendar-weekday">Fri</span>
+                            <span class="calendar-weekday">Sat</span>
 
-        <p>
-            <a href="organizations.html">Back to Organizations</a>
-        </p>
+                            <span class="calendar-day empty"></span>
+                            <span class="calendar-day empty"></span>
+                            <span class="calendar-day empty"></span>
+                            <span class="calendar-day empty"></span>
+                            <span class="calendar-day">1</span>
+                            <span class="calendar-day">2</span>
+                            <span class="calendar-day calendar-day-event">3</span>
+
+                            <span class="calendar-day">4</span>
+                            <span class="calendar-day">5</span>
+                            <span class="calendar-day">6</span>
+                            <span class="calendar-day">7</span>
+                            <span class="calendar-day">8</span>
+                            <span class="calendar-day">9</span>
+                            <span class="calendar-day">10</span>
+
+                            <span class="calendar-day">11</span>
+                            <span class="calendar-day">12</span>
+                            <span class="calendar-day">13</span>
+                            <span class="calendar-day">14</span>
+                            <span class="calendar-day">15</span>
+                            <span class="calendar-day">16</span>
+                            <span class="calendar-day">17</span>
+
+                            <span class="calendar-day">18</span>
+                            <span class="calendar-day">19</span>
+                            <span class="calendar-day">20</span>
+                            <span class="calendar-day">21</span>
+                            <span class="calendar-day">22</span>
+                            <span class="calendar-day">23</span>
+                            <span class="calendar-day">24</span>
+
+                            <span class="calendar-day">25</span>
+                            <span class="calendar-day">26</span>
+                            <span class="calendar-day">27</span>
+                            <span class="calendar-day">28</span>
+                            <span class="calendar-day">29</span>
+                            <span class="calendar-day">30</span>
+                            <span class="calendar-day">31</span>
+                        </div>
+                    </div>
+
+                    <div class="event-info-card">
+                        <p class="event-title">Oct. 3<br>Campus Design Exhibition</p>
+                        <div class="event-meta">
+                            <span><img src="assets/up_event_clock.svg" alt=""> 10:00AM - 4:00PM</span>
+                            
+                            <span><img src="assets/up_event_location.svg" alt=""> MMDC Design Studio</span>
+                        </div>
+                        <p class="event-desc">A showcase event for member artwork, illustrations, and design projects for the term.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="org-section">
+                <h2>Connect With Us</h2>
+                <div class="connect-links">
+                    <a class="connect-icon-link" href="https://www.youtube.com/channel/UC3VUgfvsivH0b7ACfv4x2sw/about" target="_blank" rel="noopener" aria-label="YouTube">
+                        <img src="assets/youtube.svg" alt="">
+                    </a>
+                    <a class="connect-icon-link" href="https://support.mmdc.mcl.edu.ph/hc/en-us/articles/39572045936909-MMDC-Student-Clubs" target="_blank" rel="noopener" aria-label="MMDC-orgs-wiki">
+                        <img src="assets/wiki.svg" alt="">
+                    </a>
+                    <a class="connect-icon-link" href="https://www.tiktok.com/en/" target="_blank" rel="noopener" aria-label="TikTok">
+                        <img src="assets/tiktok.svg" alt="">
+                    </a>
+                </div>
+            </section>
+
+            <a class="back-link" href="organizations.html">❮ &nbsp;Back to Organizations</a>
+
+        </div>
 
     </main>
 
