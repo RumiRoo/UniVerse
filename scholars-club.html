@@ -1,71 +1,229 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Scholars Club</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+
+    <link rel="stylesheet" href="style.css">
+    <title>Scholar's Club</title>
 </head>
 
 <body>
 
-    <header>
-        <h1>UniVerse</h1>
-        <p>Student Organization Management System</p>
+    <header id="header">
+        <div class="header-left">
+            <div class="logo">
+                <img src="assets/logo2.svg" alt="UniVerse Logo">
+                <span class="logo-text">
+                    <span class="uni">Uni</span><span class="verse">Verse</span>
+                </span>
+            </div>
+            <nav>
+                <a href="index.html">Home</a>
+                <a class="active" href="organizations.html">Organizations</a>
+                <a href="events.html">Events</a>
+                <a href="announcements.html">Announcements</a>
+                <a href="dashboard.html">Dashboard</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <button class="button light-button">Login</button>
+            <button class="button fill-button">Sign Up</button>
+        </div>
     </header>
-
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="organizations.html">Organizations</a>
-        <a href="events.html">Events</a>
-        <a href="announcements.html">Announcements</a>
-        <a href="dashboard.html">Dashboard</a>
-    </nav>
 
     <main>
 
-        <section>
-            <h2>Scholars Club</h2>
+        <section id="org-profile-banner">
+            <div class="org-profile-content">
+                <p class="org-profile-category">Academic</p>
+                <h1 class="org-profile-title">Scholars Club</h1>
 
-            <p>
-                A place for MMDC scholars to connect and collaborate with each
-                other, improving their leadership and academic achievements
-                while establishing a strong support network.
-            </p>
+                <p class="org-profile-desc">
+                    A place for MMDC scholars to conenct and collaborate with each other, in order to improve their leadership and academic achivements while establishing a strong support network.
+                </p>
 
-            <p>Category: Academic</p>
+                <div class="org-profile-stats">
+                    <span>📅 Founded 2026</span>
+                    <span>🎨 26 Members</span>
+                    <span>➤ &nbsp;MMDC South Bld., Meeting Room 3</span>
+                </div>
 
-            <form>
-                <button type="submit">Join Organization</button>
-            </form>
+                <form>
+                    <button type="submit" class="button join-button">Join Organization</button>
+                </form>
+            </div>
+
+            <img class="org-profile-picture" src="assets/scholars-club.jpg" alt="The Digital Fort logo">
         </section>
 
-        <section>
-            <h3>Officers</h3>
+        <div class="page-content">
 
-            <ul>
-                <li>President: Danielle Santos</li>
-                <li>Vice President: Salvadore Torres</li>
-                <li>Secretary: Rafael Margharita</li>
-            </ul>
-        </section>
+            <section class="org-section">
+                <h2>About Us</h2>
+                <p class="org-about">
+                    Scholars Club brings together MMDC's academic scholars to support one another beyond the classroom. Through mentorship, study collaborations, and leadership training, we aim to help members grow academically while building lasting peer relationships.
+                </p>
+            </section>
 
-        <section>
-            <h3>Activities</h3>
+            <section class="org-section">
+                <h2>How to Join</h2>
+                <div class="join-steps">
+                    <div class="join-step">
+                        <div class="step-number">1</div>
+                        <p class="step-title">Check Eligibility</p>
+                        <p class="step-desc">Open to students under an active scholarship at MMDC.</p>
+                    </div>
+                    <div class="join-step">
+                        <div class="step-number">2</div>
+                        <p class="step-title">Attend an Info Session</p>
+                        <p class="step-desc">Learn about our programs and how the membership supports your academics.</p>
+                    </div>
+                    <div class="join-step">
+                        <div class="step-number">3</div>
+                        <p class="step-title">Submit Membership Form</p>
+                        <p class="step-desc">Fill out a short form confirming your scholarship status and interests.</p>
+                    </div>
+                    <div class="join-step">
+                        <div class="step-number">4</div>
+                        <p class="step-title">Get Paired With a Peer Group</p>
+                        <p class="step-desc">Join a study circle based on your program and year level.</p>
+                    </div>
+                </div>
+            </section>
 
-            <ul>
-                <li>Peer Study Sessions</li>
-                <li>Leadership Development Workshop</li>
-                <li>Academic Mentorship Program</li>
-            </ul>
-        </section>
+            <section class="org-section">
+                <h2>Activities</h2>
+                <div class="activities-grid">
+                    <div class="activity-card">
+                        <div class="activity-icon">📚</div>
+                        <p class="activity-title">Study Groups</p>
+                        <p class="activity-desc">Peer sessions organized by program to prep for exams together.</p>
+                    </div>
+                    <div class="activity-card">
+                        <div class="activity-icon">🎓</div>
+                        <p class="activity-title">Leadership Workshops</p>
+                        <p class="activity-desc">Training sessions to build the traits of a leader: confident, well-spoken, and active.</p>
+                    </div>
+                    <div class="activity-card">
+                        <div class="activity-icon">🫱🏻‍🫲🏾</div>
+                        <p class="activity-title">Mentorship Programs</p>
+                        <p class="activity-desc">Pairing incoming scholars with senior members for academic guidance.</p>
+                    </div>
+                </div>
+            </section>
 
-        <section>
-            <h3>Upcoming Events</h3>
+            <section class="org-section">
+                <h2>Officers</h2>
+                <ul class="org-list">
+                    <li><span class="officer-role">Presidetn:</span> Nathaniel Cruz</li>
+                    <li><span class="officer-role">Vice President:</span> Samantha Villaluiz</li>
+                    <li><span class="officer-role">Academic Coordinator:</span> Diego Marasigan</li>
+                    <li><span class="officer-role">Membership Officer:</span> John Luise Torres</li>
+                </ul>
+            </section>
 
-            <p>Scholar Leadership Workshop - September 22, 2026</p>
-        </section>
+            <section class="org-section">
+                <h2>Upcoming Events</h2>
+                <div class="event-calendar">
+                    <div class="calendar-card">
+                        <p class="calendar-month">September 2026</p>
+                        <div class="calendar-grid">
+                            <span class="calendar-weekday">Sun</span>
+                            <span class="calendar-weekday">Mon</span>
+                            <span class="calendar-weekday">Tue</span>
+                            <span class="calendar-weekday">Wed</span>
+                            <span class="calendar-weekday">Thu</span>
+                            <span class="calendar-weekday">Fri</span>
+                            <span class="calendar-weekday">Sat</span>
 
-        <p>
-            <a href="organizations.html">Back to Organizations</a>
-        </p>
+                            <span class="calendar-day empty"></span>
+                            <span class="calendar-day empty"></span>
+                            <span class="calendar-day empty"></span>
+                            <span class="calendar-day empty"></span>
+                            <span class="calendar-day">1</span>
+                            <span class="calendar-day">2</span>
+                            <span class="calendar-day">3</span>
+
+                            <span class="calendar-day">4</span>
+                            <span class="calendar-day">5</span>
+                            <span class="calendar-day">6</span>
+                            <span class="calendar-day">7</span>
+                            <span class="calendar-day">8</span>
+                            <span class="calendar-day">9</span>
+                            <span class="calendar-day">10</span>
+
+                            <span class="calendar-day">11</span>
+                            <span class="calendar-day">12</span>
+                            <span class="calendar-day">13</span>
+                            <span class="calendar-day">14</span>
+                            <span class="calendar-day">15</span>
+                            <span class="calendar-day">16</span>
+                            <span class="calendar-day">17</span>
+
+                            <span class="calendar-day">18</span>
+                            <span class="calendar-day">19</span>
+                            <span class="calendar-day">20</span>
+                            <span class="calendar-day">21</span>
+                            <span class="calendar-day calendar-day-event">22</span>
+                            <span class="calendar-day">23</span>
+                            <span class="calendar-day calendar-day-event">24</span>
+
+                            <span class="calendar-day">25</span>
+                            <span class="calendar-day">26</span>
+                            <span class="calendar-day">27</span>
+                            <span class="calendar-day">28</span>
+                            <span class="calendar-day">29</span>
+                            <span class="calendar-day">30</span>
+                            <span class="calendar-day">31</span>
+                        </div>
+                    </div>
+
+                    <div class="event-info-card">
+                        <p class="event-title">Sept. 22<br>Leadership Development Workshop</p>
+                        <div class="event-meta">
+                            <span><img src="assets/up_event_clock.svg" alt=""> 11:00AM - 2:00PM</span>
+                            
+                            <span>
+                                <img src="assets/up_event_location.svg" alt="">Seminar Room 3
+                            </span>
+                        </div>
+                        <p class="event-desc">A workshop on leadership fundamentals for scholars taking on peer mentor roles.</p>
+                    </div>
+
+                    <div class="event-info-card">
+                        <p class="event-title">Sept. 24<br>Milestone 1 Peer Mentoring</p>
+                        <div class="event-meta">
+                            <span><img src="assets/up_event_clock.svg" alt=""> 5:00PM - 7:00PM</span>
+                            
+                            <span>
+                                <img src="assets/up_event_location.svg" alt="">MMDC Library
+                            </span>
+                        </div>
+                        <p class="event-desc">Student-led review and inquiry session for the upcoming milestone, open to all scholar members.</p>
+                    </div>
+                    
+                </div>
+            </section>
+
+            <section class="org-section">
+                <h2>Connect With Us</h2>
+                <div class="connect-links">
+                    <a class="connect-icon-link" href="https://www.mmdc.mcl.edu.ph/admissions/asenso/">
+                        <img src="assets/student-scholar.svg" alt="">
+                    </a>
+                    <a class="connect-icon-link" href="https://www.mmdc.mcl.edu.ph/admissions/next-gen/" aria-label="MMDC-orgs-wiki">
+                        <img src="assets/wiki.svg" alt="">
+                    </a>
+                    <a class="connect-icon-link" href="https://www.tiktok.com/en/" target="_blank" rel="noopener" aria-label="TikTok">
+                        <img src="assets/tiktok.svg" alt="">
+                    </a>
+                </div>
+            </section>
+
+            <a class="back-link" href="organizations.html">❮ &nbsp;Back to Organizations</a>
+
+        </div>
 
     </main>
 
