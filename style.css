@@ -55,6 +55,12 @@ h2{
     color:#26202A;
 }
 
+
+
+/* =========================
+   HEADER ELEMENTS
+   ========================= */
+
 #header {
     background-color: #fff;
     height: 4.5rem;
@@ -190,6 +196,11 @@ h2{
     gap: 0.75rem;
 }
 
+
+
+
+
+
 .button {
     padding: 0rem 1rem;
     border-radius: 0.7rem;
@@ -225,6 +236,12 @@ h2{
 
 
 
+
+/* =========================
+   HOME PAGE
+   ========================= */
+
+/* Banner */
 
 #home-banner {
     position: relative;
@@ -279,6 +296,10 @@ h2{
     width: min(60vw, 40vw);
 }
 
+#home-banner .content .search-box .search-bar:focus-within {
+    outline: 2px solid #E0950C;
+}
+
 #home-banner .content .search-box .search-bar input {
     font-size: 0.9rem;
     border: none;
@@ -293,7 +314,7 @@ h2{
 }
 
 #home-banner .content .search-box .search-button{
-    padding-block: 1rem;
+    padding-block: 1.5rem;
     padding-inline: clamp(1rem, 2vw, 1.2rem);
     line-height: 0px;
     color: black;
@@ -345,6 +366,10 @@ h2{
 }
 
 
+
+
+/* Upcoming Events Section */
+
 #home-upcoming-events {
     position: relative;
     z-index: 3;
@@ -369,7 +394,7 @@ h2{
 }
 
 .section-top .see-more:hover{
-    color:#5e2d81;
+    color:#8967A0;
 }
 
 .section-top .recent-announce{
@@ -430,8 +455,8 @@ h2{
 .up-child .event-details .event-time{
     margin-top:0.5rem;
 
-    font-weight: 600;
-    color:#4E4256;
+    font-weight: 500;
+    color:#4b464f;
 
     font-size: 0.75rem;
 
@@ -445,8 +470,8 @@ h2{
 .up-child .event-details .event-location{
     margin-top:0.5rem;
 
-    font-weight: 600;
-    color:#4E4256;
+    font-weight: 500;
+    color:#4b464f;
 
     font-size: 0.75rem;
 
@@ -457,7 +482,30 @@ h2{
     color: #565259
 }
 
+.up-child{
+    position: relative;
+}
 
+.up-child .event-date{
+    padding: 8px;
+    background-color: rgba(255,255,255,0.85);
+    color:#5e2d81;
+
+    font-size: 0.7rem;
+    font-weight: 700;
+
+    position: absolute;
+
+    top:7px;
+    right:7px;
+
+    border-radius: 10px;
+}
+
+
+
+
+/* Featured Organizations Section */
 
 #home-featured-orgs {
     margin-top:-0.5rem;
@@ -475,8 +523,6 @@ h2{
 
     gap:1rem;
 }
-
-
 
 .home-featured-orgs-con .feat-child{
     height: 10.3rem;
@@ -506,7 +552,7 @@ h2{
     height: 8.6rem;
     width:8.6rem;
 
-    border-radius: 10px;
+    border-radius: 100px;
     flex-shrink: 0;
 }
 
@@ -548,6 +594,7 @@ h2{
 
 
 
+/* Recent Announcements Section */
 
 .home-recent-announce-con{
     margin-top:1rem;
@@ -576,6 +623,10 @@ h2{
     color:#4E4256;
 }
 
+.recent-child:hover .announce-title{
+    color:#8967A0;
+}
+
 .recent-child .announce-date{
     font-weight: 600;
     color:#4E4256;
@@ -583,10 +634,14 @@ h2{
     font-size: 0.75rem;
 }
 
+.recent-child:hover .announce-date{
+    color:#a576c4;
+}
+
 .recent-child .announce-desc{
     margin-top: 0.5rem;
-    font-weight: 600;
-    color:#4E4256;
+    font-weight: 500;
+    color:#333135;
 
     font-size: 0.75rem;
 
@@ -1290,4 +1345,370 @@ form button:hover {
 
 .connect-icon-link:hover img {
     filter: brightness(0) invert(1);
+}
+
+
+
+
+
+
+/* =========================
+   EVENTS PAGE
+   ========================= */
+
+/* identical to search bar of organizations page */
+
+#events-banner {
+    position: relative;
+    background-color: #433050;
+    color: #fff;
+    overflow: hidden;
+
+    padding-block: 2.5rem;
+    padding-inline: clamp(2rem, 6vw, 5rem);
+}
+
+#events-banner .page-title,
+#events-banner .page-description {
+    position: relative;
+    z-index: 2;
+}
+
+#events-banner .page-title {
+    font-size: 2.4rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+#events-banner .page-title span {
+    color: #E0950C;
+}
+
+#events-banner .page-description {
+    margin-top: 0.5rem;
+    color: #d9d0e0;
+    font-size: 0.95rem;
+}
+
+
+
+#events-banner form {
+    margin-top: 1.7rem;
+    position: relative;
+    z-index: 2;
+    gap: 0.75rem;
+}
+
+#events-banner form .search-bar {
+    background-color: #fff;
+    color: #948F98;
+
+    height: 3rem;
+    padding-inline: clamp(1rem, 3vw, 1.7rem);
+
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    border-radius: 10px;
+    flex: 1;
+}
+
+#events-banner form .search-bar img {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+}
+
+#events-banner form .search-bar input {
+    font-size: 0.9rem;
+    border: none;
+    outline: none;
+    background: transparent;
+
+    flex: 1;
+    height: 100%;
+
+    font-family: inherit;
+    color: #4E4256;
+}
+
+#events-banner form .search-bar:focus-within {
+    outline: 2px solid #E0950C;
+}
+
+#events-banner form select {
+    height: 3rem;
+    border: none;
+    border-radius: 10px;
+    background-color: #fff;
+    color: #4E4256;
+    padding-inline: 0.9rem;
+}
+
+#events-banner form select:focus {
+    outline: 2px solid #E0950C;
+}
+
+#events-banner form .search-button {
+    height: 3rem;
+    padding-inline: clamp(1rem, 2vw, 1.2rem);
+
+    background-color: #E0950C;
+    color: #26202A;
+
+    border: none;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+
+    transition: background-color 0.2s ease;
+}
+
+
+#events-status-filters{
+    display:inline-flex;
+    gap:0.7rem;
+
+    margin-bottom:2rem;
+}
+
+.event-status-filter{
+    padding-block:0.5rem;
+    padding-inline: 1rem;
+    border-radius: 0.5rem;
+    filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.207));
+
+    background-color: #fff;
+    color:#5e2d81;
+    
+    font-size: 0.8rem;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.event-status-filter.active{
+
+    background-color: #433050;
+    color:#fff;
+    
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.event-status-filter:hover{
+    background-color: #8967A0;
+    color:#fff
+}
+
+#events-banner form .search-button:hover {
+    background-color: #e9a932;
+}
+
+#events-page {
+    padding-block: 2.5rem;
+    padding-inline: clamp(2rem, 6vw, 5rem);
+}
+
+#events-contents{
+    padding-block: 1.5rem;
+    padding-left: clamp(2rem, 5vw, 5rem);
+
+}
+
+#events-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+    gap: 1.5rem;
+}
+
+.event-card {
+    display: flex;
+    flex-direction: column;
+
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+
+    box-shadow: 0 10px 20px rgba(60, 60, 60, 0.12);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+    position: relative;
+}
+
+.event-card:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 10px 20px rgba(94, 45, 129, 0.2);
+    background-color: #FBFAFC;
+}
+
+.event-card .event-photo {
+    width: 100%;
+    height: 9rem;
+    background-color: #d9d9d9;
+    border-radius: 0;
+    flex-shrink: 0;
+
+    display: block;
+    object-fit: cover;
+    object-position: center;
+
+    position:relative;
+}
+
+.event-card .event-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #4E4256;
+}
+
+.event-card .event-body {
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.event-card .event-date{
+    padding: 8px;
+    background-color: rgba(255,255,255,0.85);
+    color:#5e2d81;
+
+    font-size: 0.75rem;
+    font-weight: 700;
+
+    position: absolute;
+
+    top:7px;
+    right:7px;
+
+    border-radius: 10px;
+}
+
+.event-card .event-categories{
+    margin-top:0.2rem;
+
+}
+
+.event-card .event-category{
+    display: inline-flex;
+    align-self: flex-start;
+    margin-top: 0.5rem;
+
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    background-color: rgba(224, 149, 12, 0.15);
+
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #B4740A;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.event-card .event-description {
+    margin-top: 0.8rem;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: #565259;
+    flex: 1;
+}
+
+.event-card .event-details {
+    margin-top: 0.8rem;
+    font-size: 0.8rem;
+    color: #565259;
+}
+
+.event-card .event-detail-icon{
+    margin-right: 0.5rem;
+}
+
+.event-card .event-location{
+    margin-top: 0.2rem;
+}
+
+.event-card .event-orgs{
+    display: flex;
+    align-items: center;
+    gap:0.2rem;
+}
+
+.event-card .event-footer{
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.event-card .event-org{
+    display: inline-flex;
+    align-items: center;
+    /*background-color: green;*/
+    padding-block:0.1rem;
+    height:1.7rem;
+}
+
+.event-card .org-photo{
+    height:100%;
+    border-radius: 100px;
+    border:1px solid #56525981;
+
+    object-fit: cover;
+    object-position: center;
+
+    margin-right:0.5rem;
+    aspect-ratio: 1 / 1;
+}
+
+.event-card .event-org-name{
+    font-size:0.75rem;
+    margin-top:-0.1rem;
+    font-weight: 500;
+    color: #4E4256;
+}
+
+.event-card .view-details{
+    margin-top: -0.1rem;
+    font-size: 0.7rem;
+    font-weight:700;
+    color:#68457f;
+    text-decoration: underline;
+
+    cursor: pointer;
+}
+
+.event-card .view-details:hover{
+    color:#8967A0;
+}
+
+.event-card .event-status{
+    padding: 0.3rem;
+    background-color: #c4dbc7;
+    color:#565259;
+
+    font-size: 0.75rem;
+    font-weight: 700;
+
+    position: absolute;
+
+    top:7px;
+    left:7px;
+
+    border-radius: 10px;
+
+    display: inline-flex;
+    align-items: center;
+    gap:5px
+}
+
+.event-card .event-status .circle{
+    background-color: #325e37;
+    height:0.35rem;
+    width:0.35rem;
+    border-radius: 10rem;
+    margin-top: 0.1rem;
 }

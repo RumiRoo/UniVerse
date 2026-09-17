@@ -4,112 +4,154 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <link rel="stylesheet" href="style.css">
     <title>Events</title>
 </head>
 
 <body>
 
-    <header>
-        <h1>UniVerse</h1>
-        <p>Student Organization Management System</p>
+    <header id="header">
+        <div class="header-left">
+            <div class="logo unselectable">
+                <img src="assets/logo2.svg" alt="UniVerse Logo">
+                <span class="logo-text">
+                    <span class="uni">Uni</span><span class="verse">Verse</span>
+                </span>
+            </div>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="organizations.html">Organizations</a>
+                <a class="active" href="events.html">Events</a>
+                <a href="announcements.html">Announcements</a>
+                <a href="dashboard.html">Dashboard</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <button class="button light-button">Log In</button>
+            <button class="button fill-button">Sign Up</button>
+        </div>
     </header>
-
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="organizations.html">Organizations</a>
-        <a href="events.html">Events</a>
-        <a href="announcements.html">Announcements</a>
-        <a href="dashboard.html">Dashboard</a>
-    </nav>
 
     <main>
 
-        <h2>Events</h2>
+        <section id="events-banner">
+            <h2 class="page-title">Campus <span>Events</span></h2>
+            <p class="page-description">Explore the vibrant pulse at the heart of MMDC through student-led events, performances, and traditions.</p>
 
-        <form>
-            <label for="event-search">Search Events</label>
-            <input type="text" id="event-search" name="event-search">
+            <form>
+                <label for="organization-search" class="sr-only">Search Organizations</label>
+                <div class="search-bar">
+                    <img src="assets/magnifying_glass.svg" alt="">
+                    <input type="text" id="organization-search" name="organization-search" placeholder="Search organizations...">
+                </div>
 
-            <button type="submit">Search</button>
+                <label for="category" class="sr-only">Filter by Category</label>
+                <select id="category" name="category">
+                    <option value="all">All Event Types</option>
+                    <option value="academic">Academics</option>
+                    <option value="arts">Arts and Design</option>
+                    <option value="journalism">Journalism</option>
+                    <option value="sports">Sports</option>
+                    <option value="technology">Technology</option>
+                </select>
 
-        </form>
-
-        <form>
-            <label for="event-category">Filter by Organization</label>
-
-            <select id="event-category" name="event-category">
-                <option value="all">All Organizations</option>
-                <option value="digital-fort">The Digital Fort</option>
-                <option value="disenyo-malaya">Disenyo Malaya</option>
-                <option value="scholars-club">Scholars Club</option>
-            </select>
-
-            <button type="submit">Filter</button>
-        </form>
-
-        <section>
-            <h3>Upcoming Events</h3>
-
-            <article>
-                <h4>Student Organization Fair</h4>
-                <p>Date: September 15, 2026
-                <br>
-                Location: Mapua Malayan Digital College Luzon Hub
-                <br>
-                Organized by: UniVerse</p>
-                <a href="#">View Event</a>
-            </article>
-
-            <article>
-                <h4>Introduction to Web Systems & Technology</h4>
-                <p>Date: September 20, 2026
-                <br>
-                Location: Computer Lab
-                <br>
-                Organized by: The Digital Fort</p>
-                <a href="digital-fort.html">View Organization</a>
-            </article>
-
-            <article>
-                <h4>Digital Consumption: Art Exhibition</h4>
-                <p>Date: September 18, 2026
-                <br>
-                Location: University Mezzanine
-                <br>
-                Organized by: Disenyo Malaya</p>
-                <a href="disenyo-malaya.html">View Organization</a>
-                
-            </article>
-
-            <article>
-                <h4>Leadership Development Workshop</h4>
-                <p>Date: September 22, 2026
-                <br>
-                Location: Seminar Room 3
-                <br>
-                Organized by: Scholars Club</p>
-                <a href="scholars-club.html">View Organization</a>
-            </article>
+                <button type="submit" class="search-button">Search</button>
+            </form>
 
         </section>
 
-        <section>
-            <h3>Past Events</h3>
+        <div id="events-contents">
+            <div id="events-status-filters">
+                <div class="event-status-filter active">All Events</div>
+                <div class="event-status-filter ">Upcoming</div>
+                <div class="event-status-filter ">Ongoing</div>
+                <div class="event-status-filter">Finished</div>
+            </div>
+            <div id="events-list">
+                <article class="event-card">
+                    <div class="event-photo">
+                        <img class="event-photo" src="assets/student-fair.jpg" alt="Students and Booths">
+                        <div class="event-date">Aug 30 - Sept 5</div>
+                        <div class="event-status ongoing">
+                            <div class="circle"></div>
+                            Ongoing
+                        </div>
+                    </div>
+                    <div class="event-body">
+                        <h3 class="event-title">Student Organization Fair</h3>
+                        <div class="event-categories">
+                            <div class="event-category">ARTS & DESIGN</div>
+                            <div class="event-category">JOURNALISM</div>
+                            <div class="event-category">...</div>
+                        </div>
+                        <p class="event-description">A collaboration between all of MMDC's organizations, this special event brings together the talents of all student groups. Join now to showcase your talents!</p>
+                        <div class="event-details">
+                            <div>
+                                <img class="event-detail-icon" src="assets/up_event_clock.svg" alt="">
+                                <span>Varying</span>
+                            </div>
+                            <div class="event-location">
+                                <img class="event-detail-icon" src="assets/up_event_location.svg" alt="">
+                                <span>Mapua Malayan Digital College Luzon Hub</span>
+                            </div>
+                        </div>
+                        <div class="event-footer">
+                            <div class="event-orgs">
+                                <div class="event-org">
+                                    <img class="org-photo" src="assets/disenyo-malaya.jpg" alt="">
+                                    <span class="event-org-name">Disenyo Malaya</span>
+                                </div>
+                                <div class="event-org">
+                                    <span class="event-org-name">+4</span>
+                                </div>
+                            </div>
+                            <div class="view-details">View Details</div>
+                        </div>
+                    </div>
+                </article>
+                <article class="event-card">
+                    <div class="event-photo">
+                        <img class="event-photo" src="assets/art-exhibit.jpg" alt="Students and Booths">
+                        <div class="event-date">Sept 5</div>
+                        <div class="event-status">
+                            <div class="circle"></div>
+                            Ongoing
+                        </div>
+                    </div>
+                    <div class="event-body">
+                        <h3 class="event-title">Digital Consumption Art Exhibition</h3>
+                        <div class="event-categories">
+                            <div class="event-category">ARTS & DESIGN</div>
+                        </div>
+                        <p class="event-description">Ready to be immersed? The digital consumption art exhibition invites everyone with passion for visual media to view our talented students’ pieces!</p>
+                        <div class="event-details">
+                            <div>
+                                <img class="event-detail-icon" src="assets/up_event_clock.svg" alt="">
+                                <span>8:00AM - 5:00PM</span>
+                            </div>
+                            <div class="event-location">
+                                <img class="event-detail-icon" src="assets/up_event_location.svg" alt="">
+                                <span>University Mezzanine</span>
+                            </div>
+                        </div>
+                        <div class="event-footer">
+                            <div class="event-orgs">
+                                <div class="event-org">
+                                    <img class="org-photo" src="assets/disenyo-malaya.jpg" alt="">
+                                    <span class="event-org-name">Disenyo Malaya</span>
+                                </div>
+                                <div class="event-org">
+                                    <span class="event-org-name">+4</span>
+                                </div>
+                            </div>
+                            <div class="view-details">View Details</div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
 
-            <article>
-                <h4>Student Orientation</h4>
-
-                <p>
-                    Date: September 12, 2026
-                    <br>
-                    Location: Auditorium
-                    <br>
-                    Organizers: UniVerse
-                </p>
-                
-            </article>
-
-        </section>
+        
 
     </main>
 
