@@ -1691,3 +1691,213 @@ form button:hover {
     border-radius: 10rem;
     margin-top: 0.1rem;
 }
+/* =========================
+   ANNOUNCEMENT DETAILS PAGE
+   ========================= */
+
+.announcement-back {
+    margin-bottom: 1.5rem;
+}
+
+.announcement-back a {
+    color: #8967A0;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.announcement-back a:hover {
+    color: #5e2d81;
+    text-decoration: underline;
+}
+
+.announcement-detail {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2.5rem;
+    background-color: #fff;
+    border-radius: 14px;
+    box-shadow: 0 10px 25px rgba(94, 45, 129, 0.10);
+}
+
+.announcement-label {
+    color: #E0950C;
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.announcement-detail-title {
+    margin-top: 0.6rem;
+    color: #433050;
+    font-family: var(--font-heading);
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 650;
+    line-height: 1.2;
+}
+
+.announcement-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid #e4dfe7;
+
+    color: #716a75;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.announcement-detail-content {
+    margin-top: 2rem;
+    color: #4E4256;
+    font-size: 0.95rem;
+    line-height: 1.8;
+}
+
+.announcement-detail-content p + p {
+    margin-top: 1.2rem;
+}
+
+.announcement-detail-content a {
+    color: #5e2d81;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.announcement-detail-content a:hover {
+    color: #E0950C;
+    text-decoration: underline;
+}
+/* =========================
+   ANNOUNCEMENTS PAGE
+   ========================= */
+
+#announcements-banner {
+    background: #433050;
+    padding: 3rem 6%;
+    color: white;
+}
+
+#announcements-banner .page-title {
+    color: white;
+}
+
+#announcements-banner .page-title span {
+    color: #E0950C;
+}
+
+#announcements-banner .page-description {
+    color: #eee5f2;
+}
+
+#announcements-banner form {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+#announcements-banner .search-bar {
+    flex: 1;
+}
+
+#announcements-banner select {
+    height: 48px;
+    padding: 0 1rem;
+    border: none;
+    border-radius: 10px;
+    background: white;
+    color: #4E4256;
+}
+
+#announcements-page {
+    padding: 3rem 6%;
+}
+
+.announcements-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.announcement-card {
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 8px 20px rgba(67, 48, 80, 0.10);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.announcement-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px rgba(67, 48, 80, 0.16);
+}
+
+.announcement-body {
+    padding: 1.5rem;
+}
+
+.announcement-category {
+    margin: 0 0 0.5rem;
+    color: #E0950C;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.announcement-title {
+    margin: 0;
+    color: #433050;
+    font-size: 1.25rem;
+}
+
+.announcement-title a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.announcement-title a:hover {
+    color: #6B378C;
+}
+
+.announcement-date {
+    margin-top: 0.75rem;
+    color: #716a75;
+    font-size: 0.8rem;
+}
+
+.announcement-description {
+    margin-top: 1rem;
+    color: #4E4256;
+    line-height: 1.6;
+}
+
+.announcement-link {
+    display: inline-block;
+    margin-top: 1rem;
+    color: #6B378C;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.announcement-link:hover {
+    color: #E0950C;
+}
+
+
+@media (max-width: 768px) {
+
+    #announcements-banner form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .announcements-list {
+        grid-template-columns: 1fr;
+    }
+
+}
