@@ -4,67 +4,252 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <link rel="stylesheet" href="style.css">
+
     <title>Dashboard</title>
 </head>
 
 <body>
 
-    <header>
-        <h1>UniVerse</h1>
-        <p>Student Organization Management System</p>
+    <header id="header">
+        <div class="header-left">
+            <div class="logo">
+                <img src="assets/logo2.svg" alt="UniVerse logo">
+                <span class="logo-text">
+                    <span class="uni">Uni</span>
+                    <span class="verse">Verse</span>
+                </span>
+            </div>
+
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="organizations.html">Organizations</a>
+                <a href="events.html">Events</a>
+                <a href="announcements.html">Announcements</a>
+                <a class="active" href="dashboard.html">Dashboard</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <button class="button fill-button">Login</button>
+        </div>
     </header>
 
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="organizations.html">Organizations</a>
-        <a href="events.html">Events</a>
-        <a href="announcements.html">Announcements</a>
-        <a href="dashboard.html">Dashboard</a>
-    </nav>
-
     <main>
-
-        <h2>Student Dashboard</h2>
-
-        <section>
-            <h3>Welcome, Student!</h3>
-            <p>This is your UniVerse dashboard.</p>
+        <section id="dashboard-banner">
+            <p class="dashboard-eyebrow">Student No.: 00001</p>
+            <h1 class="dashboard-title">Student Dashboard</h1>
+            <p class="dashboard-desc">
+                Preview for role-based dashboard. Once login is setup, the dashboard will load automatically based on user role
+            </p>
         </section>
 
-        <section>
-            <h3>My Organizations</h3>
+        <div class="page-content">
 
-            <article>
-                <h4>The Digital Fort</h4>
-                <p>Category: Journalism.</p>
-                <a href="organization.html">View Organization</a>
-            </article>
+            <div class="dashboard-tabs-wrapper">
 
-        </section>
+                <input type="radio" name="dashboard-role" id="tab-student" checked>
+                <input type="radio" name="dashboard-role" id="tab-officer">
+                <input type="radio" name="dashboard-role" id="tab-admin">
 
-        <section>
-            <h3>My Upcoming Events</h3>
+                <div class="dashboard-tabs">
+                    <label for="tab-student" class="dashboard-tab">Student</label>
+                    <label for="tab-officer" class="dashboard-tab">Officer</label>
+                    <label for="tab-admin" class="dashboard-tab">Admin</label>
+                </div>
 
-            <article>
-                <h4>Student Origanization Fair</h4>
-                <p>Date: September 15, 2026</p>
-                <p>Location: Mapua Malayan Digital College Luzon Hub</p>
-            </article>
+                <!--STUDENT PANEL-->
+                <div class="dashboard-panel" id="panel-student">
 
-        </section>
+                    <section class="org-section">
+                        <h2>My Organizations</h2>
+                        <div class="organizations-list dashboard-mini-list">
 
-        <section>
-            <h3>Recent Announcements</h3>
-            
-            <article>
-                <h4>Organization Registration is Now Open!</h4>
-                <p>Date Posted: September 8, 2026</p>
-                <p>Students may now browse and join registered organizations through UniVerse.
+                            <article class="organization-card">
+                                <img class="org-photo" src="assets/the-digital-fort.jpeg" alt="The Digital Fort logo">
+                                <div class="org-body">
+                                    <h3 class="org-title">The Digital Fort</h3>
+                                    <p class="org-category">Journalism</p>
+                                    <a class="org-link" href="digital-fort.html">View Organization →</a>
+                                </div>
+                            </article>
 
-                </p>
-            </article>
+                            <article class="organization-card">
+                                <img class="org-photo" src="assets/scholars-club.jpg" alt="Scholars Club members">
+                                <div class="org-body">
+                                    <h3 class="org-title">Scholars Club</h3>
+                                    <p class="org-category">Academic</p>
+                                    <a class="org-link" href="scholars-club.html">View Organization →</a>
+                                </div>
+                            </article>
 
-        </section>
+                        </div>
+                    </section>
+
+                    <section class="org-section">
+                        <h2>Upcoming Events</h2>                       
+                        <div class="home-upcoming-events-con dashboard-mini-list">
+                            <div class="up-child">
+                                <img class="event-photo" src="assets/student-fair.jpg" alt="Student Fair img">
+                                <div class="event-details">
+                                    <p class="event-title">Student Organization Fair</p>
+                                    <div class="event-time"> <img src="assets/up_event_clock.svg" alt=""> <span>8:00AM - 5:00PM</span> </div>
+                                    <div class="event-location"> <img src="assets/up_event_location.svg" alt=""> <span>MMDC Luzon Hub</span> </div>
+                                </div>
+                            </div>
+                            <div class="up-child">
+                                <img class="event-photo" src="assets/leadership.jpg" alt="Leadership img">
+                                <div class="event-details">
+                                    <p class="event-title">Scholar Leadership Workshop</p>
+                                    <div class="event-time"> <img src="assets/up_event_clock.svg" alt=""> <span>1:00PM - 4:00PM</span> </div>
+                                    <div class="event-location"> <img src="assets/up_event_location.svg" alt=""> <span>Library Annex</span> </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="org-section">
+                        <h2>Recent Announcements</h2>
+                        <div class="home-recent-announce-con dashboard-mini-list">
+                            <div class="recent-ann">
+                                <div class="announce-header">
+                                    <p class="announce-title">Organization Registrations Now Open!</p>
+                                    <p class="announce-date">Oct 6, 2026</p>
+                                </div>
+                                <p class="announce-desc">Students may now browse and join registered organizations. Register until November 10, 2026 at the student lounge or online through the app.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+
+                <!--OFFICER PANEL-->
+                <div class="dashboard-panel" id="panel-officer">
+
+                    <section class="org-section">
+                        <h2>My Organization</h2>
+                        <div class="officer-org-card">
+                            <img class="org-photo" src="assets/the-digital-fort.svg" alt="The Digital Fort logo">
+                            <div class="officer-org-info">
+                                <p class="org-title">The Digital Fort</p>
+                                <p class="org-category">Journalism</p>
+                                <p class="officer-org-meta">42 Members</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="org-section">
+                        <h2>Quick Actions</h2>
+                        <div class="quick-actions">
+                            <a href="#" class="button join-button">+ Post New Event</a>
+                            <a href="#" class="button light-button officer-action">+ Post New Announcement</a>
+                        </div>
+                    </section>
+
+                    <section class="org-section">
+                        <h2>Manage Events</h2>
+                        <ul class="org-list manage-list">
+                            <li>
+                                <span>Student Organization Fair — Sep 15, 2026</span>
+                                <a href="#" class="manage-action">Edit</a>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <section class="org-section">
+                        <h2>Manage Announcements</h2>
+                        <ul class="org-list manage-list">
+                            <li>
+                                <span>Organization Registrations Now Open! — Oct 6, 2026</span>
+                                <a href="#" class="manage-action">Edit</a>
+                            </li>
+                        </ul>
+                    </section>
+
+                </div>
+
+                <!--ADMIN PANEL-->
+                <div class="dashboard-panel" id="panel-admin">
+
+                    <section class="org-section">
+                        <h2>Platform Overview</h2>
+                        <div class="stat-grid">
+                            <div class="stat-tile">
+                                <p class="stat-number">3</p>
+                                <p class="stat-label">Organizations</p>
+                            </div>
+                            <div class="stat-tile">
+                                <p class="stat-number">135</p>
+                                <p class="stat-label">Students</p>
+                            </div>
+                            <div class="stat-tile">
+                                <p class="stat-number">3</p>
+                                <p class="stat-label">Upcoming Events</p>
+                            </div>
+                            <div class="stat-tile">
+                                <p class="stat-number">2</p>
+                                <p class="stat-label">Pending Requests</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="org-section">
+                        <h2>Organization Registration Requests</h2>
+                        <div class="request-list">
+                            <div class="request-card">
+                                <div class="request-info">
+                                    <p class="request-title">Anime &amp; Cosplay Society</p>
+                                    <p class="request-meta">Arts and Design · Submitted by Karlo Dizon</p>
+                                </div>
+                                <div class="request-actions">
+                                    <a href="#" class="button join-button">Approve</a>
+                                    <a href="#" class="button light-button">Reject</a>
+                                </div>
+                            </div>
+                            <div class="request-card">
+                                <div class="request-info">
+                                    <p class="request-title">Basketball Varsity Club</p>
+                                    <p class="request-meta">Sports · Submitted by Miguel Torres</p>
+                                </div>
+                                <div class="request-actions">
+                                    <a href="#" class="button join-button">Approve</a>
+                                    <a href="#" class="button light-button">Reject</a>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="org-section">
+                        <h2>Manage Organizations</h2>
+                        <ul class="org-list manage-list">
+                            <li>
+                                <span>The Digital Fort - Journalism</span>
+                                <span class="manage-actions">
+                                    <a href="digital-fort.html" class="manage-action">View</a>
+                                    <a href="#" class="manage-action manage-action-danger">Remove</a>
+                                </span>
+                            </li>
+                            <li>
+                                <span>Disenyo Malaya - Arts and Design</span>
+                                <span class="manage-actions">
+                                    <a href="disenyo-malaya.html" class="manage-action">View</a>
+                                    <a href="#" class="manage-action manage-action-danger">Remove</a>
+                                </span>
+                            </li>
+                            <li>
+                                <span>Scholars Club - Academic</span>
+                                <span class="manage-actions">
+                                    <a href="scholars-club.html" class="manage-action">View</a>
+                                    <a href="#" class="manage-action manage-action-danger">Remove</a>
+                                </span>
+                            </li>
+                        </ul>
+                    </section>
+
+                </div>
+
+            </div>
+
+        </div>
 
     </main>
 
