@@ -4,110 +4,238 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <link rel="stylesheet" href="style.css">
     <title>Announcements</title>
 </head>
 
 <body>
 
-    <header>
-        <h1>UniVerse</h1>
-        <p>Student Organization Management System</p>
+    <header id="header">
+        <div class="header-left">
+
+            <div class="logo">
+                <img src="assets/logo2.svg" alt="UniVerse logo">
+                <span class="logo-text">
+                    <span class="uni">Uni</span><span class="verse">Verse</span>
+                </span>
+            </div>
+
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="organizations.html">Organizations</a>
+                <a href="events.html">Events</a>
+                <a href="announcements.html" class="active">Announcements</a>
+                <a href="dashboard.html">Dashboard</a>
+            </nav>
+
+        </div>
+
+        <div class="header-right">
+            <button class="button light-button">Log In</button>
+        </div>
     </header>
 
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="organizations.html">Organizations</a>
-        <a href="events.html">Events</a>
-        <a href="announcements.html">Announcements</a>
-        <a href="dashboard.html">Dashboard</a>
-    </nav>
 
     <main>
 
-        <h2>Announcements</h2>
+        <section id="announcements-banner">
 
-        <form>
-            <label for="announcement-search">Search Announcements:</label>
-            <input for="text" id="announcement-search" name="announcement-search">
-            <button type="submit">Search</button>
+            <h2 class="page-title">
+                Latest <span>Announcements</span>
+            </h2>
 
-        </form>
+            <p class="page-description">
+                Stay updated with the latest news, activities, and announcements
+                from UniVerse and student organizations.
+            </p>
 
-        <form>
-            <label for="announcement-organization">Filter by Organization</label>
+            <form>
 
-            <select id="announcement-organization" name="announcement-organization">
-                <option value="all">All organizations</option>
-                <option value="digital-fort">The Digital Fort</option>
-                <option value="disenya-malaya">Disenya Malaya</option>
-                <option value="scholars-club">Scholars Club</option>
-            </select>
+                <label for="announcement-search" class="sr-only">
+                    Search Announcements
+                </label>
 
-            <button type="submit">Filter</button>
+                <div class="search-bar">
+                    <img src="assets/magnifying_glass.svg" alt="">
+                    <input
+                        type="text"
+                        id="announcement-search"
+                        name="announcement-search"
+                        placeholder="Search announcements..."
+                    >
+                </div>
 
-        </form>
+                <label for="announcement-organization" class="sr-only">
+                    Filter by Organization
+                </label>
 
-        <section>
-            <h3>Recent Announcements</h3>
+                <select
+                    id="announcement-organization"
+                    name="announcement-organization"
+                >
+                    <option value="all">All Organizations</option>
+                    <option value="universe">UniVerse</option>
+                    <option value="digital-fort">The Digital Fort</option>
+                    <option value="disenyo-malaya">Disenyo Malaya</option>
+                    <option value="scholars-club">Scholars Club</option>
+                </select>
 
-            <article>
-                <h4>Organization Registrations Are Now Open!</h4>
-                <p>
-                    Date Posted: Sept. 8, 2026
-                    <br>
-                    Posted by: UniVerse
-                </p>
+                <button type="submit" class="search-button">
+                    Search
+                </button>
 
-                <p>
-                    Students may now browse and join registered organizations through UniVerse!
-                </p>
-            </article>
-
-            <article>
-                <h4>News Writing Workshop</h4>
-                <p>
-                    Date Posted: Sept. 12, 2026
-                    <br>
-                    Posted and Organized by: The Digital Fort
-                </p>
-
-                <p>
-                    The Digital Fort will be holding a writing workshop for students interested in journalism, and content and news writing.
-                </p>
-                <a href="digital-fort.html">Visit Organization</a>
-            </article>
-
-            <article>
-                <h4>Design Exhibition Submissions Are Open!</h4>
-                <p>
-                    Date Posted: Sept. 7, 2026
-                    <br>
-                    Posted by: Disenya Malaya
-                </p>
-
-                <p>
-                    Calling all creatives! Students may submit their artwork for a chance to showcase it on the upcoming campus design exhibition on September 18, Friday. The theme is "Digital Consumption". Visit Disenya Malaya's webpage for more details or contact us at disenya-malaya@mmdc.edu.ph.
-                </p>
-                <a href="disenyo-malaya.html">Visit Organization</a>
-            </article>
-
-            <article>
-                <h4>Leadership Workshop Registration</h4>
-                <p>
-                    Date Posted: Sept. 6, 2026
-                    <br>
-                    Posted and Organized by: Scholars Club
-                </p>
-
-                <p>
-                    Registration is now open on Scholars Club's webpage for the upcoming leadership development workshop.
-                </p>
-                <a href="scholars-club.html">Visit Organization</a>
-            </article>
+            </form>
 
         </section>
 
+
+        <div id="announcements-page">
+
+            <div class="announcements-list">
+
+
+                <article class="announcement-card">
+
+                    <div class="announcement-body">
+
+                        <p class="announcement-category">
+                            UNIVERSE
+                        </p>
+
+                        <h3 class="announcement-title">
+                            <a href="announcement-details.html">
+                                Organization Registrations Are Now Open!
+                            </a>
+                        </h3>
+
+                        <p class="announcement-date">
+                            Posted Sept. 8, 2026
+                        </p>
+
+                        <p class="announcement-description">
+                            Students may now browse and join registered
+                            organizations through UniVerse!
+                        </p>
+
+                        <a
+                            class="announcement-link"
+                            href="announcement-details.html"
+                        >
+                            Read Announcement
+                        </a>
+
+                    </div>
+
+                </article>
+
+
+                <article class="announcement-card">
+
+                    <div class="announcement-body">
+
+                        <p class="announcement-category">
+                            THE DIGITAL FORT
+                        </p>
+
+                        <h3 class="announcement-title">
+                            News Writing Workshop
+                        </h3>
+
+                        <p class="announcement-date">
+                            Posted Sept. 12, 2026
+                        </p>
+
+                        <p class="announcement-description">
+                            The Digital Fort will be holding a writing workshop
+                            for students interested in journalism, and content
+                            and news writing.
+                        </p>
+
+                        <a
+                            class="announcement-link"
+                            href="digital-fort.html"
+                        >
+                            Visit Organization
+                        </a>
+
+                    </div>
+
+                </article>
+
+
+                <article class="announcement-card">
+
+                    <div class="announcement-body">
+
+                        <p class="announcement-category">
+                            DISENYO MALAYA
+                        </p>
+
+                        <h3 class="announcement-title">
+                            Design Exhibition Submissions Are Open!
+                        </h3>
+
+                        <p class="announcement-date">
+                            Posted Sept. 7, 2026
+                        </p>
+
+                        <p class="announcement-description">
+                            Calling all creatives! Students may submit their
+                            artwork for a chance to showcase it on the upcoming
+                            campus design exhibition on September 18, Friday.
+                            The theme is "Digital Consumption".
+                        </p>
+
+                        <a
+                            class="announcement-link"
+                            href="disenyo-malaya.html"
+                        >
+                            Visit Organization
+                        </a>
+
+                    </div>
+
+                </article>
+
+
+                <article class="announcement-card">
+
+                    <div class="announcement-body">
+
+                        <p class="announcement-category">
+                            SCHOLARS CLUB
+                        </p>
+
+                        <h3 class="announcement-title">
+                            Leadership Workshop Registration
+                        </h3>
+
+                        <p class="announcement-date">
+                            Posted Sept. 6, 2026
+                        </p>
+
+                        <p class="announcement-description">
+                            Registration is now open on Scholars Club's webpage
+                            for the upcoming leadership development workshop.
+                        </p>
+
+                        <a
+                            class="announcement-link"
+                            href="scholars-club.html"
+                        >
+                            Visit Organization
+                        </a>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </div>
+
     </main>
+
 
     <footer>
         <p>&copy; 2026 UniVerse</p>
