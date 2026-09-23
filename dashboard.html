@@ -139,9 +139,94 @@
 
                     <section class="org-section">
                         <h2>Quick Actions</h2>
-                        <div class="quick-actions">
-                            <a href="#" class="button join-button">+ Post New Event</a>
-                            <a href="#" class="button light-button officer-action">+ Post New Announcement</a>
+                        <div id="quick-actions">
+                            <input type="radio" name="quick-actions" id="tab-new-event" checked>
+                            <input type="radio" name="quick-actions" id="tab-new-announce">
+
+                            <div id="quick-act-tabs">
+                                <label id="lbl-new-event" for="tab-new-event" class="button join-button unselectable">+ Post New Event</label>
+                                <label id="lbl-new-announce" for="tab-new-announce" class="button light-button officer-action unselectable">+ Post New Announcement</label>
+                            </div>
+                            
+                            <div id="panel-new-event" class="quick-act-panel">
+                                <form>
+                                    <div>
+                                        <h4>New Event Name</h4>
+                                        <input type="text" name="event-name" placeholder="Enter event name...">
+                                    </div>
+                                    <div>
+                                        <h4>Event Description</h4>
+                                        <textarea placeholder="Enter event description..."></textarea>
+                                    </div>
+                                    <div class="inline-section">
+                                        <div class="inline-part">
+                                            <h4>Start Date</h4>
+                                            <input type="date" name="event-date-start" >
+                                        </div>
+                                        <div class="inline-part">
+                                            <h4>End Date</h4>
+                                            <input type="date" name="event-date-end" >
+                                        </div>
+                                    </div>
+                                    <div class="event-programme-section">
+                                        <div class="header">
+                                            <h4>Programme Schedule</h4>
+                                            <div class="add-schedule">Add Schedule</div>
+                                        </div>
+                                        <div class="schedules">
+                                            <div class="schedule">
+                                                <div>
+                                                    <h5>Schedule Title</h5>
+                                                    <input type="text" name="schedule-title" placeholder="Enter schedule title...">
+                                                </div>
+                                                <div class="inline-section">
+                                                    <div class="inline-part">
+                                                        <h5>Schedule Date</h5>
+                                                        <input type="date" name="schedule-date">
+                                                    </div>
+                                                    <div class="inline-part">
+                                                        <h5>Start Time</h5>
+                                                        <input type="time" name="schedule-start-time">
+                                                    </div>
+                                                    <div class="inline-part">
+                                                        <h5>End Time</h5>
+                                                        <input type="time" name="schedule-end-time">
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <h5>Schedule Location</h5>
+                                                    <input type="text" name="schedule-location" placeholder="Enter schedule location...">
+                                                </div>
+                                                <div>
+                                                    <h5>Schedule Description</h5>
+                                                    <textarea placeholder="Enter schedule description..."></textarea>
+                                                </div>
+                                                <div class="remove-schedule">✕ &nbsp; Remove </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--<div>
+                                        <h5>Registration Instructions</h5>
+                                        <input type="file" name="registration-instructions">
+                                    </div>-->
+                                    <button class="join-button" type="submit">Submit New Event</button>
+                                </form>
+                            </div>
+                            
+                            <div id="panel-new-announce" class="quick-act-panel">
+                                <form>
+                                    <div>
+                                        <h4>New Announcement Name</h4>
+                                        <input type="text" name="announce-name" placeholder="Enter announcement name...">
+                                    </div>
+                                    <div>
+                                        <h4>Announcement Body</h4>
+                                        <textarea name="announce-body" placeholder="Enter announcement body..."></textarea>
+                                    </div>
+                                    <button class="join-button" type="submit">Submit New Announcement</button>
+                                </form>
+                            </div>
+
                         </div>
                     </section>
 
@@ -149,18 +234,202 @@
                         <h2>Manage Events</h2>
                         <ul class="org-list manage-list">
                             <li>
-                                <span>Student Organization Fair — Sep 15, 2026</span>
-                                <a href="#" class="manage-action">Edit</a>
+                                <div class="manage-item-main">
+                                    <h4>Student Organization Fair — Sep 15, 2026</h4>
+                                    
+                                    <label class="manage-action">
+                                        <input type="checkbox" class="edit-toggle">Edit
+                                    </label>
+                                </div>
+
+                                <div class="panel-edit-event quick-act-panel">
+                                    <form>
+                                        <div>
+                                            <h4>Event Name</h4>
+                                            <input type="text" name="event-name" placeholder="Enter event name..." value="Student Organizations Fair">
+                                        </div>
+                                        <div>
+                                            <h4>Event Description</h4>
+                                            <textarea value placeholder="Enter event description...">A collaboration between all of MMDC's organizations, this special event brings together the talents of all student groups. Join now to showcase your talents!</textarea>
+                                        </div>
+                                        <div class="inline-section">
+                                            <div class="inline-part">
+                                                <h4>Start Date</h4>
+                                                <input type="date" name="event-date-start" value="2026-08-31">
+                                            </div>
+                                            <div class="inline-part">
+                                                <h4>End Date</h4>
+                                                <input type="date" name="event-date-end" value="2026-08-31">
+                                            </div>
+                                        </div>
+                                        <div class="event-programme-section">
+                                            <div class="header">
+                                                <h4>Programme Schedule</h4>
+                                                <div class="add-schedule">Add Schedule</div>
+                                            </div>
+                                            <div class="schedules">
+                                                <div class="schedule">
+                                                    <div>
+                                                        <h5>Schedule Title</h5>
+                                                        <input type="text" name="schedule-title" placeholder="Enter schedule title..." value="Grand Opening & Main Booth Fair">
+                                                    </div>
+                                                    <div class="inline-section">
+                                                        <div class="inline-part">
+                                                            <h5>Schedule Date</h5>
+                                                            <input type="date" name="schedule-date" value="2026-08-31">
+                                                        </div>
+                                                        <div class="inline-part">
+                                                            <h5>Start Time</h5>
+                                                            <input type="time" name="schedule-start-time" value="09:00">
+                                                        </div>
+                                                        <div class="inline-part">
+                                                            <h5>End Time</h5>
+                                                            <input type="time" name="schedule-end-time" value="10:00">
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <h5>Schedule Location</h5>
+                                                        <input type="text" name="schedule-location" placeholder="Enter schedule location..." value="Main Quad">
+                                                    </div>
+                                                    <div>
+                                                        <h5>Schedule Description</h5>
+                                                        <textarea placeholder="Enter schedule description...">Kickoff ceremony, welcome address, and opening of all general booth exhibits.</textarea>
+                                                    </div>
+                                                    <div class="remove-schedule">✕ &nbsp; Remove </div>
+                                                </div>
+                                                <div class="schedule">
+                                                    <div>
+                                                        <h5>Schedule Title</h5>
+                                                        <input type="text" name="schedule-title" placeholder="Enter schedule title..." value="&quot;Behind the Headlines&quot; Live Pitch & Workshop">
+                                                    </div>
+                                                    <div class="inline-section">
+                                                        <div class="inline-part">
+                                                            <h5>Schedule Date</h5>
+                                                            <input type="date" name="schedule-date" value="2026-08-31">
+                                                        </div>
+                                                        <div class="inline-part">
+                                                            <h5>Start Time</h5>
+                                                            <input type="time" name="schedule-start-time" value="10:30">
+                                                        </div>
+                                                        <div class="inline-part">
+                                                            <h5>End Time</h5>
+                                                            <input type="time" name="schedule-end-time" value="12:30">
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <h5>Schedule Location</h5>
+                                                        <input type="text" name="schedule-location" placeholder="Enter schedule location..." value="Student Center 201">
+                                                    </div>
+                                                    <div>
+                                                        <h5>Schedule Description</h5>
+                                                        <textarea placeholder="Enter schedule description...">Interactive session on campus reporting, photojournalism basics, and pitch ideas.</textarea>
+                                                    </div>
+                                                    <div class="remove-schedule">✕ &nbsp; Remove </div>
+                                                </div>
+                                                <div class="schedule">
+                                                    <div>
+                                                        <h5>Schedule Title</h5>
+                                                        <input type="text" name="schedule-title" placeholder="Enter schedule title..." value="Academic Bowl & Quiz Bee">
+                                                    </div>
+                                                    <div class="inline-section">
+                                                        <div class="inline-part">
+                                                            <h5>Schedule Date</h5>
+                                                            <input type="date" name="schedule-date" value="2026-08-31">
+                                                        </div>
+                                                        <div class="inline-part">
+                                                            <h5>Start Time</h5>
+                                                            <input type="time" name="schedule-start-time" value="13:30">
+                                                        </div>
+                                                        <div class="inline-part">
+                                                            <h5>End Time</h5>
+                                                            <input type="time" name="schedule-end-time" value="14:45">
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <h5>Schedule Location</h5>
+                                                        <input type="text" name="schedule-location" placeholder="Enter schedule location..." value="Auditorium">
+                                                    </div>
+                                                    <div>
+                                                        <h5>Schedule Description</h5>
+                                                        <textarea placeholder="Enter schedule description...">Inter-departmental trivia challenge showcasing top academic talent across subjects.</textarea>
+                                                    </div>
+                                                    <div class="remove-schedule">✕ &nbsp; Remove </div>
+                                                </div>
+                                                <div class="schedule">
+                                                    <div>
+                                                        <h5>Schedule Title</h5>
+                                                        <input type="text" name="schedule-title" placeholder="Enter schedule title..." value="Live Canvas & Interactive Mural Jam">
+                                                    </div>
+                                                    <div class="inline-section">
+                                                        <div class="inline-part">
+                                                            <h5>Schedule Date</h5>
+                                                            <input type="date" name="schedule-date" value="2026-08-31">
+                                                        </div>
+                                                        <div class="inline-part">
+                                                            <h5>Start Time</h5>
+                                                            <input type="time" name="schedule-start-time" value="15:00">
+                                                        </div>
+                                                        <div class="inline-part">
+                                                            <h5>End Time</h5>
+                                                            <input type="time" name="schedule-end-time" value="17:30">
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <h5>Schedule Location</h5>
+                                                        <input type="text" name="schedule-location" placeholder="Enter schedule location..." value="Main Courtyard">
+                                                    </div>
+                                                    <div>
+                                                        <h5>Schedule Description</h5>
+                                                        <textarea placeholder="Enter schedule description...">Watch live painting demonstrations or leave your mark on the interactive campus mural.</textarea>
+                                                    </div>
+                                                    <div class="remove-schedule">✕ &nbsp; Remove </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--<div>
+                                            <h5>Registration Instructions</h5>
+                                            <input type="file" name="registration-instructions">
+                                        </div>-->
+                                        <button class="join-button" type="submit">Submit New Event</button>
+                                    </form>
+                                </div>
                             </li>
                         </ul>
                     </section>
+                    
 
                     <section class="org-section">
                         <h2>Manage Announcements</h2>
                         <ul class="org-list manage-list">
                             <li>
-                                <span>Organization Registrations Now Open! — Oct 6, 2026</span>
-                                <a href="#" class="manage-action">Edit</a>
+                                <div class="manage-item-main">
+                                    <h4>Organization Registrations Now Open! — Oct 6, 2026</h4>
+                                    
+                                    <label class="manage-action">
+                                        <input type="checkbox" class="edit-toggle">Edit
+                                    </label>
+                                </div>
+
+                                <div class="panel-edit-event quick-act-panel">
+                                    <form>
+                                        <div>
+                                            <h4>New Announcement Name</h4>
+                                            <input type="text" name="announce-name" placeholder="Enter announcement name..." value="Organization Registrations Are Now Open!">
+                                        </div>
+                                        <div>
+                                            <h4>Announcement Body</h4>
+                                            <textarea name="announce-body" placeholder="Enter announcement body...">Students may now browse and join registered organizations through UniVerse!
+
+Explore the available student organizations, learn more about their activities and events, and discover opportunities to get involved in the university community.
+
+Whether you're interested in journalism, arts and design, academics, or other student activities, UniVerse makes it easier to discover organizations that match your interests.
+
+Visit the Organizations page to browse the available student organizations.
+                                            </textarea>
+                                        </div>
+                                        <button class="join-button" type="submit">Submit New Announcement</button>
+                                    </form>
+                                </div>
                             </li>
                         </ul>
                     </section>
