@@ -8,12 +8,6 @@
     padding: 0;
 }
 
-.unselectable {
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
 .sr-only {
     position: absolute;
     width: 1px;
@@ -180,13 +174,24 @@ h2{
 }
 
 .light-button {
-    background-color: transparent;
-    color: #5e2d81;
-    font-weight: bold;
+    background-color: #5e2d81;
+    color: #ffffff;
 
     padding: 5px 15px;
     align-items: center;
     justify-content: center;
+
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+}
+
+.light-button:hover {
+    color: #5e2d81;
+    background-color: rgba(94, 45, 129, 0.08);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(23, 11, 41, 0.374);
+    outline: 1px solid #5e2d81;
 }
 
 #home-banner {
@@ -205,6 +210,7 @@ h2{
 #home-banner .content {
     position: relative;
     z-index: 2;
+    width: 100%
 }
 
 #home-banner .content .welcome{
@@ -236,10 +242,11 @@ h2{
 
     display: flex;
     align-items: center; 
-    gap: 1rem;
+    gap: 0.75rem;
 
     border-radius: 10px;
-    width: min(60vw, 40vw);
+    width: 100%;
+    max-width: 65rem
 }
 
 #home-banner .content .search-box .search-bar input {
@@ -259,13 +266,13 @@ h2{
     padding-block: 1rem;
     padding-inline: clamp(1rem, 2vw, 1.2rem);
     line-height: 0px;
-    color: black;
+    color: #26202A;
 
     background-color: #E0950C;
 
     border-radius: 10px;
 
-    font-weight:800;
+    font-weight: 700;
 }
 
 #home-banner .content .search-box .search-button:hover{
@@ -303,6 +310,9 @@ h2{
     flex-shrink: 0;
 }
 
+/*---------------------
+Upcoming Events Section
+-----------------------*/
 
 #home-upcoming-events {
     position: relative;
@@ -335,7 +345,6 @@ h2{
     display: flex;
     gap:1rem;
 }
-
 
 .home-upcoming-events-con{
     margin-top:1rem;
@@ -416,7 +425,29 @@ h2{
     color: #565259
 }
 
+.up-child{
+    position: relative;
+}
 
+.up-child .event-date{
+    padding: 8px;
+    background-color: rgba(255,255,255,0.85);
+    color:#5e2d81;
+
+    font-size: 0.7rem;
+    font-weight: 700;
+
+    position: absolute;
+
+    top:7px;
+    right:7px;
+
+    border-radius: 10px;
+}
+
+/*----------------------------
+Featured Organizations Section
+------------------------------*/
 
 #home-featured-orgs {
     margin-top:-0.5rem;
@@ -503,6 +534,10 @@ h2{
     text-decoration: underline;
 }
 
+/*--------------------------
+Recent Announcements Section
+----------------------------*/
+
 .home-recent-announce-con{
     margin-top:1rem;
 
@@ -542,11 +577,13 @@ h2{
     font-weight: 600;
     color:#4E4256;
 
-    font-size: 0.75rem;
+    font-size: 0.8rem;
 
 }
 
-/* FOOTER */
+/*--------
+  FOOTER
+----------*/
 
 footer {
     margin-top: 2rem;
@@ -561,7 +598,9 @@ footer p {
 }
 
 
-/* GENERAL PAGE CONTENT */
+/*-------------------
+ GENERAL PAGE CONTENT
+---------------------*/
 
 main {
     min-height: calc(100vh - 4.5rem);
@@ -584,7 +623,9 @@ main {
     font-size: 0.9rem;
 }
 
-/* SEARCH & FILTER */
+/*----------------
+  SEARCH & FILTER
+------------------*/
 
 form {
     display: flex;
@@ -600,8 +641,8 @@ form label {
 }
 
 form input,
-form select,
-form textarea {
+form select {
+    height: 2.7rem;
     padding-inline: 0.9rem;
     border: 1px solid #d9d9d9;
     border-radius: 8px;
@@ -612,24 +653,12 @@ form textarea {
     outline: none;
 }
 
-form input,
-form select {
-    height: 2.7rem;
-}
-
-form textarea{
-    padding-block: 0.2rem;
-    width: 100%;
-    height:7rem;
-}
-
 form input {
     flex: 1;
 }
 
 form input:focus,
-form select:focus,
-form textarea:focus {
+form select:focus {
     border-color: #8967A0;
 }
 
@@ -651,10 +680,28 @@ form button:hover {
     background-color: #433050;
 }
 
+form textarea {
+    padding: 0.7rem 0.9rem;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    background-color: #fff;
+    font-family: inherit;
+    font-size: 0.85rem;
+    color: #4E4256;
+    outline: none;
+    width: 100%;
+    resize: none;
+    min-height: 6rem;
+}
 
-/* ORGANIZATIONS PAGE */
+form textarea:focus {
+    border-color: #8967A0;
+}
 
-/* Banner header, mirrors #home-banner so the page doesn't feel bolted-on */
+/*------------------
+ ORGANIZATIONS PAGE
+--------------------*/
+
 #organizations-banner {
     position: relative;
     background-color: #433050;
@@ -866,7 +913,9 @@ form button:hover {
     gap: 0.5rem;
 }
 
-/* ORGANIZATION PROFILE PAGE */
+/*--------------------------
+  ORGANIZATION PROFILE PAGE
+----------------------------*/
 
 #org-profile-banner {
     position: relative;
@@ -973,7 +1022,9 @@ form button:hover {
     border: 6px solid #fff;
 }
 
-/* Officers Section */
+/*-------------------
+  OFFICERS DASHBOARD
+-------------------*/
 
 .org-list {
     margin-top: 1rem;
@@ -995,21 +1046,55 @@ form button:hover {
 
 .officer-role {
     font-weight: 700;
-    color: hwb(0 2% 98%);
+    color: #4E4256;
     margin-right: 0.3rem;
 }
 
+.join-button,
+.cancel-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem 1rem;
+    border-radius: 0.7rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
 .join-button {
+    border: none;
     background-color: #E0950C;
     color: #26202A;
-    font-weight: 700;
 }
 
 .join-button:hover {
     background-color: #e9a932;
 }
 
-/* General section rhythm */
+.cancel-button {
+    border: 1px solid #ccc;
+    background-color: #5e2d81;
+    color: #f2f2f2;
+}
+
+.cancel-button:hover {
+    background-color: #883fbd;
+    color: #f2f2f2;
+    border-color: #aaa;
+}
+
+.announcement-edit-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+}
+
+/*------------------------
+  General section rhythm
+------------------------*/
 
 .org-section {
     margin-top: 2.8rem;
@@ -1027,7 +1112,9 @@ form button:hover {
     color: #565259;
 }
 
-/* How to Join Section */
+/*---------------------
+  How to Join Section
+---------------------*/
 
 .join-steps {
     margin-top: 1.3rem;
@@ -1065,7 +1152,9 @@ form button:hover {
     line-height: 1.5;
 }
 
-/* Activities */
+/*----------------
+    Activities
+----------------*/
 
 .activities-grid {
     margin-top: 1.3rem;
@@ -1117,7 +1206,9 @@ form button:hover {
     margin-top: 0.4rem;
 }
 
-/* Upcoming Events Calendar */
+/*-------------------------
+  Upcoming Events Calendar
+-------------------------*/
 
 .event-calendar {
     margin-top: 1.3rem;
@@ -1222,7 +1313,9 @@ form button:hover {
     line-height: 1.5;
 }
 
-/* Connect With Us Section */
+/*------------------------
+  Connect With Us Section
+------------------------*/
 
 .connect-links {
     margin-top: 1.3rem;
@@ -1266,7 +1359,9 @@ form button:hover {
     filter: brightness(0) invert(1);
 }
 
-/* EVENTS PAGE */
+/*----------------
+    EVENTS PAGE
+----------------*/
 
 #events-banner {
     position: relative;
@@ -1620,7 +1715,9 @@ form button:hover {
     margin-top: 0.1rem;
 }
 
-/* EVENT PROFILE PAGE */
+/*-------------------
+  EVENT PROFILE PAGE
+-------------------*/
 
 #event-info-banner {
     position: relative;
@@ -1943,7 +2040,246 @@ form button:hover {
     color:#a576c4;
 }
 
-/* DASHBOARD PAGE */
+/*----------------------------
+   ANNOUNCEMENT DETAILS PAGE
+----------------------------*/
+
+.announcement-back {
+    margin-bottom: 1.5rem;
+}
+
+.announcement-back a {
+    color: #8967A0;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.announcement-back a:hover {
+    color: #5e2d81;
+    text-decoration: underline;
+}
+
+.announcement-detail {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2.5rem;
+    background-color: #fff;
+    border-radius: 14px;
+    box-shadow: 0 10px 25px rgba(94, 45, 129, 0.10);
+}
+
+.announcement-label {
+    color: #E0950C;
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.announcement-detail-title {
+    margin-top: 0.6rem;
+    color: #433050;
+    font-family: var(--font-heading);
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 650;
+    line-height: 1.2;
+}
+
+.announcement-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid #e4dfe7;
+
+    color: #716a75;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.announcement-detail-content {
+    margin-top: 2rem;
+    color: #4E4256;
+    font-size: 0.95rem;
+    line-height: 1.8;
+}
+
+.announcement-detail-content p + p {
+    margin-top: 1.2rem;
+}
+
+.announcement-detail-content a {
+    color: #5e2d81;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.announcement-detail-content a:hover {
+    color: #E0950C;
+    text-decoration: underline;
+}
+
+/*----------------------
+   ANNOUNCEMENTS PAGE
+----------------------*/
+
+#announcements-banner {
+    background: #433050;
+    padding: 3rem 6%;
+    color: white;
+}
+
+#announcements-banner .page-title {
+    color: white;
+}
+
+#announcements-banner .page-title span {
+    color: #E0950C;
+}
+
+#announcements-banner .page-description {
+    color: #eee5f2;
+}
+
+#announcements-banner form {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+#announcements-banner .search-bar {
+    position: relative;
+    width: 100%;
+}
+
+#announcements-banner .search-bar input {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 12px 16px 12px 45px;
+
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+#announcements-banner .search-bar img {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: 16px;
+    height: 16px;
+
+    pointer-events: none;
+}
+
+#announcements-banner select {
+    height: 48px;
+    padding: 0 1rem;
+    border: none;
+    border-radius: 10px;
+    background: white;
+    color: #4E4256;
+}
+
+#announcements-page {
+    padding: 3rem 6%;
+}
+
+.announcements-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.announcement-card {
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 8px 20px rgba(67, 48, 80, 0.10);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.announcement-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px rgba(67, 48, 80, 0.16);
+}
+
+.announcement-body {
+    padding: 1.5rem;
+}
+
+.announcement-category {
+    margin: 0 0 0.5rem;
+    color: #ac730a;
+    font-size: 0.75rem;
+    text-decoration: underline;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+}
+
+.announcement-title {
+    margin: 0;
+    color: #433050;
+    font-size: 1.25rem;
+}
+
+.announcement-title a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.announcement-title a:hover {
+    color: #6B378C;
+}
+
+.announcement-date {
+    margin-top: 0.75rem;
+    color: #5e5862;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.announcement-description {
+    margin-top: 1rem;
+    color: #4E4256;
+    line-height: 1.6;
+}
+
+.announcement-link {
+    display: inline-block;
+    margin-top: 1rem;
+    color: #6B378C;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.announcement-link:hover {
+    color: #E0950C;
+}
+
+@media (max-width: 768px) {
+
+    #announcements-banner form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .announcements-list {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+/*------------------
+  DASHBOARD PAGE 
+------------------*/
 
 #dashboard-banner {
     background-color: #433050;
@@ -1979,7 +2315,9 @@ form button:hover {
     line-height: 1.6;
 }
 
-/* Tabs */
+/*-----------------
+  DASHBOARD TABS
+-----------------*/
 
 .dashboard-tabs-wrapper input[type="radio"] {
     display: none;
@@ -2040,7 +2378,9 @@ form button:hover {
     max-width: 380px;
 }
 
-/* Officer: org overview */
+/*-----------------------
+  OFFICER: org overview
+-----------------------*/
 
 .officer-org-card {
     margin-top: 1rem;
@@ -2089,7 +2429,6 @@ form button:hover {
     gap: 0.8rem;
 }
 
-
 .quick-act-panel {
     display: none;
 }
@@ -2104,7 +2443,6 @@ form button:hover {
     padding: 1rem;
     box-shadow: 0 10px 20px rgba(94, 45, 129, 0.12);
 }
-
 
 .quick-act-panel form {
     display: flex;
@@ -2129,9 +2467,19 @@ form button:hover {
     align-self: flex-end;
 }
 
-.quick-act-panel h4,h5,h6{
-    color:#433050;
-    font-weight: 500;
+.quick-act-panel h4,
+.quick-act-panel h5,
+.quick-act-panel h6 {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #4E4256;
+}
+
+.event-programme-section .header h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #433050;
 }
 
 .quick-act-panel .normal-section {
@@ -2208,7 +2556,7 @@ form button:hover {
     border-radius: 8px;
     color: #433050;
     font-family: inherit;
-    font-size: 0.6rem;
+    font-size: 0.72rem;
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.2s ease;
@@ -2228,6 +2576,7 @@ form button:hover {
 .schedules{
     display: flex;
     flex-direction: column;
+    gap: 1rem;
     padding: 0.5rem;
     margin: -0.5rem;
 }
@@ -2235,13 +2584,13 @@ form button:hover {
 .schedules .schedule{
     display: flex;
     flex-direction: column;
-    gap:1rem;
+    gap: 1rem;
     background-color: #fff;
     border-radius: 10px;
     padding: 1rem;
     box-shadow: 0 2px 12px rgba(94, 45, 129, 0.3);
 
-    position:relative;
+    position: relative;
 }
 
 .schedule h5,
@@ -2250,17 +2599,18 @@ form button:hover {
     margin-bottom:0.5rem;
 }
 
-
-
 .officer-action {
     border: 2px solid #5e2d81;
 }
 
-/* Manage lists (Officer + Admin) */
+/*--------------------------------
+   Dashboard (Officer & Admin)
+--------------------------------*/
 
 .manage-list li {
     display: block; 
     background-color: #fff;
+    box-shadow: 0 10px 20px rgba(94, 45, 129, 0.07);
     
     padding-inline: 1rem;
     padding-block: 1.5rem;
@@ -2268,23 +2618,36 @@ form button:hover {
 }
 
 .manage-item-main {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr auto; 
     align-items: center;
     width: 100%;
 }
 
+.manage-item-main.has-date {
+    grid-template-columns: 1fr auto auto;
+    gap: 1rem;
+}
+
+.manage-item-main.has-date .announcement-meta-date {
+    text-align: center;
+    color: #565259;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
 
 .edit-toggle {
     display: none;
 }
 
 .manage-list li h4 {
-    color: #26202A;
+    font-size: 0.95rem;
+    color: #4E4256;
     font-weight: 500;
 }
 
 .manage-action {
+    text-align: right;
     font-size: 0.8rem;
     font-weight: 700;
     color: #8967A0;
@@ -2312,8 +2675,9 @@ form button:hover {
     flex-direction: column;
 }
 
-
-/* Stats */
+/*---------------
+  ADMIN: Stats
+---------------*/
 
 .stat-grid {
     margin-top: 1rem;
@@ -2344,7 +2708,9 @@ form button:hover {
     color: #565259;
 }
 
-/* Section for registration requests */
+/*----------------------------------
+  Section for registration requests
+----------------------------------*/
 
 .request-list {
     margin-top: 1rem;
