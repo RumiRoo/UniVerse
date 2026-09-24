@@ -1073,6 +1073,16 @@ form textarea:focus {
     background-color: #e9a932;
 }
 
+.join-button.joined {
+    background-color: #756d7a;
+    color: #ffffff;
+    outline: #000000;
+}
+
+.join-button.joined:hover {
+    background-color: #3a2f40;
+}
+
 .cancel-button {
     border: 1px solid #ccc;
     background-color: #5e2d81;
@@ -2747,4 +2757,15 @@ form textarea:focus {
 .request-actions {
     display: flex;
     gap: 0.6rem;
+}
+
+/*----------------------------------
+  Organization: No Results Message
+----------------------------------*/
+.no-results {
+    display: none;
+    margin-top: 2rem;
+    text-align: center;
+    color: #565259;
+    font-size: 0.9rem;
 }
