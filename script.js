@@ -84,3 +84,68 @@ if (joinButton) {
         localStorage.setItem('joinedOrgs', JSON.stringify(joinedOrgs));
     });
 }
+
+
+
+// Search + Filter Events
+const eventSearch = document.getElementById('event-search');
+const eventCategorySelect = document.getElementById('event-category');
+const eventCards = document.querySelectorAll('.event-card');
+const noEventsMessage = document.getElementById('no-events-message');
+const statusFilterButtons = document.querySelectorAll('.event-status-filter');
+
+let selectedStatus = 'all';
+
+if (eventSearch && eventCategorySelect) {    
+    function applyEventFilters() {
+        const searchTerm = eventSearch.value.trim().toLowerCase();
+        const selectedCategory = eventCategorySelect.value;
+
+        let visibleCount = 0;
+
+        eventCards.forEach(function (card) {
+            const title = card.querySelector('.event-title').textContent.toLowerCase();
+            const description = card.querySelector('.event-description').textContent.toLowerCase();
+            
+            const cardCategories = card.dataset.categories ? card.dataset.categories.split(',').map(c => c.trim().toLowerCase()) : [];
+            const cardStatus = card.dataset.status ? card.dataset.status.trim().toLowerCase() : '';
+
+            const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
+            const matchesCategory = selectedCategory === 'all' || cardCategories.includes(selectedCategory.toLowerCase());
+            const matchesStatus = selectedStatus === 'all' || cardStatus === selectedStatus.toLowerCase();
+
+            const shouldShow = matchesSearch && matchesCategory && matchesStatus;
+
+            if (shouldShow) {
+                card.style.display = '';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        if (noEventsMessage) {
+            noEventsMessage.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+    }
+
+    eventSearch.addEventListener('input', applyEventFilters);
+    eventCategorySelect.addEventListener('change', applyEventFilters);
+
+    statusFilterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            statusFilterButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            selectedStatus = button.dataset.value;
+            applyEventFilters();
+        });
+    });
+
+    const eventForm = eventSearch.closest('form');
+    if (eventForm) {
+        eventForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            applyEventFilters();
+        });
+    }
+}

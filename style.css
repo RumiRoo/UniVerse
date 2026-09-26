@@ -2,10 +2,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap');
 
+/*----------------------------
+General
+------------------------------*/
+
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+}
+
+a {
+    text-decoration: none;
 }
 
 .sr-only {
@@ -22,6 +30,12 @@
 
 .clickable{
     cursor: pointer;
+}
+
+.event-status-filter {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .recent-ann, .feat-child, .up-child, .see-more {
@@ -49,21 +63,95 @@ h2{
     color:#26202A;
 }
 
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem 1rem;
+    border-radius: 0.7rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.2s ease, background-color 0.2s ease;
+}
+
+.light-button {
+    background-color: #5e2d81;
+    color: #ffffff;
+
+    padding: 5px 15px;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+}
+
+.light-button:hover {
+    color: #5e2d81;
+    background-color: rgba(94, 45, 129, 0.08);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(23, 11, 41, 0.374);
+    outline: 1px solid #5e2d81;
+}
+
+[data-tooltip] {
+  position: relative;
+  cursor: pointer;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  
+  background-color: #333;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  white-space: nowrap;
+  z-index: 1;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out;
+}
+
+[data-tooltip]:hover::after {
+  opacity: 1;
+}
+
+
+
+/*----------------------------
+Header
+------------------------------*/
+
 #header {
     background-color: #fff;
-    height: 4.5rem;
+    min-height: 4.5rem;
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
     padding-block: 0.5rem;
     padding-inline: clamp(1rem, 3vw, 1.7rem);
 }
+
 
 .header-left {
     display: flex;
     align-items: center;
     gap:2rem;
+    flex-wrap: wrap;
 }
 
 
@@ -73,6 +161,7 @@ h2{
     align-items: center;
     gap: 0.8rem;
     white-space: nowrap;
+    margin-right: 0.5rem;
 }
 
 #header .logo img {
@@ -96,9 +185,7 @@ h2{
 }
 
 #header nav {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
+    display: contents;
 }
 
 #header nav a {
@@ -110,6 +197,7 @@ h2{
     padding-bottom: 4px;
 
     padding-inline: 0.5rem;
+    white-space: nowrap;
 
     transition: 
         padding-inline 0.3s cubic-bezier(0.25, 1, 0.5, 1),
@@ -152,51 +240,23 @@ h2{
     transform: scaleX(0.8);
 }
 
+
 .header-right {
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    margin-left: auto;
 }
 
-.button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.8rem 1rem;
-    border-radius: 0.7rem;
-    font-family: inherit;
-    font-size: 0.9rem;
-    font-weight: 500;
-    border: none;
-    cursor: pointer;
-    text-decoration: none;
-    transition: opacity 0.2s ease, background-color 0.2s ease;
-}
 
-.light-button {
-    background-color: #5e2d81;
-    color: #ffffff;
+/*----------------------------
+Homoe - Banner
+------------------------------*/
 
-    padding: 5px 15px;
-    align-items: center;
-    justify-content: center;
-
-    cursor: pointer;
-    transition: all 0.3s ease;
-
-}
-
-.light-button:hover {
-    color: #5e2d81;
-    background-color: rgba(94, 45, 129, 0.08);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(23, 11, 41, 0.374);
-    outline: 1px solid #5e2d81;
-}
 
 #home-banner {
     position: relative;
-    height: 18.7rem;
+    min-height: 18.7rem;
     background-color: #433050;
     color: #fff;
     overflow: hidden;
@@ -210,11 +270,10 @@ h2{
 #home-banner .content {
     position: relative;
     z-index: 2;
-    width: 100%
 }
 
 #home-banner .content .welcome{
-    font-size: clamp(1.8rem, 5vw, 4rem);
+    font-size: clamp(1.8rem, 5vw, 3.5rem);
     font-weight:500;
 }
 
@@ -231,6 +290,7 @@ h2{
     align-items: center;
     margin-top: 3rem;
     gap: 1rem;
+    flex-wrap: wrap;
 }
 
 #home-banner .content .search-box .search-bar {
@@ -242,11 +302,15 @@ h2{
 
     display: flex;
     align-items: center; 
-    gap: 0.75rem;
+    gap: 1rem;
 
     border-radius: 10px;
-    width: 100%;
-    max-width: 65rem
+    flex: 1 1 260px;
+    max-width: 500px;
+}
+
+#home-banner .content .search-box .search-bar:focus-within {
+    outline: 2px solid #E0950C;
 }
 
 #home-banner .content .search-box .search-bar input {
@@ -263,16 +327,17 @@ h2{
 }
 
 #home-banner .content .search-box .search-button{
-    padding-block: 1rem;
+    height: 3.2rem;
+    padding-block: 1.5rem;
     padding-inline: clamp(1rem, 2vw, 1.2rem);
     line-height: 0px;
-    color: #26202A;
+    color: black;
 
     background-color: #E0950C;
 
     border-radius: 10px;
 
-    font-weight: 700;
+    font-weight:800;
 }
 
 #home-banner .content .search-box .search-button:hover{
@@ -292,26 +357,39 @@ h2{
 
 #home-contents{
     display: flex;
+    flex-direction: column;
+    padding-inline: clamp(2rem, 6vw, 5rem);
+    padding-block: 2rem;
+    gap: 2rem;
 }
 
-#home-contents-right{
-    padding-block: 2rem;
-    padding-left: clamp(2rem, 5vw, 5rem);
-    padding-right: clamp(2rem, 7vw, 5rem);
+@media (min-width: 992px) {
+    #home-contents {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 5rem;
+    }
 
-    width: 40rem;
-    flex-shrink: 0;
+    #home-contents-left {
+        flex: 1 1 58%;
+        min-width: 0;
+    }
+
+    #home-contents-right {
+        flex: 0 0 clamp(320px, 35vw, 440px);
+        min-width: 300px;
+    }
 }
 
-#home-contents-left{
-    padding-block: 2rem;
-    padding-left: clamp(2rem, 7vw, 5rem);
-
-    flex-shrink: 0;
+#home-contents-left,
+#home-contents-right {
+    padding: 0;
+    width: 100%;
 }
 
 /*---------------------
-Upcoming Events Section
+Home - Upcoming Events Section
 -----------------------*/
 
 #home-upcoming-events {
@@ -338,7 +416,7 @@ Upcoming Events Section
 }
 
 .section-top .see-more:hover{
-    color:#5e2d81;
+    color:#8967A0;
 }
 
 .section-top .recent-announce{
@@ -346,24 +424,31 @@ Upcoming Events Section
     gap:1rem;
 }
 
+
 .home-upcoming-events-con{
     margin-top:1rem;
 
-    display: flex;
-    align-items: center;
-    
-    gap:1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.25rem;
 }
 
 .home-upcoming-events-con .up-child{
     background-color: #fff;
-    height: 15rem;
-    width:16rem;
 
     border-radius: 10px;
 
     box-shadow: 0 10px 20px rgba(94, 45, 129, 0.12);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    max-width: 320px;
+    width: 100%;
+    padding-bottom:1rem;
 }
 
 .home-upcoming-events-con .up-child:hover {
@@ -446,7 +531,7 @@ Upcoming Events Section
 }
 
 /*----------------------------
-Featured Organizations Section
+Home - Featured Organizations Section
 ------------------------------*/
 
 #home-featured-orgs {
@@ -461,13 +546,14 @@ Featured Organizations Section
     margin-top:1rem;
 
     display:flex;
-    align-items: center;
+    flex-direction: row;
+    align-items: stretch;
 
     gap:1rem;
+    min-height: 10.3rem;
 }
 
 .home-featured-orgs-con .feat-child{
-    height: 10.3rem;
     width:24.7rem;
     background-color: #fff;
 
@@ -475,7 +561,8 @@ Featured Organizations Section
     display:flex;
     align-items: center;
 
-    padding-inline: clamp(0.3rem, 1vw, 0.4rem);
+    padding-inline: 2rem;
+    padding-block: 2rem;
 
     gap:1rem;
 
@@ -579,6 +666,15 @@ Recent Announcements Section
 
     font-size: 0.8rem;
 
+}
+
+.recent-ann:hover .announce-title,
+.recent-ann:hover .announce-date{
+    color:#8967A0;
+}
+
+.recent-ann:hover .announce-desc{
+    color:#7a757d;
 }
 
 /*--------
@@ -1095,11 +1191,45 @@ form textarea:focus {
     border-color: #aaa;
 }
 
-.announcement-edit-actions {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
+.edit-actions {
+    display: inline-flex;
     gap: 10px;
+}
+
+.org-checkbox-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.org-checkbox-item {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 14px;
+    background-color: #f5f1f9;
+    border: 1px solid #e1d3e9;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #26202A;
+    transition: all 0.2s ease;
+    font-weight: 400;
+}
+
+.org-checkbox-item input[type="checkbox"] {
+    display: none;
+}
+
+.org-checkbox-item:has(input[type="checkbox"]:checked) {
+    background-color: #5e2d81;
+    color: white;
+    border-color: #5e2d81;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+}
+
+.org-checkbox-item:hover {
+    border-color: #94a3b8;
 }
 
 /*------------------------
@@ -1595,9 +1725,12 @@ form textarea:focus {
     position: absolute;
 
     top:7px;
-    left:7px;
+    right:7px;
 
     border-radius: 10px;
+
+    display: inline-flex;
+    align-items: center;
 }
 
 .event-card .event-categories{
@@ -1697,9 +1830,10 @@ form textarea:focus {
     color:#8967A0;
 }
 
+/*
 .event-card .event-status{
     padding: 0.3rem;
-    background-color: #c4dbc7;
+    background-color: #c4dbc789;
     color:#565259;
 
     font-size: 0.75rem;
@@ -1716,9 +1850,10 @@ form textarea:focus {
     align-items: center;
     gap:5px
 }
+*/
 
-.event-card .event-status .circle{
-    background-color: #325e37;
+.event-card .circle{
+    background-color: #5e2d81;
     height:0.35rem;
     width:0.35rem;
     border-radius: 10rem;
@@ -2048,6 +2183,29 @@ form textarea:focus {
 
 .involved-org:hover .event-org-name{
     color:#a576c4;
+}
+
+.contact-list {
+    margin-top: 1rem;
+    padding-left: 1rem;
+}
+
+.contact-list li {
+    display: block; 
+    background-color: #fff;
+
+    /*padding-inline: 1rem;*/
+    padding-block: 0.8rem;
+    
+    font-size: 0.85rem;
+    font-weight:700;
+    color:#68457f;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.contact-list li:hover{
+    color:#8967A0;
 }
 
 /*----------------------------
@@ -2486,11 +2644,23 @@ form textarea:focus {
     color: #4E4256;
 }
 
-.event-programme-section .header h4 {
+.event-programme-section .header h4
+.event-contact-section .header h4 {
     font-size: 0.95rem;
     font-weight: 700;
     color: #433050;
 }
+
+.event-programme-section .header,
+.event-contact-section .header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom:1rem;
+}
+
 
 .quick-act-panel .normal-section {
     display: flex;
@@ -2529,15 +2699,6 @@ form textarea:focus {
     flex: 1;
     display: flex;
     flex-direction: column;
-}
-
-.event-programme-section .header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    margin-bottom:1rem;
 }
 
 .add-schedule {
@@ -2769,3 +2930,4 @@ form textarea:focus {
     color: #565259;
     font-size: 0.9rem;
 }
+

@@ -167,7 +167,63 @@
                                             <h4>End Date</h4>
                                             <input type="date" name="event-date-end" >
                                         </div>
-                                    </div>                        
+                                    </div>    
+                                    <div>
+                                        <h4>Select Involved Organizations</h4>
+                                        <div class="org-checkbox-grid">
+                                            <label class="org-checkbox-item">
+                                                <input type="checkbox" name="orgs" value="the-digital-fort">
+                                                <span>The Digital Fort</span>
+                                            </label>
+                                            
+                                            <label class="org-checkbox-item">
+                                                <input type="checkbox" name="orgs" value="disenyo-malaya">
+                                                <span>Disenyo Malaya</span>
+                                            </label>
+                                            
+                                            <label class="org-checkbox-item">
+                                                <input type="checkbox" name="orgs" value="scholars-club">
+                                                <span>Scholars Club</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="event-programme-section">
+                                        <div class="header">
+                                            <h4>Programme Schedule</h4>
+                                            <div class="add-schedule">Add Schedule</div>
+                                        </div>
+                                        <div class="schedules">
+                                            <div class="schedule">
+                                                <div>
+                                                    <h5>Schedule Title</h5>
+                                                    <input type="text" name="schedule-title" placeholder="Enter schedule title..." value="">
+                                                </div>
+                                                <div class="inline-section">
+                                                    <div class="inline-part">
+                                                        <h5>Schedule Date</h5>
+                                                        <input type="date" name="schedule-date" value="">
+                                                    </div>
+                                                    <div class="inline-part">
+                                                        <h5>Start Time</h5>
+                                                        <input type="time" name="schedule-start-time" value="">
+                                                    </div>
+                                                    <div class="inline-part">
+                                                        <h5>End Time</h5>
+                                                        <input type="time" name="schedule-end-time" value="">
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <h5>Schedule Location</h5>
+                                                    <input type="text" name="schedule-location" placeholder="Enter schedule location..." value="">
+                                                </div>
+                                                <div>
+                                                    <h5>Schedule Description</h5>
+                                                    <textarea placeholder="Enter schedule description..."></textarea>
+                                                </div>
+                                                <div class="remove-schedule">✕ &nbsp; Remove </div>
+                                            </div>
+                                        </div>
+                                    </div>                    
                                     <button class="join-button" type="submit">Submit New Event</button>
                                 </form>
                             </div>
@@ -220,6 +276,25 @@
                                             <div class="inline-part">
                                                 <h4>End Date</h4>
                                                 <input type="date" name="event-date-end" value="2026-08-31">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h4>Select Involved Organizations</h4>
+                                            <div class="org-checkbox-grid">
+                                                <label class="org-checkbox-item">
+                                                    <input type="checkbox" name="orgs" value="the-digital-fort" checked>
+                                                    <span>The Digital Fort</span>
+                                                </label>
+                                                
+                                                <label class="org-checkbox-item">
+                                                    <input type="checkbox" name="orgs" value="disenyo-malaya" checked>
+                                                    <span>Disenyo Malaya</span>
+                                                </label>
+                                                
+                                                <label class="org-checkbox-item">
+                                                    <input type="checkbox" name="orgs" value="scholars-club" checked>
+                                                    <span>Scholars Club</span>
+                                                </label>
                                             </div>
                                         </div>
                                         <div class="event-programme-section">
@@ -346,6 +421,11 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="edit-actions">
+                                            <button class="join-button" type="submit">Save Changes</button>
+
+                                            <button class="cancel-button" type="button">Cancel</button>
+                                        </div>
                                     </form>
                                 </div>
                             </li>
@@ -380,7 +460,7 @@ Explore the available student organizations, learn more about their activities a
 
 Visit the Organizations page to browse the available student organizations.</textarea>
                                         </div>
-                                        <div class="announcement-edit-actions">
+                                        <div class="edit-actions">
                                             <button class="join-button" type="submit">Save Changes</button>
 
                                             <button class="cancel-button" type="button">Cancel</button>
