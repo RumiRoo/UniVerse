@@ -30,14 +30,14 @@
             </nav>
         </div>
         <div class="header-right">
-            <button class="button fill-button">Login</button>
+            <button class="button light-button">Log In</button>
         </div>
     </header>
 
     <main>
         <section id="dashboard-banner">
-            <p class="dashboard-eyebrow">Student No.: 00001</p>
-            <h1 class="dashboard-title">Student Dashboard</h1>
+            <p class="dashboard-eyebrow">ID No.: 00001</p>
+            <h1 class="dashboard-title">My Dashboard</h1>
             <p class="dashboard-desc">
                 Preview for role-based dashboard. Once login is setup, the dashboard will load automatically based on user role
             </p>
@@ -69,7 +69,7 @@
                                 <div class="org-body">
                                     <h3 class="org-title">The Digital Fort</h3>
                                     <p class="org-category">Journalism</p>
-                                    <a class="org-link" href="digital-fort.html">View Organization →</a>
+                                    <a class="org-link" href="digital-fort.html">View Organization</a>
                                 </div>
                             </article>
 
@@ -78,7 +78,7 @@
                                 <div class="org-body">
                                     <h3 class="org-title">Scholars Club</h3>
                                     <p class="org-category">Academic</p>
-                                    <a class="org-link" href="scholars-club.html">View Organization →</a>
+                                    <a class="org-link" href="scholars-club.html">View Organization</a>
                                 </div>
                             </article>
 
@@ -113,7 +113,7 @@
                             <div class="recent-ann">
                                 <div class="announce-header">
                                     <p class="announce-title">Organization Registrations Now Open!</p>
-                                    <p class="announce-date">Oct 6, 2026</p>
+                                    <p class="announce-date">Sept. 6, 2026</p>
                                 </div>
                                 <p class="announce-desc">Students may now browse and join registered organizations. Register until November 10, 2026 at the student lounge or online through the app.</p>
                             </div>
@@ -128,7 +128,7 @@
                     <section class="org-section">
                         <h2>My Organization</h2>
                         <div class="officer-org-card">
-                            <img class="org-photo" src="assets/the-digital-fort.svg" alt="The Digital Fort logo">
+                            <img class="org-photo" src="assets/the-digital-fort.jpeg" alt="The Digital Fort logo">
                             <div class="officer-org-info">
                                 <p class="org-title">The Digital Fort</p>
                                 <p class="org-category">Journalism</p>
@@ -156,7 +156,7 @@
                                     </div>
                                     <div>
                                         <h4>Event Description</h4>
-                                        <textarea placeholder="Enter event description..."></textarea>
+                                        <textarea placeholder=" Enter event description..."></textarea>
                                     </div>
                                     <div class="inline-section">
                                         <div class="inline-part">
@@ -167,48 +167,7 @@
                                             <h4>End Date</h4>
                                             <input type="date" name="event-date-end" >
                                         </div>
-                                    </div>
-                                    <div class="event-programme-section">
-                                        <div class="header">
-                                            <h4>Programme Schedule</h4>
-                                            <div class="add-schedule">Add Schedule</div>
-                                        </div>
-                                        <div class="schedules">
-                                            <div class="schedule">
-                                                <div>
-                                                    <h5>Schedule Title</h5>
-                                                    <input type="text" name="schedule-title" placeholder="Enter schedule title...">
-                                                </div>
-                                                <div class="inline-section">
-                                                    <div class="inline-part">
-                                                        <h5>Schedule Date</h5>
-                                                        <input type="date" name="schedule-date">
-                                                    </div>
-                                                    <div class="inline-part">
-                                                        <h5>Start Time</h5>
-                                                        <input type="time" name="schedule-start-time">
-                                                    </div>
-                                                    <div class="inline-part">
-                                                        <h5>End Time</h5>
-                                                        <input type="time" name="schedule-end-time">
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <h5>Schedule Location</h5>
-                                                    <input type="text" name="schedule-location" placeholder="Enter schedule location...">
-                                                </div>
-                                                <div>
-                                                    <h5>Schedule Description</h5>
-                                                    <textarea placeholder="Enter schedule description..."></textarea>
-                                                </div>
-                                                <div class="remove-schedule">✕ &nbsp; Remove </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!--<div>
-                                        <h5>Registration Instructions</h5>
-                                        <input type="file" name="registration-instructions">
-                                    </div>-->
+                                    </div>                        
                                     <button class="join-button" type="submit">Submit New Event</button>
                                 </form>
                             </div>
@@ -220,7 +179,7 @@
                                         <input type="text" name="announce-name" placeholder="Enter announcement name...">
                                     </div>
                                     <div>
-                                        <h4>Announcement Body</h4>
+                                        <h4>Announcement Description</h4>
                                         <textarea name="announce-body" placeholder="Enter announcement body..."></textarea>
                                     </div>
                                     <button class="join-button" type="submit">Submit New Announcement</button>
@@ -234,8 +193,9 @@
                         <h2>Manage Events</h2>
                         <ul class="org-list manage-list">
                             <li>
-                                <div class="manage-item-main">
-                                    <h4>Student Organization Fair — Sep 15, 2026</h4>
+                                <div class="manage-item-main has-date">
+                                    <h4>Student Organization Fair</h4>
+                                    <p class="announcement-meta-date">Posted on Sept. 6, 2026</p>
                                     
                                     <label class="manage-action">
                                         <input type="checkbox" class="edit-toggle">Edit
@@ -380,17 +340,12 @@
                                                     </div>
                                                     <div>
                                                         <h5>Schedule Description</h5>
-                                                        <textarea placeholder="Enter schedule description...">Watch live painting demonstrations or leave your mark on the interactive campus mural.</textarea>
+                                                        <textarea placeholder=" Enter schedule description...">Watch live painting demonstrations or leave your mark on the interactive campus mural.</textarea>
                                                     </div>
                                                     <div class="remove-schedule">✕ &nbsp; Remove </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <!--<div>
-                                            <h5>Registration Instructions</h5>
-                                            <input type="file" name="registration-instructions">
-                                        </div>-->
-                                        <button class="join-button" type="submit">Submit New Event</button>
                                     </form>
                                 </div>
                             </li>
@@ -402,8 +357,9 @@
                         <h2>Manage Announcements</h2>
                         <ul class="org-list manage-list">
                             <li>
-                                <div class="manage-item-main">
-                                    <h4>Organization Registrations Now Open! — Oct 6, 2026</h4>
+                                <div class="manage-item-main has-date">
+                                    <h4>Organization Registrations Now Open!</h4>
+                                    <p class="announcement-meta-date">Posted on Sept. 6, 2026</p>
                                     
                                     <label class="manage-action">
                                         <input type="checkbox" class="edit-toggle">Edit
@@ -413,21 +369,23 @@
                                 <div class="panel-edit-event quick-act-panel">
                                     <form>
                                         <div>
-                                            <h4>New Announcement Name</h4>
-                                            <input type="text" name="announce-name" placeholder="Enter announcement name..." value="Organization Registrations Are Now Open!">
+                                            <h4>Announcement Title</h4>
+                                            <input type="text" name="announce-name" value="Organization Registrations Are Now Open!">
                                         </div>
                                         <div>
-                                            <h4>Announcement Body</h4>
-                                            <textarea name="announce-body" placeholder="Enter announcement body...">Students may now browse and join registered organizations through UniVerse!
+                                            <h4>Announcement Description</h4>
+                                            <textarea id="announce-body" name="announce-body" rows="8" required>Students may now browse and join registered organizations through UniVerse!
 
-Explore the available student organizations, learn more about their activities and events, and discover opportunities to get involved in the university community.
+Explore the available student organizations, learn more about their activities and events, and discover opportunities to get involved in the university community. Whether you're interested in journalism, arts and design, academics, or other student activities, UniVerse makes it easier to discover organizations that match their interests.
 
-Whether you're interested in journalism, arts and design, academics, or other student activities, UniVerse makes it easier to discover organizations that match your interests.
-
-Visit the Organizations page to browse the available student organizations.
-                                            </textarea>
+Visit the Organizations page to browse the available student organizations.</textarea>
                                         </div>
-                                        <button class="join-button" type="submit">Submit New Announcement</button>
+                                        <div class="announcement-edit-actions">
+                                            <button class="join-button" type="submit">Save Changes</button>
+
+                                            <button class="cancel-button" type="button">Cancel</button>
+                                        </div>
+
                                     </form>
                                 </div>
                             </li>
@@ -491,25 +449,31 @@ Visit the Organizations page to browse the available student organizations.
                         <h2>Manage Organizations</h2>
                         <ul class="org-list manage-list">
                             <li>
-                                <span>The Digital Fort - Journalism</span>
-                                <span class="manage-actions">
-                                    <a href="digital-fort.html" class="manage-action">View</a>
-                                    <a href="#" class="manage-action manage-action-danger">Remove</a>
-                                </span>
+                                <div class="manage-item-main">
+                                    <span>The Digital Fort - Journalism</span>
+                                    <span class="manage-actions">
+                                        <a href="digital-fort.html" class="manage-action">View</a>
+                                        <a href="#" class="manage-action manage-action-danger">Remove</a>
+                                    </span>
+                                </div>
                             </li>
                             <li>
-                                <span>Disenyo Malaya - Arts and Design</span>
-                                <span class="manage-actions">
-                                    <a href="disenyo-malaya.html" class="manage-action">View</a>
-                                    <a href="#" class="manage-action manage-action-danger">Remove</a>
-                                </span>
+                                <div class="manage-item-main">
+                                    <span>Disenyo Malaya - Arts and Design</span>
+                                    <span class="manage-actions">
+                                        <a href="disenyo-malaya.html" class="manage-action">View</a>
+                                        <a href="#" class="manage-action manage-action-danger">Remove</a>
+                                    </span>
+                                </div>
                             </li>
                             <li>
-                                <span>Scholars Club - Academic</span>
-                                <span class="manage-actions">
-                                    <a href="scholars-club.html" class="manage-action">View</a>
-                                    <a href="#" class="manage-action manage-action-danger">Remove</a>
-                                </span>
+                                <div class="manage-item-main">
+                                    <span>Scholars Club - Academic</span>
+                                    <span class="manage-actions">
+                                        <a href="scholars-club.html" class="manage-action">View</a>
+                                        <a href="#" class="manage-action manage-action-danger">Remove</a>
+                                    </span>
+                                </div>
                             </li>
                         </ul>
                     </section>
