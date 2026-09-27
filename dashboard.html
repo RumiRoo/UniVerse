@@ -247,7 +247,7 @@
 
                     <section class="org-section">
                         <h2>Manage Events</h2>
-                        <ul class="org-list manage-list">
+                        <ul class="org-list manage-list" id="manage-events-list">
                             <li>
                                 <div class="manage-item-main has-date">
                                     <h4>Student Organization Fair</h4>
@@ -435,7 +435,7 @@
 
                     <section class="org-section">
                         <h2>Manage Announcements</h2>
-                        <ul class="org-list manage-list">
+                        <ul class="org-list manage-list" id="manage-announcements-list">
                             <li>
                                 <div class="manage-item-main has-date">
                                     <h4>Organization Registrations Now Open!</h4>
@@ -493,7 +493,7 @@ Visit the Organizations page to browse the available student organizations.</tex
                                 <p class="stat-label">Upcoming Events</p>
                             </div>
                             <div class="stat-tile">
-                                <p class="stat-number">2</p>
+                                <p class="stat-number" id="pending-requests-count">2</p>
                                 <p class="stat-label">Pending Requests</p>
                             </div>
                         </div>
@@ -501,25 +501,28 @@ Visit the Organizations page to browse the available student organizations.</tex
 
                     <section class="org-section">
                         <h2>Organization Registration Requests</h2>
-                        <div class="request-list">
-                            <div class="request-card">
+
+                        <p id="no-requests-message" class="no-results">No pending organization requests.</p>
+
+                        <div class="request-list" id="request-list">
+                            <div class="request-card" data-org-name="Anime &amp; Cosplay Society" data-org-category="Arts and Design">
                                 <div class="request-info">
                                     <p class="request-title">Anime &amp; Cosplay Society</p>
                                     <p class="request-meta">Arts and Design · Submitted by Karlo Dizon</p>
                                 </div>
                                 <div class="request-actions">
-                                    <a href="#" class="button join-button">Approve</a>
-                                    <a href="#" class="button light-button">Reject</a>
+                                    <a href="#" class="button join-button request-approve">Approve</a>
+                                    <a href="#" class="button light-button request-reject">Reject</a>
                                 </div>
                             </div>
-                            <div class="request-card">
+                            <div class="request-card" data-org-name="Basketball Varsity Club" data-org-category="Sports">
                                 <div class="request-info">
                                     <p class="request-title">Basketball Varsity Club</p>
                                     <p class="request-meta">Sports · Submitted by Miguel Torres</p>
                                 </div>
                                 <div class="request-actions">
-                                    <a href="#" class="button join-button">Approve</a>
-                                    <a href="#" class="button light-button">Reject</a>
+                                    <a href="#" class="button join-button request-approve">Approve</a>
+                                    <a href="#" class="button light-button request-reject">Reject</a>
                                 </div>
                             </div>
                         </div>
@@ -527,7 +530,7 @@ Visit the Organizations page to browse the available student organizations.</tex
 
                     <section class="org-section">
                         <h2>Manage Organizations</h2>
-                        <ul class="org-list manage-list">
+                        <ul class="org-list manage-list" id="admin-org-list">
                             <li>
                                 <div class="manage-item-main">
                                     <span>The Digital Fort - Journalism</span>
@@ -567,8 +570,51 @@ Visit the Organizations page to browse the available student organizations.</tex
     </main>
 
     <footer>
-        <p>&copy; 2026 UniVerse</p>
+        <div class="footer-content">
+
+            <div class="footer-brand">
+                <div class="logo">
+                    <span class="logo-text">
+                        <span class="uni">Uni</span><span class="verse">Verse</span>
+                    </span>
+                </div>
+                <p class="footer-tagline">
+                    Connecting MMDC students to organizations, events, and opportunities in one place.
+                </p>
+            </div>
+
+            <div class="footer-links">
+                <h4 class="footer-heading">Quick Links</h4>
+                <a href="index.html">Home</a>
+                <a href="organizations.html">Organizations</a>
+                <a href="events.html">Events</a>
+                <a href="announcements.html">Announcements</a>
+                <a href="dashboard.html">Dashboard</a>
+            </div>
+
+            <div class="footer-connect">
+                <h4 class="footer-heading">Connect With Us</h4>
+                <p class="footer-contact">universe@mmdc.mcl.edu.ph</p>
+                <div class="connect-links footer-social">
+                    <a class="connect-icon-link" href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook">
+                        <img src="assets/facebook.svg" alt="">
+                    </a>
+                    <a class="connect-icon-link" href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram">
+                        <img src="assets/instagram.svg" alt="">
+                    </a>
+                    <a class="connect-icon-link" href="https://tiktok.com" target="_blank" rel="noopener" aria-label="TikTok">
+                        <img src="assets/tiktok.svg" alt="">
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 UniVerse. All rights reserved.</p>
+        </div>
     </footer>
 
+<script src="script.js"></script>
 </body>
 </html>

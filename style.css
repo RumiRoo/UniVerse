@@ -285,63 +285,11 @@ Homoe - Banner
     font-size:1.15rem;
 }
 
-#home-banner .content .search-box{
-    display: flex;
-    align-items: center;
+#home-banner .content .banner-hint {
     margin-top: 3rem;
-    gap: 1rem;
-    flex-wrap: wrap;
-}
-
-#home-banner .content .search-box .search-bar {
-    background-color: #fff;
-    color: #948F98;
-
-    height: 3.2rem; 
-    padding-inline: clamp(1rem, 3vw, 1.7rem);
-
-    display: flex;
-    align-items: center; 
-    gap: 1rem;
-
-    border-radius: 10px;
-    flex: 1 1 260px;
-    max-width: 500px;
-}
-
-#home-banner .content .search-box .search-bar:focus-within {
-    outline: 2px solid #E0950C;
-}
-
-#home-banner .content .search-box .search-bar input {
-    font-size: 0.9rem;
-    border: none;
-    outline: none;
-    background: transparent;
-
-    flex: 1;
-    height: 100%;
-    
-    font-family: inherit;
-    color: #4E4256;
-}
-
-#home-banner .content .search-box .search-button{
-    height: 3.2rem;
-    padding-block: 1.5rem;
-    padding-inline: clamp(1rem, 2vw, 1.2rem);
-    line-height: 0px;
-    color: black;
-
-    background-color: #E0950C;
-
-    border-radius: 10px;
-
-    font-weight:800;
-}
-
-#home-banner .content .search-box .search-button:hover{
-    background-color: #e9a932;
+    font-size: 0.95rem;
+    color: #d9d0e0;
+    line-height: 1.5;
 }
 
 #home-banner > img {
@@ -683,14 +631,89 @@ Recent Announcements Section
 
 footer {
     margin-top: 2rem;
-    padding: 1.5rem;
     background-color: #433050;
     color: #fff;
+}
+
+.footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 2.5rem;
+
+    padding-block: 2.5rem;
+    padding-inline: clamp(1.5rem, 6vw, 5rem);
+}
+
+.footer-brand {
+    flex: 1 1 16rem;
+    max-width: 22rem;
+}
+
+footer .logo-text {
+    color: #fff;
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.footer-tagline {
+    margin-top: 0.8rem;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: #d9d0e0;
+}
+
+.footer-heading {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #fff;
+    margin-bottom: 0.9rem;
+}
+
+.footer-links {
+    flex: 1 1 10rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.footer-links a {
+    color: #d9d0e0;
+    font-size: 0.85rem;
+    text-decoration: none;
+    margin-bottom: 0.6rem;
+    transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+    color: #E0950C;
+}
+
+.footer-connect {
+    flex: 1 1 14rem;
+}
+
+.footer-contact {
+    font-size: 0.85rem;
+    color: #d9d0e0;
+    margin-bottom: 1rem;
+}
+
+.footer-connect .connect-links {
+    margin-top: 0;
+    justify-content: flex-start;
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    padding-block: 1.2rem;
     text-align: center;
 }
 
-footer p {
+.footer-bottom p {
     font-size: 0.8rem;
+    color: #d9d0e0;
 }
 
 
@@ -2357,6 +2380,13 @@ form textarea:focus {
 
 #announcements-page {
     padding: 3rem 6%;
+}
+
+#announcement-filter-form .search-button {
+    background-color: #E0950C;
+    color: #000000;
+    font-weight: 700;
+    font-size: 0.9rem;
 }
 
 .announcements-list {
