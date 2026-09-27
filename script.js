@@ -1,4 +1,4 @@
-// ORGANIZATION
+// ORGANIZATION WEBPAGE
 // Search + Filter orgs
 const searchInput = document.getElementById('organization-search');
 const categorySelect = document.getElementById('category');
@@ -52,7 +52,7 @@ if (searchInput && categorySelect) {
 
 
 // Join + Leave orgs
-// Runs only on organization profile pages
+// Runs on organization profile pages
 
 const joinButton =
     document.querySelector('#org-profile-banner .join-button');
@@ -245,6 +245,226 @@ if (myOrganizationsList) {
     noJoinedOrgsMessage.style.display = joinedCount === 0 ? 'block' : 'none';
 }
 
+// ADMIN DASHBOARD: buttons Approve + Reject Org. Requests
+const requestList = document.getElementById('request-list');
+
+if (requestList) {
+    const noRequestsMessage = document.getElementById('no-requests-message');
+    const adminOrgList = document.getElementById('admin-org-list');
+    const pendingCountEl = document.getElementById('pending-requests-count');
+
+    function updatePendingCount() {
+        const remaining = requestList.querySelectorAll('.request-card').length;
+        if (pendingCountEl) {
+            pendingCountEl.textContent = remaining;
+        }
+        noRequestsMessage.style.display = remaining === 0 ? 'block' : 'none';
+    }
+
+    // One listener on the whole list instead of one per button so
+    // it still works even if more requests are added later
+    requestList.addEventListener('click', function (event) {
+        const approveClicked = event.target.classList.contains('request-approve');
+        const rejectClicked = event.target.classList.contains('request-reject');
+
+        if (!approveClicked && !rejectClicked) return; // clicked somewhere else, ignore
+
+        event.preventDefault();
+
+        const card = event.target.closest('.request-card');
+        const orgName = card.dataset.orgName;
+        const orgCategory = card.dataset.orgCategory;
+
+        if (approveClicked && adminOrgList) {
+            // Add the newly approved org. into "Manage Organizations"
+            const newItem = document.createElement('li');
+            newItem.innerHTML =
+                '<div class="manage-item-main">' +
+                    '<span>' + orgName + ' - ' + orgCategory + '</span>' +
+                    '<span class="manage-actions">' +
+                        '<a href="#" class="manage-action">View</a>' +
+                        '<a href="#" class="manage-action manage-action-danger">Remove</a>' +
+                    '</span>' +
+                '</div>';
+            adminOrgList.appendChild(newItem);
+        }
+
+        // Whether approved or rejected, request is handled either way
+        card.remove();
+        updatePendingCount();
+    });
+}
+
+// Admin: Remove an organization from "Manage Organizations"
+const adminOrgListEl = document.getElementById('admin-org-list');
+
+if (adminOrgListEl) {
+    adminOrgListEl.addEventListener('click', function (event) {
+        if (!event.target.classList.contains('manage-action-danger')) return;
+
+        event.preventDefault();
+        const item = event.target.closest('li');
+        item.remove();
+    });
+}
+
+// Small helper for when "?" or "&" is typed
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// OFFICER DASHBOARD: Submit New Event
+const newEventForm = document.querySelector('#panel-new-event form');
+const manageEventsList = document.getElementById('manage-events-list');
+
+if (newEventForm && manageEventsList) {
+    newEventForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const nameInput = newEventForm.querySelector('input[name="event-name"]');
+        const descriptionInput = newEventForm.querySelector('textarea');
+        const eventName = nameInput.value.trim();
+        const eventDescription = descriptionInput.value.trim();
+
+        if (eventName === '') return; // prevents a blank event
+
+        const today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const safeName = escapeHtml(eventName);
+        const safeDescription = escapeHtml(eventDescription);
+
+        const newItem = document.createElement('li');
+        newItem.innerHTML =
+            '<div class="manage-item-main has-date">' +
+                '<h4>' + safeName + '</h4>' +
+                '<p class="announcement-meta-date">Posted on ' + today + '</p>' +
+                '<label class="manage-action"><input type="checkbox" class="edit-toggle">Edit</label>' +
+            '</div>' +
+            '<div class="panel-edit-event quick-act-panel">' +
+                '<form>' +
+                    '<div>' +
+                        '<h4>Event Name</h4>' +
+                        '<input type="text" name="event-name" value="' + safeName + '">' +
+                    '</div>' +
+                    '<div>' +
+                        '<h4>Event Description</h4>' +
+                        '<textarea name="event-description">' + safeDescription + '</textarea>' +
+                    '</div>' +
+                    '<div class="edit-actions">' +
+                        '<button class="join-button" type="submit">Save Changes</button>' +
+                        '<button class="cancel-button" type="button">Cancel</button>' +
+                    '</div>' +
+                '</form>' +
+            '</div>';
+
+        manageEventsList.appendChild(newItem);
+        newEventForm.reset();
+    });
+}
+
+// OFFICER DASHBOARD: Submit New Announcement
+const newAnnounceForm = document.querySelector('#panel-new-announce form');
+const manageAnnouncementsList = document.getElementById('manage-announcements-list');
+
+if (newAnnounceForm && manageAnnouncementsList) {
+    newAnnounceForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const nameInput = newAnnounceForm.querySelector('input[name="announce-name"]');
+        const descriptionInput = newAnnounceForm.querySelector('textarea[name="announce-body"]');
+        const announceName = nameInput.value.trim();
+        const announceBody = descriptionInput.value.trim();
+
+        if (announceName === '') return;
+
+        const today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const safeName = escapeHtml(announceName);
+        const safeBody = escapeHtml(announceBody);
+
+        const newItem = document.createElement('li');
+        newItem.innerHTML =
+            '<div class="manage-item-main has-date">' +
+                '<h4>' + safeName + '</h4>' +
+                '<p class="announcement-meta-date">Posted on ' + today + '</p>' +
+                '<label class="manage-action"><input type="checkbox" class="edit-toggle">Edit</label>' +
+            '</div>' +
+            '<div class="panel-edit-event quick-act-panel">' +
+                '<form>' +
+                    '<div>' +
+                        '<h4>Announcement Title</h4>' +
+                        '<input type="text" name="announce-name" value="' + safeName + '">' +
+                    '</div>' +
+                    '<div>' +
+                        '<h4>Announcement Description</h4>' +
+                        '<textarea name="announce-body">' + safeBody + '</textarea>' +
+                    '</div>' +
+                    '<div class="edit-actions">' +
+                        '<button class="join-button" type="submit">Save Changes</button>' +
+                        '<button class="cancel-button" type="button">Cancel</button>' +
+                    '</div>' +
+                '</form>' +
+            '</div>';
+
+        manageAnnouncementsList.appendChild(newItem);
+        newAnnounceForm.reset();
+    });
+}
+
+// OFFICER DASHBOARD: Add Schedule
+document.addEventListener('click', function (event) {
+    if (!event.target.classList.contains('add-schedule')) return;
+
+    const schedulesContainer = event.target.closest('.event-programme-section').querySelector('.schedules');
+    const firstSchedule = schedulesContainer.querySelector('.schedule');
+
+    const newSchedule = firstSchedule.cloneNode(true);
+    newSchedule.querySelectorAll('input').forEach(function (input) { input.value = ''; });
+    newSchedule.querySelectorAll('textarea').forEach(function (textarea) { textarea.value = ''; });
+
+    schedulesContainer.appendChild(newSchedule);
+});
+
+// OFFICER DASHBOARD: Remove Schedule
+document.addEventListener('click', function (event) {
+    if (!event.target.classList.contains('remove-schedule')) return;
+
+    const schedulesContainer = event.target.closest('.schedules');
+    const allSchedules = schedulesContainer.querySelectorAll('.schedule');
+
+    if (allSchedules.length > 1) {
+        event.target.closest('.schedule').remove();
+    }
+});
+
+// OFFICER DASHBOARD: Save Changes
+document.addEventListener('submit', function (event) {
+    if (!event.target.closest('.panel-edit-event')) return;
+
+    event.preventDefault();
+
+    const form = event.target;
+    const nameInput = form.querySelector('input[name="event-name"], input[name="announce-name"]');
+    const li = form.closest('li');
+    const heading = li.querySelector('.manage-item-main h4');
+
+    if (nameInput && heading && nameInput.value.trim() !== '') {
+        heading.textContent = nameInput.value.trim();
+    }
+
+    const toggle = li.querySelector('.edit-toggle');
+    if (toggle) toggle.checked = false;
+});
+
+// OFFICER DASHBOARD: Cancel
+document.addEventListener('click', function (event) {
+    if (!event.target.classList.contains('cancel-button')) return;
+
+    const li = event.target.closest('li');
+    const toggle = li.querySelector('.edit-toggle');
+    if (toggle) toggle.checked = false;
+});
+
 // ANNOUNCEMENT: navigation to mock announcements
 // Each id matches the data-id on the cards in the announcement.html
 
@@ -307,7 +527,6 @@ const announcementsData = [
     }
 ];
 
-// Only runs on announcement-details.html
 const announcementDetailArticle = document.querySelector('.announcement-detail');
 
 if (announcementDetailArticle) {
@@ -321,7 +540,7 @@ if (announcementDetailArticle) {
     });
 
     if (announcement) {
-        // Fill in the page with this announcement's real content
+        // Fills the page with this announcement's real content
         document.querySelector('.announcement-label').textContent = announcement.category;
         document.querySelector('.announcement-detail-title').textContent = announcement.title;
 
@@ -399,3 +618,4 @@ if (announcementSearchInput && announcementOrgSelect) {
         applyAnnouncementFilters();
     });
 }
+
