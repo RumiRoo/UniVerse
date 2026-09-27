@@ -2920,14 +2920,24 @@ form textarea:focus {
     gap: 0.6rem;
 }
 
-/*----------------------------------
-  Organization: No Results Message
-----------------------------------*/
+/*-----------------------
+   No Results Message
+-----------------------*/
 .no-results {
     display: none;
     margin-top: 2rem;
     text-align: center;
     color: #565259;
     font-size: 0.9rem;
+}
+
+.no-results a {
+    color: #5e2d81;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.no-results a:hover {
+    text-decoration: underline;
 }
 
