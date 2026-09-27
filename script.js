@@ -4,11 +4,7 @@ const categorySelect = document.getElementById('category');
 const orgCards = document.querySelectorAll('.organization-card');
 const noResultsMessage = document.getElementById('no-results-message');
 
-<<<<<<< HEAD
 if (searchInput && categorySelect) {
-=======
-if (searchInput && categorySelect) {    
->>>>>>> main
     function applyFilters() {
         const searchTerm = searchInput.value.trim().toLowerCase();
         const selectedCategory = categorySelect.value;
@@ -20,7 +16,6 @@ if (searchInput && categorySelect) {
             const description = card.querySelector('.org-description').textContent.toLowerCase();
             const cardCategory = card.dataset.category;
 
-<<<<<<< HEAD
             const matchesSearch =
                 title.includes(searchTerm) ||
                 description.includes(searchTerm);
@@ -30,17 +25,8 @@ if (searchInput && categorySelect) {
                 cardCategory === selectedCategory;
 
             const shouldShow =
-                matchesSearch && matchesCategory;
-=======
-            const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
-
-            // Category condition: either "All Organizations" is selected
-            // or the card's category matches the dropdown's selection
-            const matchesCategory = selectedCategory === 'all' || cardCategory === selectedCategory;
-
-            // Card only shows if both conditions are true
-            const shouldShow = matchesSearch && matchesCategory;
->>>>>>> main
+                matchesSearch &&
+                matchesCategory;
 
             if (shouldShow) {
                 card.style.display = '';
@@ -50,14 +36,8 @@ if (searchInput && categorySelect) {
             }
         });
 
-<<<<<<< HEAD
-        if (noResultsMessage) {
-            noResultsMessage.style.display =
-                visibleCount === 0 ? 'block' : 'none';
-        }
-=======
-        noResultsMessage.style.display = visibleCount === 0 ? 'block' : 'none';
->>>>>>> main
+        noResultsMessage.style.display =
+            visibleCount === 0 ? 'block' : 'none';
     }
 
     searchInput.addEventListener('input', applyFilters);
@@ -67,44 +47,27 @@ if (searchInput && categorySelect) {
         event.preventDefault();
         applyFilters();
     });
-<<<<<<< HEAD
 }
 
 
 // Join + Leave orgs
 // Runs only on organization profile pages
-=======
 
-}
-
-// Join + Leave orgs
-// runs only on organization profile pages)
->>>>>>> main
-
-const joinButton = document.querySelector('#org-profile-banner .join-button');
+const joinButton =
+    document.querySelector('#org-profile-banner .join-button');
 
 if (joinButton) {
-<<<<<<< HEAD
     const orgId = document.body.dataset.org;
 
     const joinedOrgs =
         JSON.parse(localStorage.getItem('joinedOrgs')) || [];
 
-=======
-    const orgId = document.body.dataset.org; // For ex. "digital-fort"
-
-    // Remember which orgs the student joined even after refreshing
-    const joinedOrgs = JSON.parse(localStorage.getItem('joinedOrgs')) || [];
-
-    // If this org was already joined before, show on page load
->>>>>>> main
     if (joinedOrgs.includes(orgId)) {
         joinButton.textContent = 'Joined';
         joinButton.classList.add('joined');
     }
 
     joinButton.addEventListener('click', function (event) {
-<<<<<<< HEAD
         event.preventDefault();
 
         const isJoined =
@@ -116,7 +79,8 @@ if (joinButton) {
             joinButton.textContent = 'Join Organization';
             joinButton.classList.remove('joined');
 
-            const index = joinedOrgs.indexOf(orgId);
+            const index =
+                joinedOrgs.indexOf(orgId);
 
             if (index !== -1) {
                 joinedOrgs.splice(index, 1);
@@ -124,43 +88,22 @@ if (joinButton) {
 
         } else {
 
-=======
-        event.preventDefault(); // stops the form from reloading the page
-
-        const isJoined = joinButton.classList.contains('joined');
-
-        if (isJoined) {
-            // Leave
-            joinButton.textContent = 'Join Organization';
-            joinButton.classList.remove('joined');
-            const index = joinedOrgs.indexOf(orgId);
-            if (index !== -1) joinedOrgs.splice(index, 1);
-        } else {
->>>>>>> main
             // Join
             joinButton.textContent = 'Joined ✓';
             joinButton.classList.add('joined');
-            joinedOrgs.push(orgId);
-<<<<<<< HEAD
 
+            joinedOrgs.push(orgId);
         }
 
         localStorage.setItem(
             'joinedOrgs',
             JSON.stringify(joinedOrgs)
         );
-=======
-        }
-
-        localStorage.setItem('joinedOrgs', JSON.stringify(joinedOrgs));
->>>>>>> main
     });
 }
 
 
-<<<<<<< HEAD
 // Search + Filter Events
-
 const eventSearch =
     document.getElementById('event-search');
 
@@ -181,33 +124,15 @@ let selectedStatus = 'all';
 if (eventSearch && eventCategorySelect) {
 
     function applyEventFilters() {
-
         const searchTerm =
             eventSearch.value.trim().toLowerCase();
 
         const selectedCategory =
             eventCategorySelect.value;
-=======
-
-// Search + Filter Events
-const eventSearch = document.getElementById('event-search');
-const eventCategorySelect = document.getElementById('event-category');
-const eventCards = document.querySelectorAll('.event-card');
-const noEventsMessage = document.getElementById('no-events-message');
-const statusFilterButtons = document.querySelectorAll('.event-status-filter');
-
-let selectedStatus = 'all';
-
-if (eventSearch && eventCategorySelect) {    
-    function applyEventFilters() {
-        const searchTerm = eventSearch.value.trim().toLowerCase();
-        const selectedCategory = eventCategorySelect.value;
->>>>>>> main
 
         let visibleCount = 0;
 
         eventCards.forEach(function (card) {
-<<<<<<< HEAD
 
             const title =
                 card.querySelector('.event-title')
@@ -251,19 +176,6 @@ if (eventSearch && eventCategorySelect) {
                 matchesSearch &&
                 matchesCategory &&
                 matchesStatus;
-=======
-            const title = card.querySelector('.event-title').textContent.toLowerCase();
-            const description = card.querySelector('.event-description').textContent.toLowerCase();
-            
-            const cardCategories = card.dataset.categories ? card.dataset.categories.split(',').map(c => c.trim().toLowerCase()) : [];
-            const cardStatus = card.dataset.status ? card.dataset.status.trim().toLowerCase() : '';
-
-            const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
-            const matchesCategory = selectedCategory === 'all' || cardCategories.includes(selectedCategory.toLowerCase());
-            const matchesStatus = selectedStatus === 'all' || cardStatus === selectedStatus.toLowerCase();
-
-            const shouldShow = matchesSearch && matchesCategory && matchesStatus;
->>>>>>> main
 
             if (shouldShow) {
                 card.style.display = '';
@@ -274,7 +186,6 @@ if (eventSearch && eventCategorySelect) {
         });
 
         if (noEventsMessage) {
-<<<<<<< HEAD
             noEventsMessage.style.display =
                 visibleCount === 0 ? 'block' : 'none';
         }
@@ -291,7 +202,6 @@ if (eventSearch && eventCategorySelect) {
     );
 
     statusFilterButtons.forEach(function (button) {
-
         button.addEventListener('click', function () {
 
             statusFilterButtons.forEach(function (btn) {
@@ -303,25 +213,10 @@ if (eventSearch && eventCategorySelect) {
             selectedStatus =
                 button.dataset.value;
 
-=======
-            noEventsMessage.style.display = visibleCount === 0 ? 'block' : 'none';
-        }
-    }
-
-    eventSearch.addEventListener('input', applyEventFilters);
-    eventCategorySelect.addEventListener('change', applyEventFilters);
-
-    statusFilterButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            statusFilterButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-            selectedStatus = button.dataset.value;
->>>>>>> main
             applyEventFilters();
         });
     });
 
-<<<<<<< HEAD
     const eventForm =
         eventSearch.closest('form');
 
@@ -335,7 +230,6 @@ if (eventSearch && eventCategorySelect) {
         );
     }
 }
-
 
 
 // ======================================================
@@ -397,7 +291,8 @@ if (announcementSearch && announcementOrganization) {
 
             const matchesOrganization =
                 selectedOrganization === 'all' ||
-                organization === selectedOrganization.toLowerCase();
+                organization ===
+                    selectedOrganization.toLowerCase();
 
             const shouldShow =
                 matchesSearch &&
@@ -432,28 +327,17 @@ if (announcementSearch && announcementOrganization) {
     );
 
 
-    // Prevent page refresh when Search is clicked
+    // Prevent form submission from refreshing the page
     const announcementForm =
         announcementSearch.closest('form');
 
     if (announcementForm) {
-
         announcementForm.addEventListener(
             'submit',
             function (event) {
-
                 event.preventDefault();
-
                 applyAnnouncementFilters();
             }
         );
-=======
-    const eventForm = eventSearch.closest('form');
-    if (eventForm) {
-        eventForm.addEventListener('submit', function (event) {
-            event.preventDefault();
-            applyEventFilters();
-        });
->>>>>>> main
     }
 }
