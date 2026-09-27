@@ -38,14 +38,14 @@
             <p class="page-description">Explore the vibrant pulse at the heart of MMDC through student-led events, performances, and traditions.</p>
 
             <form>
-                <label for="organization-search" class="sr-only">Search Organizations</label>
+                <label for="event-search" class="sr-only">Search Organizations</label>
                 <div class="search-bar">
                     <img src="assets/magnifying_glass.svg" alt="">
-                    <input type="text" id="organization-search" name="organization-search" placeholder="Search organizations...">
+                    <input type="text" id="event-search" name="event-search" placeholder="Search events...">
                 </div>
 
-                <label for="category" class="sr-only">Filter by Category</label>
-                <select id="category" name="category">
+                <label for="event-category" class="sr-only">Filter by Category</label>
+                <select id="event-category" name="category">
                     <option value="all">All Event Types</option>
                     <option value="academic">Academics</option>
                     <option value="arts">Arts and Design</option>
@@ -61,27 +61,33 @@
 
         <div id="events-contents">
             <div id="events-status-filters">
-                <div class="event-status-filter active">All Events</div>
-                <div class="event-status-filter ">Upcoming</div>
-                <div class="event-status-filter ">Ongoing</div>
-                <div class="event-status-filter">Finished</div>
+                <div class="event-status-filter active" data-value="all">All Events</div>
+                <div class="event-status-filter " data-value="upcoming">Upcoming</div>
+                <div class="event-status-filter " data-value="ongoing">Ongoing</div>
+                <div class="event-status-filter" data-value="finished">Finished</div>
             </div>
+
+            <p id="no-events-message" class="no-results">No events found</p>
+
             <div id="events-list">
-                <article class="event-card">
+                <article class="event-card" data-status="ongoing" data-categories="arts,journalism,academic">
                     <div class="event-photo">
                         <img class="event-photo" src="assets/student-fair.jpg" alt="Students and Booths">
-                        <div class="event-date">Nov 30</div>
-                        <div class="event-status">
+                        <div class="event-date">Nov 30
+                            &nbsp;<div class="circle"></div>&nbsp;
+                            <span class="event-status">Ongoing</span>
+                        </div>
+                        <!--<div class="event-status">
                             <div class="circle"></div>
                             Upcoming
-                        </div>
+                        </div>-->
                     </div>
                     <div class="event-body">
                         <h3 class="event-title">Student Organization Fair</h3>
                         <div class="event-categories">
                             <div class="event-category">ARTS & DESIGN</div>
                             <div class="event-category">JOURNALISM</div>
-                            <div class="event-category">...</div>
+                            <div class="event-category" data-tooltip="ACADEMICS">+1</div>
                         </div>
                         <p class="event-description">A collaboration between all of MMDC's organizations, this special event brings together the talents of all student groups. Join now to showcase your talents!</p>
                         <div class="event-details">
@@ -110,10 +116,14 @@
                         </div>
                     </div>
                 </article>
-                <article class="event-card">
+
+                <article class="event-card" data-status="upcoming" data-categories="arts">
                     <div class="event-photo">
                         <img class="event-photo" src="assets/art-exhibit.jpg" alt="Students and Booths">
-                        <div class="event-date">Sept 5</div>
+                        <div class="event-date">Sept 5
+                            &nbsp;<div class="circle"></div>&nbsp;
+                            <span>Upcoming</span>
+                        </div>
                         <!--<div class="event-status">
                             <div class="circle"></div>
                             Ongoing
@@ -146,6 +156,7 @@
                         </div>
                     </div>
                 </article>
+
             </div>
         </div>
 
@@ -157,5 +168,6 @@
         <p>&copy; 2026 UniVerse</p>
     </footer>
 
+<script src="script.js"></script>
 </body>
 </html>
