@@ -12,10 +12,11 @@
 
     <header id="header">
         <div class="header-left">
-            <div class="logo unselectable">
+            <div class="logo">
                 <img src="assets/logo2.svg" alt="UniVerse Logo">
                 <span class="logo-text">
-                    <span class="uni">Uni</span><span class="verse">Verse</span>
+                    <span class="uni">Uni</span>
+                    <span class="verse">Verse</span>
                 </span>
             </div>
             <nav>
@@ -28,7 +29,6 @@
         </div>
         <div class="header-right">
             <button class="button light-button">Log In</button>
-            <button class="button fill-button">Sign Up</button>
         </div>
     </header>
 
@@ -42,7 +42,7 @@
                     Discover student organizations, activities, events, and announcements in one place.
                 </p>
                 
-                <form class="search-box" action="search-results.html" method="get">
+                <form class="search-box" action="" method="get">
                     <div class="search-bar">
                         <img src="assets/magnifying_glass.svg" alt="">
                         <input type="text" name="q" placeholder="Search events, organizations, announcements...">
@@ -57,7 +57,7 @@
             <div id="home-contents-left">
                 <section id="home-upcoming-events">
                     <div class="section-top">
-                        <h2 class="section-name">Upcoming School Events</h2>
+                        <h2 class="section-name">Recent Events</h2>
                         <a href="events.html">
                             <p class="see-more">See More</p>
                         </a>
@@ -65,7 +65,6 @@
                     <div class="home-upcoming-events-con">
                         <div class="up-child">
                             <img class="event-photo" src="assets/student-fair.jpg" alt="Students and Booths">
-                            <div class="event-date">Aug 30 - Sept 5</div>
                             <div class="event-details">
                                 <p class="event-title">Student Organization Fair</p>
                                 <div class="event-time">
@@ -75,7 +74,6 @@
                         </div>
                         <div class="up-child">
                             <img class="event-photo" src="assets/web-system.jpg" alt="Website-Creation">
-                            <div class="event-date">Sept 6</div>
                             <div class="event-details">
                                 <p class="event-title">Introduction to Web Systems & Technology</p>
                                 <div class="event-time"> <img src="assets/up_event_clock.svg"> <span>9:00AM</span> </div>
@@ -84,7 +82,6 @@
                         </div>
                         <div class="up-child">
                             <img class="event-photo" src="assets/art-exhibit.jpg" alt="Art Exhibition img">
-                            <div class="event-date">Aug 31 - Sept 2</div>
                             <div class="event-details">
                                 <p class="event-title">Digital Consumption: Art Exhibition</p>
                                 <div class="event-time"> <img src="assets/up_event_clock.svg"> <span>11:00AM</span> </div>
@@ -128,29 +125,38 @@
             </div>
 
             <div id="home-contents-right">
-                <div class="section-top">
-                    <div class="section-top recent-announce">
-                        <img src="assets/megaphone.svg" alt="">
-                        <h2 class="section-name">Recent Announcements</h2>
-                    </div>
-                    <p class="see-more">See More</p>
-                </div>
-                <div class="home-recent-announce-con">
-                    <div class="recent-child">
-                        <div class="announce-header">
-                            <p class="announce-title">Organization Registrations Now Open!</p>
-                            <p class="announce-date">Sept. 6, 2026</p>
+                <div>
+                    <div class="section-top">
+                        <div class="section-top recent-announce">
+                            <img src="assets/megaphone.svg" alt="">
+                            <h2 class="section-name">Recent Announcements</h2>
                         </div>
-                        <p class="announce-desc">Students may now browse and join registered organizations. Register until November 10, 2026 at the student lounge.</p>
+                        <a href="announcements.html">
+                            <p class="see-more">See More</p>
+                        </a>
                     </div>
-                    <div class="recent-child">
-                        <div class="announce-header">
-                            <p class="announce-title">Leadership Workshop Registration</p>
-                            <p class="announce-date">Sept 6, 2026</p>
-                        </div>
-                        <p class="announce-desc">Registration is now open on Scholars Club's webpage for the upcoming leadership development workshop.</p>
+                    <div class="home-recent-announce-con">
+                        <a href="announcement-details.html">
+                            <div class="recent-ann">
+                                <div class="announce-header">
+                                    <p class="announce-title">Organization Registrations Now Open!</p>
+                                    <p class="announce-date">Sept. 6, 2026</p>
+                                </div>
+                                <p class="announce-desc">Students may now browse and join registered organizations. Register until November 10, 2026 at the student lounge.</p>
+                            </div>
+                        </a>
+                        <a href="announcement-details.html">
+                            <div class="recent-ann">
+                                <div class="announce-header">
+                                    <p class="announce-title">Leadership Workshop Registration</p>
+                                    <p class="announce-date">Sept 6, 2026</p>
+                                </div>
+                                <p class="announce-desc">Registration is now open on Scholars Club's webpage for the upcoming leadership development workshop.</p>
+                            </div>
+                        </a>
                     </div>
                 </div>
+                <br>
             </div>
 
         </div>
