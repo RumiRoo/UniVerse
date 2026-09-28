@@ -308,11 +308,11 @@ if (adminOrgListEl) {
     });
 }
 
-// Small helper for when "?" or "&" is typed
+// Small helper for when "<" or "&" is typed
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
-    return div.innerHTML;
+    return div.innerHTML.replace(/"/g, '&quot;');
 }
 
 // OFFICER DASHBOARD: Submit New Event
