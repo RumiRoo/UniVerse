@@ -61,51 +61,10 @@
 
         <div id="organizations-page">
 
-            <p id="no-results-message" class="no-results">No organizations found</p>
-            
-            <div class="organizations-list">
+            <p id="no-results-message" class="no-results" aria-live="polite">No organizations found</p>
 
-                <article class="organization-card" data-category="journalism">
-                    <img class="org-photo" src="assets/the-digital-fort.jpeg" alt="The Digital Fort img">
-                    <div class="org-body">
-                        <h3 class="org-title">The Digital Fort</h3>
-                        <p class="org-category">Journalism</p>
-                        <p class="org-description">
-                            The official journalism club of MMDC where you can be updated with current news, articles, announcements, and
-                            other relevant information in and out of the university.
-                        </p>
-                        <a class="org-link" href="digital-fort.html">View Organization</a>
-                    </div>
-                </article>
-
-                <article class="organization-card" data-category="arts">
-                    <img class="org-photo" src="assets/disenyo-malaya.jpg" alt="Disenyo Malaya img">
-                    
-                    <div class="org-body">
-                        <h3 class="org-title">Disenyo Malaya</h3>
-                        <p class="org-category">Arts and Design</p>
-                        <p class="org-description">
-                            An organization dedicated to aspiring designers and students who wish to explore and express their creativity in visual arts.
-                        </p>
-                        <a class="org-link" href="disenyo-malaya.html">View Organization</a>
-                    </div>
-                </article>
-
-                <article class="organization-card" data-category="academic">
-                    <img class="org-photo" src="assets/scholars-club.jpg" alt="Scholars Club img">
-                    
-                    <div class="org-body">
-                        <h3 class="org-title">Scholars Club</h3>
-                        <p class="org-category">Academic</p>
-                        <p class="org-description">
-                            A place for MMDC scholars to connect and collaborate with each
-                            other, improving their leadership and academic achievements
-                            while establishing a strong support network.
-                        </p>
-                        <a class="org-link" href="scholars-club.html">View Organization</a>
-                    </div>
-                </article>
-
+            <div class="organizations-list" id="organizations-list" aria-live="polite">
+                <!--Cards rendered here by script.js from organizationsData -->
             </div>
 
         </div>
