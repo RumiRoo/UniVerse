@@ -283,9 +283,12 @@ Header
         height: 100vh;
         background-color: #5e2d81;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
+        padding-top: 6rem;
+        padding-bottom: 3rem;
         gap: 2rem;
+        overflow-y: auto;
         transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 999;
     }
@@ -315,6 +318,13 @@ Header
         right: 0;
     }
 
+    #menu-toggle:checked ~ .mobile-menu-btn {
+        position: fixed;
+        top: 1.2rem;
+        right: 1.5rem;
+        z-index: 1002;
+    }
+
     #menu-toggle:checked + .mobile-menu-btn .bar:nth-child(1) {
         transform: translateY(9px) rotate(45deg);
         background-color: #ffffff;
@@ -326,6 +336,8 @@ Header
         transform: translateY(-9px) rotate(-45deg);
         background-color: #ffffff;
     }
+
+    
 }
 
 
