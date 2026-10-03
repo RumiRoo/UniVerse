@@ -19,9 +19,9 @@
                 </span>
             </div>
 
-            <input type="checkbox" id="menu-toggle" class="menu-checkbox">
+            <input type="checkbox" tabindex="-1" id="menu-toggle" class="menu-checkbox">
 
-            <label for="menu-toggle" class="mobile-menu-btn" aria-label="Toggle Menu">
+            <label for="menu-toggle" tabindex="0" class="mobile-menu-btn" aria-label="Toggle Menu">
                 <span class="bar"></span>
                 <span class="bar"></span>
                 <span class="bar"></span>
@@ -70,10 +70,10 @@
 
         <div id="events-contents">
             <div id="events-status-filters">
-                <div class="event-status-filter active" data-value="all">All Events</div>
-                <div class="event-status-filter " data-value="upcoming">Upcoming</div>
-                <div class="event-status-filter " data-value="ongoing">Ongoing</div>
-                <div class="event-status-filter" data-value="finished">Finished</div>
+                <div class="event-status-filter active" tabindex="0" data-value="all">All Events</div>
+                <div class="event-status-filter " tabindex="0" data-value="upcoming">Upcoming</div>
+                <div class="event-status-filter " tabindex="0" data-value="ongoing">Ongoing</div>
+                <div class="event-status-filter" tabindex="0" data-value="finished">Finished</div>
             </div>
 
             <p id="no-events-message" class="no-results">No events found</p>
@@ -96,7 +96,7 @@
                         <div class="event-categories">
                             <div class="event-category">ARTS & DESIGN</div>
                             <div class="event-category">JOURNALISM</div>
-                            <div class="event-category" data-tooltip="ACADEMICS">+1</div>
+                            <div class="event-category" tabindex="0" data-tooltip="ACADEMICS">+1</div>
                         </div>
                         <p class="event-description">A collaboration between all of MMDC's organizations, this special event brings together the talents of all student groups. Join now to showcase your talents!</p>
                         <div class="event-details">
@@ -161,7 +161,9 @@
                                     <span class="event-org-name">Disenyo Malaya</span>
                                 </div>
                             </div>
-                            <div class="view-details">View Details</div>
+                            <a href="">
+                                 <div class="view-details">View Details</div>
+                            </a>
                         </div>
                     </div>
                 </article>
@@ -216,6 +218,6 @@
         </div>
     </footer>
 
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

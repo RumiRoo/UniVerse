@@ -12,6 +12,12 @@ General
     padding: 0;
 }
 
+:focus:not(form input):not(form textarea){
+    outline: 2px solid #E0950C;
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
 a {
     text-decoration: none;
 }
@@ -129,7 +135,18 @@ h2{
   opacity: 1;
 }
 
+.event-category[data-tooltip]:hover::after,
+.event-category[data-tooltip]:focus::after {
+    opacity: 1;
+    visibility: visible;
+    display: block;
+}
 
+.event-category[data-tooltip]:focus {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
 
 /*----------------------------
 Header
@@ -244,7 +261,12 @@ Header
 }
 
 .menu-checkbox {
-    display: none;
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    pointer-events: none;
 }
 
 .mobile-menu-btn {
@@ -266,6 +288,12 @@ Header
     background-color: #26202A;
     border-radius: 2px;
     transition: all 0.3s ease;
+}
+
+.mobile-menu-btn:focus {
+    outline: 2px solid #E0950C;
+    outline-offset: 3px;
+    border-radius: 4px;
 }
 
 
@@ -291,6 +319,8 @@ Header
         overflow-y: auto;
         transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 999;
+
+        visibility: hidden;
     }
 
     #header nav a {
@@ -316,6 +346,8 @@ Header
 
     #menu-toggle:checked ~ nav {
         right: 0;
+        visibility: visible;
+        transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s ease;
     }
 
     #menu-toggle:checked ~ .mobile-menu-btn {
@@ -2711,12 +2743,14 @@ form textarea:focus {
 
 .home-upcoming-events-con.dashboard-mini-list,
 .home-recent-announce-con.dashboard-mini-list {
-    flex-wrap: wrap;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 380px));
+    
+    justify-content: start; 
 }
 
 .dashboard-mini-list .up-child {
-    flex: 1 1 16rem;
     max-width: 380px;
+    width: 100%;
 }
 
 /*-----------------------

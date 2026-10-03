@@ -20,9 +20,9 @@
                 </span>
             </div>
 
-            <input type="checkbox" id="menu-toggle" class="menu-checkbox">
+            <input type="checkbox" tabindex="-1" id="menu-toggle" class="menu-checkbox">
 
-            <label for="menu-toggle" class="mobile-menu-btn" aria-label="Toggle Menu">
+            <label for="menu-toggle" tabindex="0" class="mobile-menu-btn" aria-label="Toggle Menu">
                 <span class="bar"></span>
                 <span class="bar"></span>
                 <span class="bar"></span>
@@ -59,9 +59,9 @@
                 <input type="radio" name="dashboard-role" id="tab-admin">
 
                 <div class="dashboard-tabs">
-                    <label for="tab-student" class="dashboard-tab">Student</label>
-                    <label for="tab-officer" class="dashboard-tab">Officer</label>
-                    <label for="tab-admin" class="dashboard-tab">Admin</label>
+                    <label for="tab-student" tabindex="0" class="dashboard-tab">Student</label>
+                    <label for="tab-officer" tabindex="0" class="dashboard-tab">Officer</label>
+                    <label for="tab-admin" tabindex="0" class="dashboard-tab">Admin</label>
                 </div>
 
                 <!--STUDENT PANEL-->
@@ -138,8 +138,8 @@
                             <input type="radio" name="quick-actions" id="tab-new-announce">
 
                             <div id="quick-act-tabs">
-                                <label id="lbl-new-event" for="tab-new-event" class="button join-button unselectable">+ Post New Event</label>
-                                <label id="lbl-new-announce" for="tab-new-announce" class="button light-button officer-action unselectable">+ Post New Announcement</label>
+                                <label id="lbl-new-event" tabindex="0" for="tab-new-event" class="button join-button unselectable">+ Post New Event</label>
+                                <label id="lbl-new-announce" tabindex="0" for="tab-new-announce" class="button light-button officer-action unselectable">+ Post New Announcement</label>
                             </div>
                             
                             <div id="panel-new-event" class="quick-act-panel">
@@ -171,10 +171,11 @@
                                     <div class="event-programme-section">
                                         <div class="header">
                                             <h4>Programme Schedule</h4>
-                                            <div class="add-schedule">Add Schedule</div>
+                                            <div tabindex="0" class="add-schedule">Add Schedule</div>
                                         </div>
                                         <div class="schedules">
                                             <div class="schedule">
+                                                <div tabindex="0" class="remove-schedule">✕ &nbsp; Remove </div>
                                                 <div>
                                                     <h5>Schedule Title</h5>
                                                     <input type="text" name="schedule-title" placeholder="Enter schedule title..." value="">
@@ -201,7 +202,6 @@
                                                     <h5>Schedule Description</h5>
                                                     <textarea placeholder="Enter schedule description..."></textarea>
                                                 </div>
-                                                <div class="remove-schedule">✕ &nbsp; Remove </div>
                                             </div>
                                         </div>
                                     </div>                    
@@ -348,6 +348,6 @@
         </div>
     </footer>
 
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

@@ -129,6 +129,48 @@ if (dashboardTabs.length > 0) {
     });
 }
 
+// Dashboard Role Tabs, get enter to work when a role option is focused on for keyboard accessiblity
+const dashboardTabLabels = document.querySelectorAll('.dashboard-tab');
+
+if (dashboardTabLabels.length > 0) {
+    dashboardTabLabels.forEach(function (label) {
+        label.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+
+                const targetRadioId = label.getAttribute('for');
+                const targetRadio = document.getElementById(targetRadioId);
+
+                if (targetRadio) {
+                    targetRadio.checked = true;
+                    targetRadio.dispatchEvent(new Event('change'));
+                }
+            }
+        });
+    });
+}
+
+// Dashboard Org Officer Quick Acts, get enter to work when a quick act option is focused on for keyboard accessiblity
+const quickActionLabels = document.querySelectorAll('#quick-act-tabs label');
+
+if (quickActionLabels.length > 0) {
+    quickActionLabels.forEach(function (label) {
+        label.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+
+                const targetRadioId = label.getAttribute('for');
+                const targetRadio = document.getElementById(targetRadioId);
+
+                if (targetRadio) {
+                    targetRadio.checked = true;
+                    targetRadio.dispatchEvent(new Event('change'));
+                }
+            }
+        });
+    });
+}
+
 // ANNOUNCEMENTS: one shared data source for the public pages AND the Officer dashboard
 const defaultAnnouncementsData = [
     {
@@ -335,7 +377,7 @@ if (joinButton) {
     });
 }
 
-// Search + Filter Events
+// EVENTS PAGE: Search + Filter Events
 const eventSearch = document.getElementById('event-search');
 const eventCategorySelect = document.getElementById('event-category');
 const eventCards = document.querySelectorAll('.event-card');
@@ -386,14 +428,25 @@ if (eventSearch && eventCategorySelect) {
     eventSearch.addEventListener('input', applyEventFilters);
     eventCategorySelect.addEventListener('change', applyEventFilters);
 
+    //for status filters
     statusFilterButtons.forEach(function (button) {
-        button.addEventListener('click', function () {
+        function selectFilter() {
             statusFilterButtons.forEach(function (btn) {
-                btn.classList.remove('active');
+                btn.classList.format ? btn.classList.remove('active') : btn.classList.remove('active');
             });
             button.classList.add('active');
             selectedStatus = button.dataset.value;
             applyEventFilters();
+        }
+
+        button.addEventListener('click', selectFilter);
+
+        //ensuring on enter press with a tab-focused status filter, the filter works
+        button.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                selectFilter();
+            }
         });
     });
 }
@@ -574,6 +627,7 @@ function saveOfficerEvents() {
 // Templates: turns an event/announcement object into HTML
 function createScheduleBlockHTML(schedule) {
     return '<div class="schedule">' +
+        '<div tabindex="0" class="remove-schedule">✕ &nbsp; Remove </div>' +
         '<div><h5>Schedule Title</h5>' +
             '<input type="text" name="schedule-title" placeholder="Enter schedule title..." value="' + escapeHtml(schedule.title) + '"></div>' +
         '<div class="inline-section">' +
@@ -585,7 +639,6 @@ function createScheduleBlockHTML(schedule) {
             '<input type="text" name="schedule-location" placeholder="Enter schedule location..." value="' + escapeHtml(schedule.location) + '"></div>' +
         '<div><h5>Schedule Description</h5>' +
             '<textarea placeholder="Enter schedule description...">' + escapeHtml(schedule.description) + '</textarea></div>' +
-        '<div class="remove-schedule">✕ &nbsp; Remove </div>' +
     '</div>';
 }
 
@@ -593,20 +646,37 @@ function createOrgCheckboxGridHTML(selectedOrgIds) {
     return '<div class="org-checkbox-grid">' +
         organizationsData.map(function (org) {
             const isChecked = selectedOrgIds.includes(org.id) ? ' checked' : '';
-            return '<label class="org-checkbox-item">' +
-                '<input type="checkbox" name="orgs" value="' + org.id + '"' + isChecked + '>' +
+            return '<label class="org-checkbox-item" tabindex="0">' +
+                '<input type="checkbox" tabindex="-1" name="orgs" value="' + org.id + '"' + isChecked + '>' +
                 '<span>' + org.name + '</span>' +
             '</label>';
         }).join('') +
     '</div>';
 }
 
+// Dashboard org officer, make select involved organizations interactive with enter if tab-focused on, for both new event and edit event form
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+        const label = e.target.closest('.org-checkbox-item');
+        if (label) {
+            e.preventDefault();
+            
+            const checkbox = label.querySelector('input[type="checkbox"]');
+
+            if (checkbox) {
+                checkbox.checked = !checkbox.checked;
+                checkbox.dispatchEvent(new Event('change'));
+            }
+        }
+    }
+});
+
 function createEventListItemHTML(eventItem) {
     return '<li data-id="' + eventItem.id + '">' +
         '<div class="manage-item-main has-date">' +
             '<h4>' + escapeHtml(eventItem.name) + '</h4>' +
             '<p class="announcement-meta-date">' + eventItem.postedDate + '</p>' +
-            '<label class="manage-action"><input type="checkbox" class="edit-toggle">Edit</label>' +
+            '<label tabindex="0" class="manage-action"><input type="checkbox" class="edit-toggle">Edit</label>' +
         '</div>' +
         '<div class="panel-edit-event quick-act-panel">' +
             '<form>' +
@@ -618,7 +688,7 @@ function createEventListItemHTML(eventItem) {
                 '</div>' +
                 '<div><h4>Select Involved Organizations</h4>' + createOrgCheckboxGridHTML(eventItem.orgs) + '</div>' +
                 '<div class="event-programme-section">' +
-                    '<div class="header"><h4>Programme Schedule</h4><div class="add-schedule">Add Schedule</div></div>' +
+                    '<div tabindex="0" class="header"><h4>Programme Schedule</h4><div class="add-schedule">Add Schedule</div></div>' +
                     '<div class="schedules">' + eventItem.schedules.map(createScheduleBlockHTML).join('') + '</div>' +
                 '</div>' +
                 '<div class="edit-actions">' +
@@ -640,7 +710,7 @@ function createAnnouncementListItemHTML(announcement) {
         '<div class="manage-item-main has-date">' +
             '<h4>' + escapeHtml(announcement.title) + '</h4>' +
             '<p class="announcement-meta-date">' + announcement.postedDate + '</p>' +
-            '<label class="manage-action"><input type="checkbox" class="edit-toggle">Edit</label>' +
+            '<label tabindex="0" class="manage-action"><input type="checkbox" class="edit-toggle">Edit</label>' +
         '</div>' +
         '<div class="panel-edit-event quick-act-panel">' +
             '<form>' +
@@ -803,8 +873,8 @@ document.addEventListener('submit', function (event) {
 const newEventOrgCheckboxes = document.getElementById('new-event-org-checkboxes');
 if (newEventOrgCheckboxes) {
     newEventOrgCheckboxes.innerHTML = organizationsData.map(function (org) {
-        return '<label class="org-checkbox-item">' +
-            '<input type="checkbox" name="orgs" value="' + org.id + '">' +
+        return '<label tabindex="0" class="org-checkbox-item">' +
+            '<input tabindex="-1" type="checkbox" name="orgs" value="' + org.id + '">' +
             '<span>' + org.name + '</span>' +
         '</label>';
     }).join('');
@@ -844,3 +914,36 @@ document.addEventListener('click', function (event) {
         event.target.closest('.schedule').remove();
     }
 });
+
+
+//for toggling the menu using enter
+const menuToggle = document.querySelector('.menu-checkbox');
+const menuBtn = document.querySelector('.mobile-menu-btn');
+
+if (menuBtn && menuToggle) {
+    console.log("Hamburger menu script loaded successfully!");
+
+    menuBtn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            menuToggle.checked = !menuToggle.checked;
+        }
+    });
+}
+
+// ensuring keyboard accessbility for the edit toggles in dashboard for org officer
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+        const manageAction = e.target.closest('.manage-action');
+        if (manageAction) {
+            e.preventDefault();
+            
+            const checkbox = manageAction.querySelector('input.edit-toggle');
+
+            if (checkbox) {
+                checkbox.checked = !checkbox.checked;
+                checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        }
+    }
+}); 
