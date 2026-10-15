@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="style.css">
+
+    <title>Dashboard</title>
+</head>
+
+<body>
+
+    <header id="header">
+        <div class="header-left">
+            <div class="logo">
+                <img src="assets/logo2.svg" alt="UniVerse Logo">
+                <span class="logo-text">
+                    <span class="uni">Uni</span><span class="verse">Verse</span>
+                </span>
+            </div>
+
+            <input type="checkbox" tabindex="-1" id="menu-toggle" class="menu-checkbox">
+
+            <label for="menu-toggle" tabindex="0" class="mobile-menu-btn" aria-label="Toggle Menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </label>
+
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="organizations.html">Organizations</a>
+                <a href="events.html">Events</a>
+                <a href="announcements.html">Announcements</a>
+                <a class="active" href="dashboard.html">Dashboard</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <button class="button light-button" id="logout-button">Log Out</button>
+        </div>
+    </header>
+
+    <main>
+        <section id="dashboard-banner">
+            <p class="dashboard-eyebrow" id="dashboard-user-info">Loading...</p>
+            <h1 class="dashboard-title">My Dashboard</h1>
+            <p class="dashboard-desc">
+                Dashboard view is shown automatically based on the account's role.
+            </p>
+        </section>
+
+        <div class="page-content">
+
+            <div class="dashboard-tabs-wrapper">
+
+                <!--STUDENT PANEL-->
+                <div class="dashboard-panel" id="panel-student">
+
+                    <section class="org-section">
+                        <h2>My Organizations</h2>
+
+                        <p id="no-joined-orgs-message" class="no-results">
+                            You haven't joined any organizations yet <a href="organizations.html">Browse organizations →</a>
+                        </p>
+
+                        <div class="organizations-list dashboard-mini-list" id="my-organizations-list">
+                            <!--Rendered in script.js, from organizationsData filtered by joinedOrgs-->
+                        </div>
+                    </section>
+
+                    <section class="org-section">
+                        <h2>Upcoming Events</h2>                       
+                        <div class="home-upcoming-events-con dashboard-mini-list">
+                            <div class="up-child">
+                                <img class="event-photo" src="assets/student-fair.jpg" alt="Student Fair img">
+                                <div class="event-details">
+                                    <p class="event-title">Student Organization Fair</p>
+                                    <div class="event-time"> <img src="assets/up_event_clock.svg" alt=""> <span>8:00AM - 5:00PM</span> </div>
+                                    <div class="event-location"> <img src="assets/up_event_location.svg" alt=""> <span>MMDC Luzon Hub</span> </div>
+                                </div>
+                            </div>
+                            <div class="up-child">
+                                <img class="event-photo" src="assets/leadership.jpg" alt="Leadership img">
+                                <div class="event-details">
+                                    <p class="event-title">Scholar Leadership Workshop</p>
+                                    <div class="event-time"> <img src="assets/up_event_clock.svg" alt=""> <span>1:00PM - 4:00PM</span> </div>
+                                    <div class="event-location"> <img src="assets/up_event_location.svg" alt=""> <span>Library Annex</span> </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="org-section">
+                        <h2>Recent Announcements</h2>
+                        <div class="home-recent-announce-con dashboard-mini-list">
+                            <div class="recent-ann">
+                                <div class="announce-header">
+                                    <p class="announce-title">Organization Registrations Now Open!</p>
+                                    <p class="announce-date">Sept. 6, 2026</p>
+                                </div>
+                                <p class="announce-desc">Students may now browse and join registered organizations. Register until November 10, 2026 at the student lounge or online through the app.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+
+                <!--OFFICER PANEL-->
+                <div class="dashboard-panel" id="panel-officer">
+
+                    <section class="org-section">
+                        <h2>My Organization</h2>
+                        <div class="officer-org-card">
+                            <img class="org-photo" src="assets/the-digital-fort.jpeg" alt="The Digital Fort logo">
+                            <div class="officer-org-info">
+                                <p class="org-title">The Digital Fort</p>
+                                <p class="org-category">Journalism</p>
+                                <p class="officer-org-meta">42 Members</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="org-section">
+                        <h2>Quick Actions</h2>
+                        <div id="quick-actions">
+                            <input type="radio" name="quick-actions" id="tab-new-event" checked>
+                            <input type="radio" name="quick-actions" id="tab-new-announce">
+
+                            <div id="quick-act-tabs">
+                                <label id="lbl-new-event" tabindex="0" for="tab-new-event" class="button join-button unselectable">+ Post New Event</label>
+                                <label id="lbl-new-announce" tabindex="0" for="tab-new-announce" class="button light-button officer-action unselectable">+ Post New Announcement</label>
+                            </div>
+                            
+                            <div id="panel-new-event" class="quick-act-panel">
+                                <form>
+                                    <div>
+                                        <h4>New Event Name</h4>
+                                        <input type="text" name="event-name" placeholder="Enter event name...">
+                                    </div>
+                                    <div>
+                                        <h4>Event Description</h4>
+                                        <textarea name="event-description" placeholder="Enter event description..."></textarea>
+                                    </div>
+                                    <div class="inline-section">
+                                        <div class="inline-part">
+                                            <h4>Start Date</h4>
+                                            <input type="date" name="event-date-start" >
+                                        </div>
+                                        <div class="inline-part">
+                                            <h4>End Date</h4>
+                                            <input type="date" name="event-date-end" >
+                                        </div>
+                                    </div>    
+                                    <div>
+                                        <h4>Select Involved Organizations</h4>
+                                        <div class="org-checkbox-grid" id="new-event-org-checkboxes">
+                                            <!--script.js, rendered from organizationsData-->
+                                        </div>
+                                    </div>
+                                    <div class="event-programme-section">
+                                        <div class="header">
+                                            <h4>Programme Schedule</h4>
+                                            <div tabindex="0" class="add-schedule">Add Schedule</div>
+                                        </div>
+                                        <div class="schedules">
+                                            <div class="schedule">
+                                                <div tabindex="0" class="remove-schedule">✕ &nbsp; Remove </div>
+                                                <div>
+                                                    <h5>Schedule Title</h5>
+                                                    <input type="text" name="schedule-title" placeholder="Enter schedule title..." value="">
+                                                </div>
+                                                <div class="inline-section">
+                                                    <div class="inline-part">
+                                                        <h5>Schedule Date</h5>
+                                                        <input type="date" name="schedule-date" value="">
+                                                    </div>
+                                                    <div class="inline-part">
+                                                        <h5>Start Time</h5>
+                                                        <input type="time" name="schedule-start-time" value="">
+                                                    </div>
+                                                    <div class="inline-part">
+                                                        <h5>End Time</h5>
+                                                        <input type="time" name="schedule-end-time" value="">
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <h5>Schedule Location</h5>
+                                                    <input type="text" name="schedule-location" placeholder="Enter schedule location..." value="">
+                                                </div>
+                                                <div>
+                                                    <h5>Schedule Description</h5>
+                                                    <textarea placeholder="Enter schedule description..."></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>                    
+                                    <button class="join-button" type="submit">Submit New Event</button>
+                                </form>
+                            </div>
+                            
+                            <div id="panel-new-announce" class="quick-act-panel">
+                                <form>
+                                    <div>
+                                        <h4>New Announcement Name</h4>
+                                        <input type="text" name="announce-name" placeholder="Enter announcement name...">
+                                    </div>
+                                    <div>
+                                        <h4>Posted By</h4>
+                                        <select name="announce-org">
+                                            <option value="universe">UniVerse</option>
+                                            <option value="digital-fort">The Digital Fort</option>
+                                            <option value="disenyo-malaya">Disenyo Malaya</option>
+                                            <option value="scholars-club">Scholars Club</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <h4>Announcement Description</h4>
+                                        <textarea name="announce-body" placeholder="Enter announcement body..."></textarea>
+                                    </div>
+                                    <button class="join-button" type="submit">Submit New Announcement</button>
+                                </form>
+                            </div>
+
+                        </div>
+                    </section>
+
+                    <section class="org-section">
+                        <h2>Manage Events</h2>
+                        <ul class="org-list manage-list" id="manage-events-list">
+                            <!--script.js, rendered from officerEventsData-->
+                        </ul>
+                    </section>
+                    
+
+                    <section class="org-section">
+                        <h2>Manage Announcements</h2>
+                        <ul class="org-list manage-list" id="manage-announcements-list">
+                            <!--script.js, rendered from officerAnnouncementsData-->
+                        </ul>
+                    </section>
+
+                </div>
+
+                <!--ADMIN PANEL-->
+                <div class="dashboard-panel" id="panel-admin">
+
+                    <section class="org-section">
+                        <h2>Platform Overview</h2>
+                        <div class="stat-grid">
+                            <div class="stat-tile">
+                                <p class="stat-number" id="stat-organizations">3</p>
+                                <p class="stat-label">Organizations</p>
+                            </div>
+                            <div class="stat-tile">
+                                <p class="stat-number" id="stat-users">12</p>
+                                <p class="stat-label">Students</p>
+                            </div>
+                            <div class="stat-tile">
+                                <p class="stat-number">3</p>
+                                <p class="stat-label">Upcoming Events</p>
+                            </div>
+                            <div class="stat-tile">
+                                <p class="stat-number" id="pending-requests-count">2</p>
+                                <p class="stat-label">Pending Requests</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="org-section">
+                        <h2>Organization Registration Requests</h2>
+
+                        <p id="no-requests-message" class="no-results">No pending organization requests.</p>
+
+                        <div class="request-list" id="request-list">
+                            <!--script.js, rendered from adminRequestsData-->
+                        </div>
+                    </section>
+
+                    <section class="org-section">
+                        <h2>Manage Organizations</h2>
+                        <ul class="org-list manage-list" id="admin-org-list">
+                            <!--script.js, rendered from organizationsData-->
+                        </ul>
+                    </section>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="footer-content">
+
+            <div class="footer-brand">
+                <div class="logo">
+                    <span class="logo-text">
+                        <span class="uni">Uni</span><span class="verse">Verse</span>
+                    </span>
+                </div>
+                <p class="footer-tagline">
+                    Connecting MMDC students to organizations, events, and opportunities in one place.
+                </p>
+            </div>
+
+            <div class="footer-links">
+                <h4 class="footer-heading">Quick Links</h4>
+                <a href="index.html">Home</a>
+                <a href="organizations.html">Organizations</a>
+                <a href="events.html">Events</a>
+                <a href="announcements.html">Announcements</a>
+                <a href="dashboard.html">Dashboard</a>
+            </div>
+
+            <div class="footer-connect">
+                <h4 class="footer-heading">Connect With Us</h4>
+                <p class="footer-contact">universe@mmdc.mcl.edu.ph</p>
+                <div class="connect-links footer-social">
+                    <a class="connect-icon-link" href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook">
+                        <img src="assets/facebook.svg" alt="">
+                    </a>
+                    <a class="connect-icon-link" href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram">
+                        <img src="assets/instagram.svg" alt="">
+                    </a>
+                    <a class="connect-icon-link" href="https://tiktok.com" target="_blank" rel="noopener" aria-label="TikTok">
+                        <img src="assets/tiktok.svg" alt="">
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 UniVerse. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

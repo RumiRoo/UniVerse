@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="style.css">
+    <title>UniVerse</title>
+</head>
+
+<body>
+
+    <header id="header">
+        <div class="header-left">
+            <div class="logo">
+                <img src="assets/logo2.svg" alt="UniVerse Logo">
+                <span class="logo-text">
+                    <span class="uni">Uni</span><span class="verse">Verse</span>
+                </span>
+            </div>
+
+            <input type="checkbox" tabindex="-1" id="menu-toggle" class="menu-checkbox">
+
+            <label for="menu-toggle" tabindex="0" class="mobile-menu-btn" aria-label="Toggle Menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </label>
+
+            <nav>
+                <a class="active" href="index.html">Home</a>
+                <a href="organizations.html">Organizations</a>
+                <a href="events.html">Events</a>
+                <a href="announcements.html">Announcements</a>
+                <a href="dashboard.html">Dashboard</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <button class="button light-button" id="auth-button">Log In</button>
+        </div>
+    </header>
+
+    <main>
+        <section id="home-banner">
+            <img src="assets/sun.svg" alt="">
+
+            <div class="content">
+                <h1 class="welcome">Welcome to <span>Uni</span>Verse!</h1>
+                <p class="sub-welcome">
+                    Discover student organizations, events, and announcements in one place.
+                </p>
+                
+                <p class="banner-hint">This platform is your central hub for connecting with members, planning activities, and keeping everything organized. <br>Whether you're leading an organization, participating in events, or collaborating with fellow MMDC-ians, we're here to help you make the experience enjoyable and easier.<br><br>Explore them all using the navigation above! </p>
+            
+            </div>
+        </section>
+
+        <div id="home-contents">
+            <div id="home-contents-left">
+                <section id="home-upcoming-events">
+                    <div class="section-top">
+                        <h2 class="section-name">Recent Events</h2>
+                        <a href="events.html">
+                            <p class="see-more">See More</p>
+                        </a>
+                    </div>
+                    <div class="home-upcoming-events-con">
+                        <div class="up-child">
+                            <img class="event-photo" src="assets/student-fair.jpg" alt="Students and Booths">
+                            <div class="event-details">
+                                <p class="event-title">
+                                    <a href="student-fair.html">Student Organization Fair</a>
+                                </p>
+                                <div class="event-time">
+                                    <img src="assets/up_event_clock.svg" alt=""> <span>8:00AM - 5:00PM</span> </div>
+                                <div class="event-location"> <img src="assets/up_event_location.svg" alt=""> <span>Mapua Malayan Digital College Luzon Hub</span> </div>
+                            </div>
+                        </div>
+                        <div class="up-child">
+                            <img class="event-photo" src="assets/web-system.jpg" alt="Website-Creation">
+                            <div class="event-details">
+                                <p class="event-title">Introduction to Web Systems & Technology</p>
+                                <div class="event-time"> <img src="assets/up_event_clock.svg"> <span>9:00AM</span> </div>
+                                <div class="event-location"> <img src="assets/up_event_location.svg"> <span>Computer Lab</span> </div>
+                            </div>
+                        </div>
+                        <div class="up-child">
+                            <img class="event-photo" src="assets/art-exhibit.jpg" alt="Art Exhibition img">
+                            <div class="event-details">
+                                <p class="event-title">Digital Consumption: Art Exhibition</p>
+                                <div class="event-time"> <img src="assets/up_event_clock.svg"> <span>11:00AM</span> </div>
+                                <div class="event-location"> <img src="assets/up_event_location.svg"> <span>University Mezzanine</span> </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <br>
+
+                <section id="home-featured-orgs">
+                    <div class="section-top">
+                        <h2 class="section-name">Featured Organizations</h2>
+                        <a href="organizations.html">
+                            <p class="see-more">See More</p>
+                        </a>
+                    </div>
+                    <div class="home-featured-orgs-con">
+                        <div class="feat-child">
+                            <div class="org-photo">
+                                <img class="org-photo" src="assets/the-digital-fort.jpeg" alt="The Digital Fort img">
+                            </div>
+                            <div class="org-details">
+                                <p class="org-title">The Digital Fort</p>
+                                <p class="org-desc">The official journalism club of MMDC where you can be updated with the current news, holidays, articles, announcements, and other such relevant information in and out of the university.</p>
+                                <a class="org-link" href="digital-fort.html">View More</a>
+                            </div>
+                        </div>
+                        <div class="feat-child">
+                            <div class="org-photo">
+                                <img class="org-photo" src="assets/disenyo-malaya.jpg" alt="Disenyo Malaya img">
+                            </div>
+                            <div class="org-details">
+                                <p class="org-title">Disenyo Malaya</p>
+                                <p class="org-desc">An organization dedicated to aspiring designers and students who wish to explore and express their creativity in visual arts.</p>
+                                <a class="org-link" href=" ">View More</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <div id="home-contents-right">
+                <div>
+                    <div class="section-top">
+                        <div class="section-top recent-announce">
+                            <img src="assets/megaphone.svg" alt="">
+                            <h2 class="section-name">Recent Announcements</h2>
+                        </div>
+                        <a href="announcements.html">
+                            <p class="see-more">See More</p>
+                        </a>
+                    </div>
+                    <div class="home-recent-announce-con">
+                        <a href="announcement-details.html">
+                            <div class="recent-ann">
+                                <div class="announce-header">
+                                    <p class="announce-title">Organization Registrations Now Open!</p>
+                                    <p class="announce-date">Sept. 6, 2026</p>
+                                </div>
+                                <p class="announce-desc">Students may now browse and join registered organizations. Register until November 10, 2026 at the student lounge.</p>
+                            </div>
+                        </a>
+                        <a href="announcement-details.html">
+                            <div class="recent-ann">
+                                <div class="announce-header">
+                                    <p class="announce-title">Leadership Workshop Registration</p>
+                                    <p class="announce-date">Sept 6, 2026</p>
+                                </div>
+                                <p class="announce-desc">Registration is now open on Scholars Club's webpage for the upcoming leadership development workshop.</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <br>
+            </div>
+
+        </div>
+
+
+    </main>
+
+    <footer>
+        <div class="footer-content">
+
+            <div class="footer-brand">
+                <div class="logo">
+                    <span class="logo-text">
+                        <span class="uni">Uni</span><span class="verse">Verse</span>
+                    </span>
+                </div>
+                <p class="footer-tagline">
+                    Connecting MMDC students to organizations, events, and opportunities in one place.
+                </p>
+            </div>
+
+            <div class="footer-links">
+                <h4 class="footer-heading">Quick Links</h4>
+                <a href="index.html">Home</a>
+                <a href="organizations.html">Organizations</a>
+                <a href="events.html">Events</a>
+                <a href="announcements.html">Announcements</a>
+                <a href="dashboard.html">Dashboard</a>
+            </div>
+
+            <div class="footer-connect">
+                <h4 class="footer-heading">Connect With Us</h4>
+                <p class="footer-contact">universe@mmdc.mcl.edu.ph</p>
+                <div class="connect-links footer-social">
+                    <a class="connect-icon-link" href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook">
+                        <img src="assets/facebook.svg" alt="">
+                    </a>
+                    <a class="connect-icon-link" href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram">
+                        <img src="assets/instagram.svg" alt="">
+                    </a>
+                    <a class="connect-icon-link" href="https://tiktok.com" target="_blank" rel="noopener" aria-label="TikTok">
+                        <img src="assets/tiktok.svg" alt="">
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 UniVerse. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
