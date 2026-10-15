@@ -37,32 +37,22 @@
             </nav>
         </div>
         <div class="header-right">
-            <button class="button light-button">Log In</button>
+            <button class="button light-button" id="logout-button">Log Out</button>
         </div>
     </header>
 
     <main>
         <section id="dashboard-banner">
-            <p class="dashboard-eyebrow">ID No.: 00001</p>
+            <p class="dashboard-eyebrow" id="dashboard-user-info">Loading...</p>
             <h1 class="dashboard-title">My Dashboard</h1>
             <p class="dashboard-desc">
-                Preview for role-based dashboard. Once login is setup, the dashboard will load automatically based on user role
+                Dashboard view is shown automatically based on the account's role.
             </p>
         </section>
 
         <div class="page-content">
 
             <div class="dashboard-tabs-wrapper">
-
-                <input type="radio" name="dashboard-role" id="tab-student" checked>
-                <input type="radio" name="dashboard-role" id="tab-officer">
-                <input type="radio" name="dashboard-role" id="tab-admin">
-
-                <div class="dashboard-tabs">
-                    <label for="tab-student" tabindex="0" class="dashboard-tab">Student</label>
-                    <label for="tab-officer" tabindex="0" class="dashboard-tab">Officer</label>
-                    <label for="tab-admin" tabindex="0" class="dashboard-tab">Admin</label>
-                </div>
 
                 <!--STUDENT PANEL-->
                 <div class="dashboard-panel" id="panel-student">
@@ -259,11 +249,11 @@
                         <h2>Platform Overview</h2>
                         <div class="stat-grid">
                             <div class="stat-tile">
-                                <p class="stat-number">3</p>
+                                <p class="stat-number" id="stat-organizations">3</p>
                                 <p class="stat-label">Organizations</p>
                             </div>
                             <div class="stat-tile">
-                                <p class="stat-number">135</p>
+                                <p class="stat-number" id="stat-users">12</p>
                                 <p class="stat-label">Students</p>
                             </div>
                             <div class="stat-tile">

@@ -1,53 +1,49 @@
 // ORGANIZATIONS: master data
 // For every organization on the app:
 // Organizations page, the Dashboard's "My Organizations", and anywhere
-// else that needs org info should all read from this array
-const defaultOrganizationsData = [
-    {
-        id: "digital-fort",
-        name: "The Digital Fort",
-        category: "journalism",
-        categoryLabel: "Journalism",
-        description: "The official journalism club of MMDC where you can be updated with current news, articles, announcements, and other relevant information in and out of the university.",
-        photo: "assets/the-digital-fort.jpeg",
-        link: "digital-fort.html"
-    },
-    {
-        id: "disenyo-malaya",
-        name: "Disenyo Malaya",
-        category: "arts",
-        categoryLabel: "Arts and Design",
-        description: "An organization dedicated to aspiring designers and students who wish to explore and express their creativity in visual arts.",
-        photo: "assets/disenyo-malaya.jpg",
-        link: "disenyo-malaya.html"
-    },
-    {
-        id: "scholars-club",
-        name: "Scholars Club",
-        category: "academic",
-        categoryLabel: "Academic",
-        description: "A place for MMDC scholars to connect and collaborate with each other, improving their leadership and academic achievements while establishing a strong support network.",
-        photo: "assets/scholars-club.jpg",
-        link: "scholars-club.html"
+// loaded from backend
+const API_BASE_URL = 'http://localhost:3000';
+
+let organizationsData = [];
+
+async function fetchOrganizations() {
+    try {
+        const response = await fetch(API_BASE_URL + '/api/organizations');
+        organizationsData = await response.json();
+    } catch (error) {
+        console.error('Could not load organizations from the server:', error);
+        organizationsData = [];
     }
-];
-
-
-let organizationsData = JSON.parse(localStorage.getItem('organizations')) || defaultOrganizationsData;
-
-function saveOrganizations() {
-    localStorage.setItem('organizations', JSON.stringify(organizationsData));
+    initOrganizationsPageUI();
 }
 
-// Builds the actual <article> HTML for one organization
+// Organization Cards: converts stored category value into displayed text in teh frontend
+// Any new category added only needs to update this lookup
+const categoryLabels = {
+    academic: 'Academic',
+    arts: 'Arts and Design',
+    journalism: 'Journalism',
+    sports: 'Sports',
+    technology: 'Technology',
+};
+
+function getCategoryLabel(category) {
+    return categoryLabels[category] || category;
+}
+
 function createOrganizationCardHTML(org) {
-    return '<article class="organization-card" data-category="' + org.category + '">' +
-        '<img class="org-photo" src="' + org.photo + '" alt="' + org.name + ' logo">' +
+    // Admin-approved orgs shouldn't have photos/links yet so fall back to safe defaults
+    const photo = org.photo || 'assets/no-image.svg';
+    const link = org.link || 'organizations.html';
+
+    return '<article class="organization-card" data-category="' + org.category + '">' + 
+        '<img class="org-photo" src="' + photo + '" alt="' + escapeHtml(org.name) + ' logo" ' + 
+        'style="width: 100%; height: 200px; object-fit: contain; display: block;">' + 
         '<div class="org-body">' +
-            '<h3 class="org-title">' + org.name + '</h3>' +
-            '<p class="org-category">' + org.categoryLabel + '</p>' +
-            '<p class="org-description">' + org.description + '</p>' +
-            '<a class="org-link" href="' + org.link + '">View Organization</a>' +
+            '<h3 class="org-title">' + escapeHtml(org.name) + '</h3>' +
+            '<p class="org-category">' + getCategoryLabel(org.category) + '</p>' +
+            '<p class="org-description">' + escapeHtml(org.description) + '</p>' +
+            '<a class="org-link" href="' + link + '">View Organization</a>' +
         '</div>' +
     '</article>';
 }
@@ -58,7 +54,8 @@ const categorySelect = document.getElementById('category');
 const organizationsListEl = document.getElementById('organizations-list');
 const noResultsMessage = document.getElementById('no-results-message');
 
-if (searchInput && categorySelect && organizationsListEl) {
+function initOrganizationsPageUI() {
+    if (!(searchInput && categorySelect && organizationsListEl)) return;
 
     // Takes a filtered array and rebuilds the visible list from scratch
     // Removes the old HTML and builds new HTML from whatever data matches
@@ -86,7 +83,7 @@ if (searchInput && categorySelect && organizationsListEl) {
         renderOrganizations(filtered);
     }
 
-    // Shows every organization on first load
+    // Shows every organization
     renderOrganizations(organizationsData);
 
     searchInput.addEventListener('input', applyFilters);
@@ -97,6 +94,8 @@ if (searchInput && categorySelect && organizationsListEl) {
         applyFilters();
     });
 }
+
+fetchOrganizations();
 
 // Shared helper: looks up an org's display name + link from its id
 // Early declaration because the Officer dashboard section below needs
@@ -109,44 +108,42 @@ function getOrgDisplayInfo(orgId) {
     return org ? { name: org.name, link: org.link } : { name: 'Unknown Organization', link: '#' };
 }
 
-// DASHBOARD: remember which tab (Student/Officer/Admin) was last viewed
-const dashboardTabs = document.querySelectorAll('input[name="dashboard-role"]');
+// DASHBOARD: role-based access control (RBAC)
+const dashboardWrapper = document.querySelector('.dashboard-tabs-wrapper');
 
-if (dashboardTabs.length > 0) {
-    const savedTab = localStorage.getItem('activeDashboardTab');
+if (dashboardWrapper) {
+    const authUserRaw = localStorage.getItem('authUser');
 
-    if (savedTab) {
-        const tabToRestore = document.getElementById(savedTab);
-        if (tabToRestore) tabToRestore.checked = true;
-    }
+    if (!authUserRaw) {
+        window.location.href = 'login.html';
+    } else {
+        const authUser = JSON.parse(authUserRaw);
 
-    dashboardTabs.forEach(function (tab) {
-        tab.addEventListener('change', function () {
-            if (tab.checked) {
-                localStorage.setItem('activeDashboardTab', tab.id);
-            }
+        const dashboardUserInfo = document.getElementById('dashboard-user-info');
+        if (dashboardUserInfo) {
+            dashboardUserInfo.textContent = authUser.name + ' \u00b7 ' + authUser.role.charAt(0).toUpperCase() + authUser.role.slice(1);
+        }
+
+        const panelsByRole = {
+            student: document.getElementById('panel-student'),
+            officer: document.getElementById('panel-officer'),
+            admin: document.getElementById('panel-admin'),
+        };
+
+        Object.keys(panelsByRole).forEach(function (role) {
+            const panel = panelsByRole[role];
+            if (!panel) return;
+            panel.style.display = role === authUser.role ? 'block' : 'none';
         });
-    });
+    }
 }
 
-// Dashboard Role Tabs, get enter to work when a role option is focused on for keyboard accessiblity
-const dashboardTabLabels = document.querySelectorAll('.dashboard-tab');
-
-if (dashboardTabLabels.length > 0) {
-    dashboardTabLabels.forEach(function (label) {
-        label.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-
-                const targetRadioId = label.getAttribute('for');
-                const targetRadio = document.getElementById(targetRadioId);
-
-                if (targetRadio) {
-                    targetRadio.checked = true;
-                    targetRadio.dispatchEvent(new Event('change'));
-                }
-            }
-        });
+const logoutButton = document.getElementById('logout-button');
+if (logoutButton) {
+    logoutButton.addEventListener('click', function () {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('authUser');
+        window.location.href = 'login.html';
     });
 }
 
@@ -341,39 +338,167 @@ const joinButton = document.querySelector('#org-profile-banner .join-button');
 
 if (joinButton) {
     const orgId = document.body.dataset.org;
+    const authToken = localStorage.getItem('authToken');
 
-    const joinedOrgs = JSON.parse(localStorage.getItem('joinedOrgs')) || [];
-
-    // list of joined orgs is stored in localStorage under 'joinedOrgs'.
-    // When the page loads, if the org is in the list, the button should show
-    // 'Joined' and get the .joined class (with additional styling from style.css)
-    if (joinedOrgs.includes(orgId)) {
-        joinButton.textContent = 'Joined';
-        joinButton.classList.add('joined');
+    function setJoinedState(isJoined) {
+        joinButton.textContent = isJoined ? 'Joined' : 'Join Organization';
+        joinButton.classList.toggle('joined', isJoined);
     }
 
-    joinButton.addEventListener('click', function (event) {
+    // On page load: asks the server whether the user has already joined that particular org
+    if (authToken) {
+        fetch(API_BASE_URL + '/api/users/me/organizations', {
+            headers: { Authorization: 'Bearer ' + authToken }
+        })
+            .then(function (response) { return response.json(); })
+            .then(function (myOrgs) {
+                const alreadyJoined = Array.isArray(myOrgs) && myOrgs.some(function (org) {
+                    return org.id === orgId;
+                });
+                setJoinedState(alreadyJoined);
+            })
+            .catch(function (error) {
+                console.error('Could not check membership:', error);
+            });
+    }
+
+    joinButton.addEventListener('click', async function (event) {
         event.preventDefault();
 
-        const isJoined = joinButton.classList.contains('joined');
-
-        if (isJoined) {
-            // Leave
-            joinButton.textContent = 'Join Organization';
-            joinButton.classList.remove('joined');
-
-            const index = joinedOrgs.indexOf(orgId);
-            if (index !== -1) {
-                joinedOrgs.splice(index, 1);
-            }
-        } else {
-            // Join
-            joinButton.textContent = 'Joined';
-            joinButton.classList.add('joined');
-            joinedOrgs.push(orgId);
+        // Not logged in: sends user to the login page instead
+        if (!authToken) {
+            window.location.href = 'login.html';
+            return;
         }
 
-        localStorage.setItem('joinedOrgs', JSON.stringify(joinedOrgs));
+        const isJoined = joinButton.classList.contains('joined');
+        const action = isJoined ? 'leave' : 'join';
+
+        try {
+            const response = await fetch(API_BASE_URL + '/api/organizations/' + orgId + '/' + action, {
+                method: 'POST',
+                headers: { Authorization: 'Bearer ' + authToken }
+            });
+
+            if (response.ok) {
+                setJoinedState(!isJoined);
+            } else if (response.status === 401) {
+                // Token expired or invalid: log out and ask them to sign in again
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('authUser');
+                window.location.href = 'login.html';
+            } else {
+                console.error('Join/Leave failed with status', response.status);
+            }
+        } catch (error) {
+            console.error('Could not reach the server:', error);
+        }
+    });
+}
+
+// AUTH: Login + Register
+const loginForm = document.getElementById('login-form');
+const registerForm = document.getElementById('register-form');
+const authErrorMessage = document.getElementById('auth-error-message');
+const showRegisterLink = document.getElementById('show-register');
+const showLoginLink = document.getElementById('show-login');
+
+function showAuthError(message) {
+    authErrorMessage.textContent = message;
+    authErrorMessage.style.display = 'block';
+}
+
+function clearAuthError() {
+    authErrorMessage.style.display = 'none';
+}
+
+if (showRegisterLink && showLoginLink) {
+    showRegisterLink.addEventListener('click', function (event) {
+        event.preventDefault();
+        loginForm.style.display = 'none';
+        registerForm.style.display = 'block';
+        clearAuthError();
+    });
+
+    showLoginLink.addEventListener('click', function (event) {
+        event.preventDefault();
+        registerForm.style.display = 'none';
+        loginForm.style.display = 'block';
+        clearAuthError();
+    });
+}
+
+if (loginForm) {
+    loginForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        clearAuthError();
+
+        const email = loginForm.querySelector('[name="login-email"]').value.trim();
+        const password = loginForm.querySelector('[name="login-password"]').value;
+
+        try {
+            const response = await fetch(API_BASE_URL + '/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                showAuthError(data.error || 'Login failed.');
+                return;
+            }
+
+            localStorage.setItem('authToken', data.token);
+            localStorage.setItem('authUser', JSON.stringify(data.user));
+
+            window.location.href = 'dashboard.html';
+        } catch (error) {
+            showAuthError('Could not reach the server. Is the backend running?');
+        }
+    });
+}
+
+if (registerForm) {
+    registerForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        clearAuthError();
+
+        const name = registerForm.querySelector('[name="register-name"]').value.trim();
+        const email = registerForm.querySelector('[name="register-email"]').value.trim();
+        const password = registerForm.querySelector('[name="register-password"]').value;
+        const role = registerForm.querySelector('[name="register-role"]').value;
+
+        try {
+            const response = await fetch(API_BASE_URL + '/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password, role }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                showAuthError(data.error || 'Registration failed.');
+                return;
+            }
+
+            // Registered successfully
+            const loginResponse = await fetch(API_BASE_URL + '/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+            const loginData = await loginResponse.json();
+
+            localStorage.setItem('authToken', loginData.token);
+            localStorage.setItem('authUser', JSON.stringify(loginData.user));
+
+            window.location.href = 'dashboard.html';
+        } catch (error) {
+            showAuthError('Could not reach the server. Is the backend running?');
+        }
     });
 }
 
@@ -451,44 +576,72 @@ if (eventSearch && eventCategorySelect) {
     });
 }
 
-// DASHBOARD: "My Organizations" - from organizationsData,
-// filtered down to whichever IDs are saved in localStorage's joinedOrgs
+// DASHBOARD: "My Organizations" - fetched from the backend for the logged-in user
 const myOrganizationsList = document.getElementById('my-organizations-list');
 
 if (myOrganizationsList) {
-    const joinedOrgs = JSON.parse(localStorage.getItem('joinedOrgs')) || [];
     const noJoinedOrgsMessage = document.getElementById('no-joined-orgs-message');
+    const dashboardAuthToken = localStorage.getItem('authToken');
 
-    const myOrgs = organizationsData.filter(function (org) {
-        return joinedOrgs.includes(org.id);
-    });
-
-    myOrganizationsList.innerHTML = myOrgs.map(createOrganizationCardHTML).join('');
-    noJoinedOrgsMessage.style.display = myOrgs.length === 0 ? 'block' : 'none';
+    if (dashboardAuthToken) {
+        fetch(API_BASE_URL + '/api/users/me/organizations', {
+            headers: { Authorization: 'Bearer ' + dashboardAuthToken }
+        })
+            .then(function (response) {
+                if (response.status === 401) {
+                    // If token expired or invalid: sign out and go back to login
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('authUser');
+                    window.location.href = 'login.html';
+                    return null;
+                }
+                return response.json();
+            })
+            .then(function (myOrgs) {
+                if (!myOrgs) return;
+                myOrganizationsList.innerHTML = myOrgs.map(createOrganizationCardHTML).join('');
+                noJoinedOrgsMessage.style.display = myOrgs.length === 0 ? 'block' : 'none';
+            })
+            .catch(function (error) {
+                console.error('Could not load your organizations:', error);
+            });
+    }
 }
 
-// ADMIN: master data for Registration Requests
-const defaultAdminRequestsData = [
-    { id: "req-1", orgName: "Anime & Cosplay Society", categoryId: "arts", categoryLabel: "Arts and Design", submittedBy: "Karlo Dizon" },
-    { id: "req-2", orgName: "Basketball Varsity Club", categoryId: "sports", categoryLabel: "Sports", submittedBy: "Miguel Torres" }
-];
-
-let adminRequestsData = JSON.parse(localStorage.getItem('adminRequests')) || defaultAdminRequestsData;
-
-function saveAdminRequests() {
-    localStorage.setItem('adminRequests', JSON.stringify(adminRequestsData));
-}
-
+// ADMIN: registration requests + manage organizations
 const requestList = document.getElementById('request-list');
 const noRequestsMessage = document.getElementById('no-requests-message');
 const pendingCountEl = document.getElementById('pending-requests-count');
 const adminOrgList = document.getElementById('admin-org-list');
 
+// Helper: calls the backend with the admin's token attached
+// If the token is bad/expired (401), it should log out and go to the login page
+async function adminFetch(path, options) {
+    options = options || {};
+    options.headers = Object.assign(
+        { 'Authorization': 'Bearer ' + localStorage.getItem('authToken') },
+        options.headers || {}
+    );
+
+    const response = await fetch(API_BASE_URL + path, options);
+
+    if (response.status === 401) {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('authUser');
+        window.location.href = 'login.html';
+        throw new Error('Session expired');
+    }
+
+    const data = await response.json().catch(function () { return {}; });
+    if (!response.ok) throw new Error(data.error || 'Something went wrong');
+    return data;
+}
+
 function createRequestCardHTML(request) {
     return '<div class="request-card" data-id="' + request.id + '">' +
         '<div class="request-info">' +
-            '<p class="request-title">' + escapeHtml(request.orgName) + '</p>' +
-            '<p class="request-meta">' + request.categoryLabel + ' \u00b7 Submitted by ' + escapeHtml(request.submittedBy) + '</p>' +
+            '<p class="request-title">' + escapeHtml(request.name) + '</p>' +
+            '<p class="request-meta">' + getCategoryLabel(request.category) + ' \u00b7 Submitted by ' + escapeHtml(request.submittedBy || 'Unknown') + '</p>' +
         '</div>' +
         '<div class="request-actions">' +
             '<a href="#" class="button join-button request-approve">Approve</a>' +
@@ -500,74 +653,81 @@ function createRequestCardHTML(request) {
 function createAdminOrgListItemHTML(org) {
     return '<li data-id="' + org.id + '">' +
         '<div class="manage-item-main">' +
-            '<span>' + escapeHtml(org.name) + ' - ' + org.categoryLabel + '</span>' +
+            '<span>' + escapeHtml(org.name) + ' - ' + getCategoryLabel(org.category) + '</span>' +
             '<span class="manage-actions">' +
-                '<a href="' + org.link + '" class="manage-action">View</a>' +
+                '<a href="' + (org.link || 'organizations.html') + '" class="manage-action">View </a>' +
                 '<a href="#" class="manage-action manage-action-danger">Remove</a>' +
             '</span>' +
         '</div>' +
     '</li>';
 }
 
-function renderAdminRequests() {
-    if (!requestList) return;
-    requestList.innerHTML = adminRequestsData.map(createRequestCardHTML).join('');
-    if (pendingCountEl) pendingCountEl.textContent = adminRequestsData.length;
-    if (noRequestsMessage) noRequestsMessage.style.display = adminRequestsData.length === 0 ? 'block' : 'none';
+async function loadAdminRequests() {
+    const requests = await adminFetch('/api/admin/requests');
+    requestList.innerHTML = requests.map(createRequestCardHTML).join('');
+    if (pendingCountEl) pendingCountEl.textContent = requests.length;
+    if (noRequestsMessage) noRequestsMessage.style.display = requests.length === 0 ? 'block' : 'none';
 }
 
-function renderManageOrganizations() {
-    if (!adminOrgList) return;
-    adminOrgList.innerHTML = organizationsData.map(createAdminOrgListItemHTML).join('');
+async function loadAdminOrganizations() {
+    // The route is public so a simple fetch is used
+    const response = await fetch(API_BASE_URL + '/api/organizations');
+    const orgs = await response.json();
+    adminOrgList.innerHTML = orgs.map(createAdminOrgListItemHTML).join('');
 }
 
-renderAdminRequests();
-renderManageOrganizations();
+async function loadAdminStats() {
+    const stats = await adminFetch('/api/admin/stats');
 
-if (requestList) {
-    requestList.addEventListener('click', function (event) {
+    const orgsEl = document.getElementById('stat-organizations');
+    const usersEl = document.getElementById('stat-users');
+
+    if (orgsEl) orgsEl.textContent = stats.organizations;
+    if (usersEl) usersEl.textContent = stats.students;
+}
+
+// Only runs on the dashboard and only for admins (other roles would get a 403)
+let adminUser = null;
+try { adminUser = JSON.parse(localStorage.getItem('authUser')); } catch (e) {}
+
+if (requestList && adminOrgList && adminUser && adminUser.role === 'admin') {
+    loadAdminRequests().catch(function (error) { console.error(error); });
+    loadAdminOrganizations().catch(function (error) { console.error(error); });
+    loadAdminStats().catch(function (error) { console.error(error); });
+
+    requestList.addEventListener('click', async function (event) {
         const approveClicked = event.target.classList.contains('request-approve');
         const rejectClicked = event.target.classList.contains('request-reject');
         if (!approveClicked && !rejectClicked) return;
 
         event.preventDefault();
+        const requestId = event.target.closest('.request-card').dataset.id;
+        const action = approveClicked ? 'approve' : 'reject';
 
-        const card = event.target.closest('.request-card');
-        const requestId = card.dataset.id;
-        const request = adminRequestsData.find(function (r) { return r.id === requestId; });
-        if (!request) return;
-
-        if (approveClicked) {
-            organizationsData.push({
-                id: 'org-' + Date.now(),
-                name: request.orgName,
-                category: request.categoryId,
-                categoryLabel: request.categoryLabel,
-                description: 'Newly approved organization — description coming soon.',
-                photo: '',
-                link: 'organizations.html'
-            });
-            saveOrganizations();
-            renderManageOrganizations();
+        try {
+            await adminFetch('/api/admin/requests/' + requestId + '/' + action, { method: 'POST' });
+            await loadAdminRequests();
+            await loadAdminOrganizations();
+            await loadAdminStats();
+        } catch (error) {
+            alert(error.message);   // i.e., "An organization with this name already exists"
         }
-
-        adminRequestsData = adminRequestsData.filter(function (r) { return r.id !== requestId; });
-        saveAdminRequests();
-        renderAdminRequests();
     });
-}
 
-if (adminOrgList) {
-    adminOrgList.addEventListener('click', function (event) {
+    adminOrgList.addEventListener('click', async function (event) {
         if (!event.target.classList.contains('manage-action-danger')) return;
 
         event.preventDefault();
         const li = event.target.closest('li');
-        const orgId = li.dataset.id;
+        if (!confirm('Remove this organization? This cannot be undone.')) return;
 
-        organizationsData = organizationsData.filter(function (org) { return org.id !== orgId; });
-        saveOrganizations();
-        renderManageOrganizations();
+        try {
+            await adminFetch('/api/organizations/' + li.dataset.id, { method: 'DELETE' });
+            await loadAdminOrganizations();
+            await loadAdminStats();
+        } catch (error) {
+            alert(error.message);
+        }
     });
 }
 
@@ -946,4 +1106,28 @@ document.addEventListener('keydown', function (e) {
             }
         }
     }
-}); 
+});
+
+// ALL PAGES: header auth button (Log In/Log Out) to reflect login state
+const authButton = document.getElementById('auth-button');
+
+if (authButton) {
+    const authUserRaw = localStorage.getItem('authUser');
+
+    if (authUserRaw) {
+        const authUser = JSON.parse(authUserRaw);
+        authButton.textContent = 'Log Out (' + authUser.name + ')';
+
+        authButton.addEventListener('click', function () {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('authUser');
+            window.location.href = 'login.html';
+        });
+    } else {
+        authButton.textContent = 'Log In';
+
+        authButton.addEventListener('click', function () {
+            window.location.href = 'login.html';
+        });
+    }
+}
