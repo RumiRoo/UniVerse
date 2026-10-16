@@ -3188,7 +3188,14 @@ form textarea:focus {
     box-shadow: 0 4px 18px rgba(60, 30, 90, 0.08);
 }
 .auth-form > div + div { margin-top: 18px; }
-.auth-form h4 { margin: 0 0 6px; font-size: 0.95rem; }
+
+.auth-form label {
+    display: block;
+    margin: 0 0 6px;
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    font-weight: 600;
+}
 
 .auth-form input,
 .auth-form select {

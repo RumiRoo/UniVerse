@@ -15,6 +15,7 @@ async function fetchOrganizations() {
         organizationsData = [];
     }
     initOrganizationsPageUI();
+    initHomeFeaturedUI();
 }
 
 // Organization Cards: converts stored category value into displayed text in teh frontend
@@ -46,6 +47,29 @@ function createOrganizationCardHTML(org) {
             '<a class="org-link" href="' + link + '">View Organization</a>' +
         '</div>' +
     '</article>';
+}
+
+// HOME/LANDING PAGE: Featured Organizations (shows the first 2 organizations from the backend)
+function createFeaturedOrgHTML(org) {
+    const photo = org.photo || 'assets/no-image.svg';
+    const link = org.link || 'organizations.html';
+
+    return '<div class="feat-child">' +
+        '<div class="org-photo">' +
+            '<img class="org-photo" src="' + photo + '" alt="' + escapeHtml(org.name) + ' img">' +
+        '</div>' +
+        '<div class="org-details">' +
+            '<p class="org-title">' + escapeHtml(org.name) + '</p>' +
+            '<p class="org-desc">' + escapeHtml(org.description) + '</p>' +
+            '<a class="org-link" href="' + link + '">View More</a>' +
+        '</div>' +
+    '</div>';
+}
+
+function initHomeFeaturedUI() {
+    const container = document.querySelector('.home-featured-orgs-con');
+    if (!container) return;   // not on the home page, do nothing
+    container.innerHTML = organizationsData.slice(0, 2).map(createFeaturedOrgHTML).join('');
 }
 
 // ORGANIZATIONS PAGE: render + search/filter
@@ -468,13 +492,12 @@ if (registerForm) {
         const name = registerForm.querySelector('[name="register-name"]').value.trim();
         const email = registerForm.querySelector('[name="register-email"]').value.trim();
         const password = registerForm.querySelector('[name="register-password"]').value;
-        const role = registerForm.querySelector('[name="register-role"]').value;
 
         try {
             const response = await fetch(API_BASE_URL + '/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, password, role }),
+                body: JSON.stringify({ name, email, password }),
             });
 
             const data = await response.json();
@@ -497,7 +520,7 @@ if (registerForm) {
 
             window.location.href = 'dashboard.html';
         } catch (error) {
-            showAuthError('Could not reach the server. Is the backend running?');
+            showAuthError('Could not reach the server. Check if the backend running');
         }
     });
 }
