@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="style.css">
+    <title>Log In | UniVerse</title>
+</head>
+
+<body>
+
+    <header id="header">
+        <div class="header-left">
+            <div class="logo">
+                <img src="assets/logo2.svg" alt="UniVerse logo">
+                <span class="logo-text">
+                    <span class="uni">Uni</span><span class="verse">Verse</span>
+                </span>
+            </div>
+
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="organizations.html">Organizations</a>
+                <a href="events.html">Events</a>
+                <a href="announcements.html">Announcements</a>
+                <a href="dashboard.html">Dashboard</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <button class="button light-button" id="auth-button">Log In</button>
+        </div>
+    </header>
+
+    <main>
+
+        <section id="login-banner">
+            <h2 class="page-title">Welcome <span>Back</span></h2>
+            <p class="page-description">Log in to join organizations, manage events, and more.</p>
+        </section>
+
+        <div id="login-page">
+
+            <p id="auth-error-message" class="no-results" style="display: none;"></p>
+            <div class="demo-credentials" style="display: block; text-align: left;">
+                <strong>Demo accounts for testing:</strong><br>
+                Student: student@mmdc.edu / student123<br>
+                Officer: officer@mmdc.edu / officer123<br>
+                Admin: admin@mmdc.edu / admin123
+            </div>
+
+            <!--LOGIN FORM-->
+            <form id="login-form" class="auth-form">
+                <div><label for="login-email">Email</label><input type="email" id="login-email" name="login-email" placeholder="you@mmdc.edu" required></div>
+                <div><label for="login-password">Password</label><input type="password" id="login-password" name="login-password" placeholder="Enter your password" required></div>
+
+                <div class="edit-actions">
+                    <button class="join-button" type="submit">Log In</button>
+                </div>
+
+                <p class="auth-switch">
+                    Don't have an account? <a href="#" id="show-register">Register here</a>
+                </p>
+            </form>
+
+            <!--REGISTER FORM (hidden by default)-->
+            <form id="register-form" class="auth-form" style="display: none;">
+                <div><label for="register-name">Full Name</label><input type="text" id="register-name" name="register-name" placeholder="Enter your full name" required></div>
+                <div><label for="register-email">Email</label><input type="email" id="register-email" name="register-email" placeholder="you@mmdc.edu" required></div>
+                <div><label for="register-password">Password</label><input type="password" id="register-password" name="register-password" placeholder="Choose a password" required></div>
+
+                <div class="edit-actions">
+                    <button class="join-button" type="submit">Register</button>
+                </div>
+
+                <p class="auth-switch">
+                    Already have an account? <a href="#" id="show-login">Login here</a>
+                </p>
+            </form>
+
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="footer-content">
+
+            <div class="footer-brand">
+                <div class="logo">
+                    <span class="logo-text">
+                        <span class="uni">Uni</span><span class="verse">Verse</span>
+                    </span>
+                </div>
+                <p class="footer-tagline">
+                    Connecting MMDC students to organizations, events, and opportunities in one place.
+                </p>
+            </div>
+
+            <div class="footer-links">
+                <h4 class="footer-heading">Quick Links</h4>
+                <a href="index.html">Home</a>
+                <a href="organizations.html">Organizations</a>
+                <a href="events.html">Events</a>
+                <a href="announcements.html">Announcements</a>
+                <a href="dashboard.html">Dashboard</a>
+            </div>
+
+            <div class="footer-connect">
+                <h4 class="footer-heading">Connect With Us</h4>
+                <p class="footer-contact">universe@mmdc.mcl.edu.ph</p>
+                <div class="connect-links footer-social">
+                    <a class="connect-icon-link" href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook">
+                        <img src="assets/facebook.svg" alt="">
+                    </a>
+                    <a class="connect-icon-link" href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram">
+                        <img src="assets/instagram.svg" alt="">
+                    </a>
+                    <a class="connect-icon-link" href="https://tiktok.com" target="_blank" rel="noopener" aria-label="TikTok">
+                        <img src="assets/tiktok.svg" alt="">
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 UniVerse. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
