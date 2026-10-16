@@ -195,3 +195,147 @@ app.post('/api/requests', requireAuth(), async (req, res) => {
     });
     res.status(201).json(request);
 });
+
+// ANNOUNCEMENTS API
+// Public users can read announcements. Only officers and admins can create, edit, or delete them.
+function requireAnnouncementManager(req, res, next) {
+    requireAuth()(req, res, function () {
+        if (!['officer', 'admin'].includes(req.user.role)) {
+            return res.status(403).json({ error: 'Only officers and admins can manage announcements' });
+        }
+        next();
+    });
+}
+
+function normalizeAnnouncementContent(value) {
+    if (Array.isArray(value)) {
+        return value.map((part) => String(part || '').trim()).filter(Boolean).join('\n\n');
+    }
+    return String(value || '').trim();
+}
+
+function serializeAnnouncement(record) {
+    const publishedDate = new Date(record.createdAt).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        timeZone: 'UTC',
+    });
+    const orgId = record.organizationId || 'universe';
+    const orgName = record.organization ? record.organization.name : 'UniVerse';
+    return {
+        id: record.id,
+        title: record.title,
+        org: orgId,
+        organizationName: orgName,
+        organizationLink: record.organization ? (record.organization.link || 'organizations.html') : 'organizations.html',
+        authorName: record.author ? record.author.name : orgName,
+        postedDate: 'Posted on ' + publishedDate,
+        content: String(record.content).split(/\n\s*\n/).map((part) => part.trim()).filter(Boolean),
+        createdAt: record.createdAt,
+        updatedAt: record.updatedAt,
+    };
+}
+
+async function resolveAnnouncementOrganization(orgKey, res) {
+    if (!orgKey || orgKey === 'universe') return null;
+    const organization = await prisma.organization.findUnique({ where: { id: orgKey } });
+    if (!organization) {
+        res.status(400).json({ error: 'Selected organization does not exist' });
+        return undefined;
+    }
+    return organization.id;
+}
+
+app.get('/api/announcements', async (req, res) => {
+    try {
+        const records = await prisma.announcement.findMany({
+            include: { organization: true, author: true },
+            orderBy: { createdAt: 'desc' },
+        });
+        res.json(records.map(serializeAnnouncement));
+    } catch (error) {
+        console.error('Could not list announcements:', error);
+        res.status(500).json({ error: 'Could not load announcements' });
+    }
+});
+
+app.get('/api/announcements/:id', async (req, res) => {
+    try {
+        const record = await prisma.announcement.findUnique({
+            where: { id: req.params.id },
+            include: { organization: true, author: true },
+        });
+        if (!record) return res.status(404).json({ error: 'Announcement not found' });
+        res.json(serializeAnnouncement(record));
+    } catch (error) {
+        console.error('Could not get announcement:', error);
+        res.status(500).json({ error: 'Could not load announcement' });
+    }
+});
+
+app.post('/api/announcements', requireAnnouncementManager, async (req, res) => {
+    try {
+        const body = req.body || {};
+        const title = String(body.title || '').trim();
+        const content = normalizeAnnouncementContent(body.content);
+        const orgKey = String(body.org || 'universe').trim();
+
+        if (!title || !content) {
+            return res.status(400).json({ error: 'Announcement title and content are required' });
+        }
+
+        const organizationId = await resolveAnnouncementOrganization(orgKey, res);
+        if (organizationId === undefined) return;
+
+        const record = await prisma.announcement.create({
+            data: { title, content, organizationId, authorId: req.user.id },
+            include: { organization: true, author: true },
+        });
+        res.status(201).json(serializeAnnouncement(record));
+    } catch (error) {
+        console.error('Could not create announcement:', error);
+        res.status(500).json({ error: 'Could not create announcement' });
+    }
+});
+
+app.put('/api/announcements/:id', requireAnnouncementManager, async (req, res) => {
+    try {
+        const existing = await prisma.announcement.findUnique({ where: { id: req.params.id } });
+        if (!existing) return res.status(404).json({ error: 'Announcement not found' });
+
+        const body = req.body || {};
+        const title = String(body.title || '').trim();
+        const content = normalizeAnnouncementContent(body.content);
+        const orgKey = String(body.org || 'universe').trim();
+        if (!title || !content) {
+            return res.status(400).json({ error: 'Announcement title and content are required' });
+        }
+
+        const organizationId = await resolveAnnouncementOrganization(orgKey, res);
+        if (organizationId === undefined) return;
+
+        const record = await prisma.announcement.update({
+            where: { id: req.params.id },
+            data: { title, content, organizationId },
+            include: { organization: true, author: true },
+        });
+        res.json(serializeAnnouncement(record));
+    } catch (error) {
+        console.error('Could not update announcement:', error);
+        res.status(500).json({ error: 'Could not update announcement' });
+    }
+});
+
+app.delete('/api/announcements/:id', requireAnnouncementManager, async (req, res) => {
+    try {
+        const existing = await prisma.announcement.findUnique({ where: { id: req.params.id } });
+        if (!existing) return res.status(404).json({ error: 'Announcement not found' });
+
+        await prisma.announcement.delete({ where: { id: req.params.id } });
+        res.json({ message: 'Announcement deleted' });
+    } catch (error) {
+        console.error('Could not delete announcement:', error);
+        res.status(500).json({ error: 'Could not delete announcement' });
+    }
+});

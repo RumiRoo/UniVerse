@@ -16,6 +16,8 @@ async function fetchOrganizations() {
     }
     initOrganizationsPageUI();
     initHomeFeaturedUI();
+    refreshAnnouncementOrgOptions();
+    renderManageAnnouncements();
 }
 
 // Organization Cards: converts stored category value into displayed text in teh frontend
@@ -125,11 +127,25 @@ fetchOrganizations();
 // Early declaration because the Officer dashboard section below needs
 // announcementsData to already exist the moment the page loads
 function getOrgDisplayInfo(orgId) {
-    if (orgId === 'universe') {
-        return { name: 'UniVerse', link: 'organizations.html' };
-    }
+    const fallbackOrganizations = {
+        universe: { name: 'UniVerse', link: 'organizations.html' },
+        'digital-fort': { name: 'The Digital Fort', link: 'digital-fort.html' },
+        'disenyo-malaya': { name: 'Disenyo Malaya', link: 'disenyo-malaya.html' },
+        'scholars-club': { name: 'Scholars Club', link: 'scholars-club.html' }
+    };
+    if (fallbackOrganizations[orgId]) return fallbackOrganizations[orgId];
     const org = organizationsData.find(function (o) { return o.id === orgId; });
-    return org ? { name: org.name, link: org.link } : { name: 'Unknown Organization', link: '#' };
+    if (org) return { name: org.name, link: org.link || 'organizations.html' };
+
+    // A public announcement response may contain the organization's display name
+    // before the separate organizations request has completed.
+    const matchingAnnouncement = typeof announcementsData !== 'undefined'
+        ? announcementsData.find(function (item) { return item.org === orgId && item.organizationName; })
+        : null;
+    if (matchingAnnouncement) {
+        return { name: matchingAnnouncement.organizationName, link: matchingAnnouncement.organizationLink || 'organizations.html' };
+    }
+    return { name: 'Unknown Organization', link: 'organizations.html' };
 }
 
 // DASHBOARD: role-based access control (RBAC)
@@ -192,74 +208,132 @@ if (quickActionLabels.length > 0) {
     });
 }
 
-// ANNOUNCEMENTS: one shared data source for the public pages AND the Officer dashboard
+// ANNOUNCEMENTS: use the backend as the shared source of truth.
 const defaultAnnouncementsData = [
     {
-        id: "org-registrations",
-        org: "universe",
-        title: "Organization Registrations Are Now Open!",
-        postedDate: "Posted on Sept. 6, 2026",
+        id: 'org-registrations',
+        org: 'universe',
+        title: 'Organization Registrations Are Now Open!',
+        postedDate: 'Posted on Sep 6, 2026',
         content: [
-            "Students may now browse and join registered organizations through UniVerse!",
-            "Explore the available student organizations, learn more about their activities and events, and discover opportunities to get involved in the university community.",
-            "Whether you're interested in journalism, arts and design, academics, or other student activities, UniVerse makes it easier to discover organizations that match your interests."
+            'Students may now browse and join registered organizations through UniVerse!',
+            'Explore the available student organizations, learn more about their activities and events, and discover opportunities to get involved in the university community.',
+            'Whether you are interested in journalism, arts and design, academics, or other student activities, UniVerse makes it easier to discover organizations that match your interests.'
         ]
     },
     {
-        id: "news-writing-workshop",
-        org: "digital-fort",
-        title: "News Writing Workshop",
-        postedDate: "Posted on Sept. 12, 2026",
+        id: 'news-writing-workshop',
+        org: 'digital-fort',
+        title: 'News Writing Workshop',
+        postedDate: 'Posted on Sep 12, 2026',
         content: [
-            "The Digital Fort will be holding a writing workshop for students interested in journalism, and content and news writing.",
-            "The session will cover the basics of campus reporting, interviewing techniques, and editorial writing. All beginners are welcome.",
-            "Slots are limited so register early to secure a spot!"
+            'The Digital Fort will be holding a writing workshop for students interested in journalism, and content and news writing.',
+            'The session will cover the basics of campus reporting, interviewing techniques, and editorial writing. All beginners are welcome.',
+            'Slots are limited so register early to secure a spot!'
         ]
     },
     {
-        id: "design-exhibition",
-        org: "disenyo-malaya",
-        title: "Design Exhibition Submissions Are Open!",
-        postedDate: "Posted on Sept. 7, 2026",
+        id: 'design-exhibition',
+        org: 'disenyo-malaya',
+        title: 'Design Exhibition Submissions Are Open!',
+        postedDate: 'Posted on Sep 7, 2026',
         content: [
-            "Calling all creatives! Students may submit their artwork for a chance to showcase it on the upcoming campus design exhibition on September 18, Friday.",
-            "The theme is \"Digital Consumption\". Interpret and present it however you like, whether through illustration, UI/UX mockups, or mixed media.",
-            "Submissions are open to all students, regardless of course or year level."
+            'Calling all creatives! Students may submit their artwork for a chance to showcase it on the upcoming campus design exhibition on September 18, Friday.',
+            'The theme is "Digital Consumption". Interpret and present it however you like, whether through illustration, UI/UX mockups, or mixed media.',
+            'Submissions are open to all students, regardless of course or year level.'
         ]
     },
     {
-        id: "leadership-workshop",
-        org: "scholars-club",
-        title: "Leadership Workshop Registration",
-        postedDate: "Posted on Sept. 6, 2026",
+        id: 'leadership-workshop',
+        org: 'scholars-club',
+        title: 'Leadership Workshop Registration',
+        postedDate: 'Posted on Sep 6, 2026',
         content: [
-            "Registration is now open on Scholars Club's webpage for the upcoming leadership development workshop.",
-            "The workshop covers essential skills for scholars taking on peer mentor and leadership roles across the university.",
-            "Do take note that seats are limited to keep the session hands-on and interactive."
+            'Registration is now open on Scholars Club\'s webpage for the upcoming leadership development workshop.',
+            'The workshop covers essential skills for scholars taking on peer mentor and leadership roles across the university.',
+            'Do take note that seats are limited to keep the session hands-on and interactive.'
         ]
     }
 ];
 
-let announcementsData = JSON.parse(localStorage.getItem('announcements')) || defaultAnnouncementsData;
+function normalizeAnnouncementRecord(record) {
+    const content = Array.isArray(record.content)
+        ? record.content.map(function (part) { return String(part || '').trim(); }).filter(Boolean)
+        : String(record.content || '').split(/\n\s*\n/).map(function (part) { return part.trim(); }).filter(Boolean);
 
-function saveAnnouncements() {
-    localStorage.setItem('announcements', JSON.stringify(announcementsData));
+    return {
+        id: String(record.id),
+        org: record.org || record.organizationId || 'universe',
+        organizationName: record.organizationName || null,
+        organizationLink: record.organizationLink || null,
+        title: String(record.title || ''),
+        postedDate: record.postedDate || 'Posted on ' + new Date(record.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        content: content.length ? content : ['']
+    };
 }
 
-// Public listing page: render + search/filter
+let announcementsData = defaultAnnouncementsData.map(normalizeAnnouncementRecord);
+
+async function loadAnnouncementsFromAPI() {
+    try {
+        const response = await fetch(API_BASE_URL + '/api/announcements');
+        if (!response.ok) throw new Error('Announcements API returned ' + response.status);
+        const records = await response.json();
+        announcementsData = records.map(normalizeAnnouncementRecord);
+    } catch (error) {
+        console.error('Could not load announcements from the server. Using demo announcements for display:', error);
+        announcementsData = defaultAnnouncementsData.map(normalizeAnnouncementRecord);
+    }
+    refreshAnnouncementOrgOptions();
+    return announcementsData;
+}
+
+const announcementsLoaded = loadAnnouncementsFromAPI();
+
+function refreshAnnouncementOrgOptions() {
+    const organizations = [
+        { id: 'universe', name: 'UniVerse' }
+    ].concat(organizationsData.map(function (org) {
+        return { id: org.id, name: org.name };
+    }));
+
+    const uniqueOrganizations = organizations.filter(function (org, index, list) {
+        return list.findIndex(function (candidate) { return candidate.id === org.id; }) === index;
+    });
+
+    const publicSelect = document.getElementById('announcement-organization');
+    if (publicSelect) {
+        const previousValue = publicSelect.value || 'all';
+        const publicOptions = [{ id: 'all', name: 'All Organizations' }].concat(uniqueOrganizations);
+        publicSelect.innerHTML = publicOptions.map(function (org) {
+            return '<option value="' + escapeHtml(org.id) + '">' + escapeHtml(org.name) + '</option>';
+        }).join('');
+        publicSelect.value = publicOptions.some(function (org) { return org.id === previousValue; }) ? previousValue : 'all';
+    }
+
+    const dashboardSelect = document.querySelector('#panel-new-announce select[name="announce-org"]');
+    if (dashboardSelect) {
+        const previousDashboardValue = dashboardSelect.value || 'universe';
+        dashboardSelect.innerHTML = uniqueOrganizations.map(function (org) {
+            return '<option value="' + escapeHtml(org.id) + '">' + escapeHtml(org.name) + '</option>';
+        }).join('');
+        dashboardSelect.value = uniqueOrganizations.some(function (org) { return org.id === previousDashboardValue; }) ? previousDashboardValue : 'universe';
+    }
+}
+
+// Public listing page: render, search, and filter.
 function createAnnouncementCardHTML(announcement) {
     const orgInfo = getOrgDisplayInfo(announcement.org);
-    const shortDescription = announcement.content[0];
+    const shortDescription = announcement.content[0] || '';
+    const detailUrl = 'announcement-details.html?id=' + encodeURIComponent(announcement.id);
 
-    return '<article class="announcement-card" data-id="' + announcement.id + '" data-org="' + announcement.org + '">' +
+    return '<article class="announcement-card" data-id="' + escapeHtml(announcement.id) + '" data-org="' + escapeHtml(announcement.org) + '">' +
         '<div class="announcement-body">' +
-            '<p class="announcement-category">' + orgInfo.name.toUpperCase() + '</p>' +
-            '<h3 class="announcement-title">' +
-                '<a href="announcement-details.html?id=' + announcement.id + '">' + announcement.title + '</a>' +
-            '</h3>' +
-            '<p class="announcement-date">' + announcement.postedDate + '</p>' +
-            '<p class="announcement-description">' + shortDescription + '</p>' +
-            '<a class="announcement-link" href="announcement-details.html?id=' + announcement.id + '">Read Announcement</a>' +
+            '<p class="announcement-category">' + escapeHtml(orgInfo.name.toUpperCase()) + '</p>' +
+            '<h3 class="announcement-title"><a href="' + detailUrl + '">' + escapeHtml(announcement.title) + '</a></h3>' +
+            '<p class="announcement-date">' + escapeHtml(announcement.postedDate) + '</p>' +
+            '<p class="announcement-description">' + escapeHtml(shortDescription) + '</p>' +
+            '<a class="announcement-link" href="' + detailUrl + '">Read Announcement</a>' +
         '</div>' +
     '</article>';
 }
@@ -270,10 +344,11 @@ const announcementsListEl = document.getElementById('announcements-list');
 const noAnnouncementsMessage = document.getElementById('no-announcements-message');
 
 if (announcementSearchInput && announcementOrgSelect && announcementsListEl) {
-
     function renderAnnouncements(announcementsToShow) {
         announcementsListEl.innerHTML = announcementsToShow.map(createAnnouncementCardHTML).join('');
-        noAnnouncementsMessage.style.display = announcementsToShow.length === 0 ? 'block' : 'none';
+        if (noAnnouncementsMessage) {
+            noAnnouncementsMessage.style.display = announcementsToShow.length === 0 ? 'block' : 'none';
+        }
     }
 
     function applyAnnouncementFilters() {
@@ -282,78 +357,95 @@ if (announcementSearchInput && announcementOrgSelect && announcementsListEl) {
 
         const filtered = announcementsData.filter(function (announcement) {
             const orgInfo = getOrgDisplayInfo(announcement.org);
-            const matchesSearch =
-                announcement.title.toLowerCase().includes(searchTerm) ||
-                announcement.content[0].toLowerCase().includes(searchTerm) ||
+            const searchableContent = announcement.content.join(' ').toLowerCase();
+            const matchesSearch = announcement.title.toLowerCase().includes(searchTerm) ||
+                searchableContent.includes(searchTerm) ||
                 orgInfo.name.toLowerCase().includes(searchTerm);
-
             const matchesOrg = selectedOrg === 'all' || announcement.org === selectedOrg;
-
             return matchesSearch && matchesOrg;
         });
 
         renderAnnouncements(filtered);
     }
 
-    // Shows every announcement on first load
-    renderAnnouncements(announcementsData);
-
+    announcementsLoaded.then(applyAnnouncementFilters);
     announcementSearchInput.addEventListener('input', applyAnnouncementFilters);
     announcementOrgSelect.addEventListener('change', applyAnnouncementFilters);
 
-    announcementSearchInput.closest('form').addEventListener('submit', function (event) {
-        event.preventDefault();
-        applyAnnouncementFilters();
-    });
+    const announcementFilterForm = announcementSearchInput.closest('form');
+    if (announcementFilterForm) {
+        announcementFilterForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            applyAnnouncementFilters();
+        });
+    }
 }
 
-// Detail page: reads ?id= from the URL and populates the page from the shared data
-const announcementDetailArticle = document.querySelector('.announcement-detail');
+// Homepage: show the latest two announcements and include their IDs in detail links.
+function initHomeRecentAnnouncements() {
+    const container = document.querySelector('.home-recent-announce-con');
+    if (!container) return;
 
-if (announcementDetailArticle) {
-    const params = new URLSearchParams(window.location.search);
-    const requestedId = params.get('id');
-
-    const announcement = announcementsData.find(function (item) {
-        return item.id === requestedId;
-    });
-
-    if (announcement) {
+    container.innerHTML = announcementsData.slice(0, 2).map(function (announcement) {
+        const detailUrl = 'announcement-details.html?id=' + encodeURIComponent(announcement.id);
         const orgInfo = getOrgDisplayInfo(announcement.org);
+        return '<a href="' + detailUrl + '">' +
+            '<div class="recent-ann">' +
+                '<div class="announce-header">' +
+                    '<p class="announce-title">' + escapeHtml(announcement.title) + '</p>' +
+                    '<p class="announce-date">' + escapeHtml(announcement.postedDate.replace(/^Posted on /, '')) + '</p>' +
+                '</div>' +
+                '<p class="announce-desc">' + escapeHtml(announcement.content[0] || '') + '</p>' +
+            '</div>' +
+        '</a>';
+    }).join('');
+}
+announcementsLoaded.then(initHomeRecentAnnouncements);
 
-        document.querySelector('.announcement-label').textContent = orgInfo.name.toUpperCase();
-        document.querySelector('.announcement-detail-title').textContent = announcement.title;
+// Detail page: load the requested announcement by its ?id= query parameter.
+const announcementDetailArticle = document.querySelector('.announcement-detail');
+if (announcementDetailArticle) {
+    announcementsLoaded.then(function () {
+        const params = new URLSearchParams(window.location.search);
+        const requestedId = params.get('id');
+        const announcement = announcementsData.find(function (item) { return item.id === requestedId; });
 
+        const label = document.querySelector('.announcement-label');
+        const title = document.querySelector('.announcement-detail-title');
+        const meta = document.querySelector('.announcement-meta');
         const metaSpans = document.querySelectorAll('.announcement-meta span');
-        metaSpans[0].textContent = announcement.postedDate;
-        metaSpans[1].textContent = 'By ' + orgInfo.name;
-
         const contentContainer = document.querySelector('.announcement-detail-content');
-        contentContainer.innerHTML = '';
 
-        announcement.content.forEach(function (paragraphText) {
-            const p = document.createElement('p');
-            p.textContent = paragraphText;
-            contentContainer.appendChild(p);
-        });
+        if (announcement) {
+            const orgInfo = getOrgDisplayInfo(announcement.org);
+            label.textContent = orgInfo.name.toUpperCase();
+            title.textContent = announcement.title;
+            meta.style.display = '';
+            metaSpans[0].textContent = announcement.postedDate;
+            metaSpans[1].textContent = 'Posted by ' + orgInfo.name;
+            contentContainer.replaceChildren();
 
-        const linkParagraph = document.createElement('p');
-        linkParagraph.textContent = 'Visit ';
-        const link = document.createElement('a');
-        link.href = orgInfo.link;
-        link.textContent = orgInfo.name;
-        linkParagraph.appendChild(link);
-        linkParagraph.appendChild(document.createTextNode(' to learn more.'));
-        contentContainer.appendChild(linkParagraph);
+            announcement.content.forEach(function (paragraphText) {
+                const paragraph = document.createElement('p');
+                paragraph.textContent = paragraphText;
+                contentContainer.appendChild(paragraph);
+            });
 
-    } else {
-        document.querySelector('.announcement-label').textContent = 'ANNOUNCEMENT';
-        document.querySelector('.announcement-detail-title').textContent = 'Announcement Not Found';
-        document.querySelector('.announcement-meta').style.display = 'none';
-
-        const contentContainer = document.querySelector('.announcement-detail-content');
-        contentContainer.innerHTML = '<p>We couldn\'t find the announcement you were looking for. It may have been removed or the link may be incorrect.</p>';
-    }
+            const linkParagraph = document.createElement('p');
+            linkParagraph.appendChild(document.createTextNode('Visit '));
+            const link = document.createElement('a');
+            link.href = orgInfo.link;
+            link.textContent = orgInfo.name;
+            linkParagraph.appendChild(link);
+            linkParagraph.appendChild(document.createTextNode(' to learn more.'));
+            contentContainer.appendChild(linkParagraph);
+        } else {
+            label.textContent = 'ANNOUNCEMENT';
+            title.textContent = 'Announcement Not Found';
+            meta.style.display = 'none';
+            contentContainer.innerHTML = '<p>We couldn\'t find the announcement you were looking for. It may have been removed or the link may be incorrect.</p>';
+        }
+    });
 }
 
 // Join + Leave orgs
@@ -884,22 +976,27 @@ function createEventListItemHTML(eventItem) {
 }
 
 function createAnnouncementListItemHTML(announcement) {
-    const orgOptions = ['universe', 'digital-fort', 'disenyo-malaya', 'scholars-club'].map(function (orgId) {
+    const orgIds = ['universe'].concat(organizationsData.map(function (org) { return org.id; }));
+    if (!orgIds.includes(announcement.org)) orgIds.push(announcement.org);
+    const orgOptions = Array.from(new Set(orgIds)).map(function (orgId) {
         const isSelected = announcement.org === orgId ? ' selected' : '';
-        return '<option value="' + orgId + '"' + isSelected + '>' + getOrgDisplayInfo(orgId).name + '</option>';
+        return '<option value="' + escapeHtml(orgId) + '"' + isSelected + '>' + escapeHtml(getOrgDisplayInfo(orgId).name) + '</option>';
     }).join('');
 
-    return '<li data-id="' + announcement.id + '">' +
+    return '<li data-id="' + escapeHtml(announcement.id) + '">' +
         '<div class="manage-item-main has-date">' +
             '<h4>' + escapeHtml(announcement.title) + '</h4>' +
-            '<p class="announcement-meta-date">' + announcement.postedDate + '</p>' +
-            '<label tabindex="0" class="manage-action"><input type="checkbox" class="edit-toggle">Edit</label>' +
+            '<p class="announcement-meta-date">' + escapeHtml(announcement.postedDate) + '</p>' +
+            '<span class="manage-actions">' +
+                '<label tabindex="0" class="manage-action"><input type="checkbox" class="edit-toggle">Edit</label>' +
+                '<button type="button" class="cancel-button delete-announcement">Delete</button>' +
+            '</span>' +
         '</div>' +
         '<div class="panel-edit-event quick-act-panel">' +
             '<form>' +
-                '<div><h4>Announcement Title</h4><input type="text" name="announce-name" value="' + escapeHtml(announcement.title) + '"></div>' +
+                '<div><h4>Announcement Title</h4><input type="text" name="announce-name" value="' + escapeHtml(announcement.title) + '" required></div>' +
                 '<div><h4>Posted By</h4><select name="announce-org">' + orgOptions + '</select></div>' +
-                '<div><h4>Announcement Description</h4><textarea name="announce-body">' + escapeHtml(announcement.content.join('\n\n')) + '</textarea></div>' +
+                '<div><h4>Announcement Description</h4><textarea name="announce-body" required>' + escapeHtml(announcement.content.join('\n\n')) + '</textarea></div>' +
                 '<div class="edit-actions">' +
                     '<button class="join-button" type="submit">Save Changes</button>' +
                     '<button class="cancel-button" type="button">Cancel</button>' +
@@ -924,7 +1021,7 @@ function renderManageAnnouncements() {
 }
 
 renderManageEvents();
-renderManageAnnouncements();
+announcementsLoaded.then(renderManageAnnouncements);
 
 // Helpers: reads a form's current state back into a plain object
 function readSchedulesFromForm(formEl) {
@@ -986,34 +1083,86 @@ if (newEventForm) {
     });
 }
 
-// Submit New Announcement
+// Authenticated API helper for announcement create/update/delete.
+async function announcementApiRequest(path, options) {
+    options = options || {};
+    const headers = Object.assign({}, options.headers || {});
+    if (options.body !== undefined) headers['Content-Type'] = 'application/json';
+
+    const token = localStorage.getItem('authToken');
+    if (token) headers.Authorization = 'Bearer ' + token;
+
+    const response = await fetch(API_BASE_URL + path, Object.assign({}, options, { headers }));
+    const data = await response.json().catch(function () { return {}; });
+
+    if (!response.ok) {
+        throw new Error(data.error || 'Announcement request failed (' + response.status + ')');
+    }
+    return data;
+}
+
+function announcementFormPayload(form) {
+    const bodyText = form.querySelector('textarea[name="announce-body"]').value.trim();
+    return {
+        title: form.querySelector('input[name="announce-name"]').value.trim(),
+        org: form.querySelector('select[name="announce-org"]').value,
+        content: bodyText.split(/\n{2,}/).map(function (paragraph) { return paragraph.trim(); }).filter(Boolean)
+    };
+}
+
+// Submit New Announcement: save it to the database, not only the current browser.
 const newAnnounceForm = document.querySelector('#panel-new-announce form');
-
 if (newAnnounceForm) {
-    newAnnounceForm.addEventListener('submit', function (event) {
+    newAnnounceForm.addEventListener('submit', async function (event) {
         event.preventDefault();
+        await announcementsLoaded;
 
-        const announceName = newAnnounceForm.querySelector('input[name="announce-name"]').value.trim();
-        if (announceName === '') return;
+        const payload = announcementFormPayload(newAnnounceForm);
+        if (!payload.title || payload.content.length === 0) {
+            alert('Please enter an announcement title and description.');
+            return;
+        }
 
-        const bodyText = newAnnounceForm.querySelector('textarea[name="announce-body"]').value.trim();
+        try {
+            const created = await announcementApiRequest('/api/announcements', {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+            announcementsData.unshift(normalizeAnnouncementRecord(created));
+            renderManageAnnouncements();
+            newAnnounceForm.reset();
+            alert('Announcement published successfully.');
+        } catch (error) {
+            alert(error.message + '\nMake sure you are logged in as an officer or admin and that the backend is running.');
+        }
+    });
+}
 
-        announcementsData.push({
-            id: 'announce-' + Date.now(),
-            org: newAnnounceForm.querySelector('select[name="announce-org"]').value,
-            title: announceName,
-            postedDate: todayFormatted(),
-            content: bodyText.split(/\n{2,}/).map(function (p) { return p.trim(); }).filter(Boolean)
-        });
+// Delete announcements from the database.
+if (manageAnnouncementsList) {
+    manageAnnouncementsList.addEventListener('click', async function (event) {
+        const deleteButton = event.target.closest('.delete-announcement');
+        if (!deleteButton) return;
 
-        saveAnnouncements();
-        renderManageAnnouncements();
-        newAnnounceForm.reset();
+        const listItem = deleteButton.closest('li[data-id]');
+        if (!listItem) return;
+        if (!confirm('Delete this announcement? This cannot be undone.')) return;
+
+        try {
+            await announcementApiRequest('/api/announcements/' + encodeURIComponent(listItem.dataset.id), {
+                method: 'DELETE'
+            });
+            announcementsData = announcementsData.filter(function (item) { return item.id !== listItem.dataset.id; });
+            renderManageAnnouncements();
+            alert('Announcement deleted.');
+        } catch (error) {
+            alert(error.message);
+        }
     });
 }
 
 // Save Changes: works for both Events and Announcements edit panels
-document.addEventListener('submit', function (event) {
+document.addEventListener('submit', async function (event) {
     const form = event.target;
     if (!form.closest('.panel-edit-event')) return;
 
@@ -1040,14 +1189,24 @@ document.addEventListener('submit', function (event) {
         const announcementItem = announcementsData.find(function (item) { return item.id === itemId; });
         if (!announcementItem) return;
 
-        announcementItem.title = form.querySelector('input[name="announce-name"]').value.trim();
-        announcementItem.org = form.querySelector('select[name="announce-org"]').value;
+        const payload = announcementFormPayload(form);
+        if (!payload.title || payload.content.length === 0) {
+            alert('Please enter an announcement title and description.');
+            return;
+        }
 
-        const bodyText = form.querySelector('textarea[name="announce-body"]').value.trim();
-        announcementItem.content = bodyText.split(/\n{2,}/).map(function (p) { return p.trim(); }).filter(Boolean);
-
-        saveAnnouncements();
-        renderManageAnnouncements();
+        try {
+            const updated = await announcementApiRequest('/api/announcements/' + encodeURIComponent(itemId), {
+                method: 'PUT',
+                body: JSON.stringify(payload)
+            });
+            const updatedIndex = announcementsData.findIndex(function (item) { return item.id === itemId; });
+            if (updatedIndex !== -1) announcementsData[updatedIndex] = normalizeAnnouncementRecord(updated);
+            renderManageAnnouncements();
+            alert('Announcement updated successfully.');
+        } catch (error) {
+            alert(error.message);
+        }
     }
 });
 

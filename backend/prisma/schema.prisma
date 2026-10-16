@@ -21,6 +21,7 @@ model Organization {
   link        String?
   createdAt   DateTime @default(now())
   members     User[]   @relation("Membership")
+  announcements Announcement[]
 }
 
 model User {
@@ -31,6 +32,7 @@ model User {
   role      String
   createdAt DateTime       @default(now())
   organizations Organization[] @relation("Membership")
+  announcements Announcement[]
 }
 
 model OrganizationRequest {
@@ -40,4 +42,20 @@ model OrganizationRequest {
   description String
   submittedBy String?
   createdAt   DateTime @default(now())
+}
+
+
+model Announcement {
+  id             String       @id @default(uuid())
+  title          String
+  content        String
+  organizationId String?
+  authorId       String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  author         User?         @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId])
+  @@index([authorId])
 }
