@@ -142,6 +142,17 @@
                                         <h4>Event Description</h4>
                                         <textarea name="event-description" placeholder="Enter event description..."></textarea>
                                     </div>
+                                    <div><h4>Event Status</h4>
+                                        <select name="event-status">
+                                            <option value="Upcoming" selected>Upcoming</option>
+                                            <option value="Ongoing">Ongoing</option>
+                                            <option value="Finished">Finished</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <h4>Event Location</h4>
+                                        <input type="text" name="event-location" placeholder="Enter event location...">
+                                    </div>
                                     <div class="inline-section">
                                         <div class="inline-part">
                                             <h4>Start Date</h4>
@@ -151,11 +162,21 @@
                                             <h4>End Date</h4>
                                             <input type="date" name="event-date-end" >
                                         </div>
+                                    </div>
+                                    <div>
+                                        <h4>Event Photo URL</h4>
+                                        <input type="text" name="event-photoUrl" placeholder="Enter event phoyo URL...">
                                     </div>    
                                     <div>
                                         <h4>Select Involved Organizations</h4>
                                         <div class="org-checkbox-grid" id="new-event-org-checkboxes">
                                             <!--script.js, rendered from organizationsData-->
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4>Select Categories</h4>
+                                        <div class="cat-checkbox-grid" id="new-event-cat-checkboxes">
+                                            <!-- rendered from script.js-->
                                         </div>
                                     </div>
                                     <div class="event-programme-section">
@@ -194,7 +215,19 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>                    
+                                    </div>  
+                                    <div class="event-gallery-section">
+                                        <div class="header"><h4>Gallery</h4><div tabindex="0" class="add-photo">Add Photo</div></div>
+                                        <div class="gallery">
+                                            <div class="photo" data-id="' + (photo.id || '') + '">
+                                                <div tabindex="0" class="remove-photo">✕ &nbsp; Remove </div>
+                                                <div><h5>Photo URL</h5>
+                                                    <input type="text" name="photo-url" placeholder="Enter photo URL or asset path..."></div>
+                                                <div><h5>Caption</h5>
+                                                    <input type="text" name="photo-caption" placeholder="Enter photo caption..."></div>
+                                            </div>
+                                        </div>
+                                    </div>                  
                                     <button class="join-button" type="submit">Submit New Event</button>
                                 </form>
                             </div>

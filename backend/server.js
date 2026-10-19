@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const { PrismaClient } = require('./generated/prisma');
 const { PrismaLibSql } = require('@prisma/adapter-libsql');
+const { nanoid } = require('nanoid');
 
 const app = express();
 app.use(express.json());
@@ -339,3 +340,259 @@ app.delete('/api/announcements/:id', requireAnnouncementManager, async (req, res
         res.status(500).json({ error: 'Could not delete announcement' });
     }
 });
+
+
+//fetch categories
+app.get('/api/categories', async (req, res) => {
+    try {
+        const categories = await prisma.category.findMany();
+        res.json(categories);
+    } catch (error) {
+        console.error("Error fetching categories:", error);
+        res.status(500).json({ error: "Failed to fetch categories" });
+    }
+});
+
+
+//fetch events for events.html
+app.get('/api/events', async (req, res) => {
+    try {
+        const events = await prisma.event.findMany({
+            include: {
+                categories: true,
+                galleryPhotos: true,
+                orgsRelated: true,
+                schedules: true
+            },
+            orderBy: { createdAt: 'desc' }
+        });
+        res.json(events);
+    } catch (error) {
+        console.error('Error fetching events:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// fetch a specific event's details for event-details.html
+app.get('/api/events/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const event = await prisma.event.findUnique({
+            where: { id },
+            include: {
+                categories: true,
+                schedules: true,
+                galleryPhotos: true,
+                orgsRelated: true
+            }
+        });
+
+        if (!event) {
+            return res.status(404).json({ error: 'Event not found' });
+        }
+
+        res.json(event);
+    } catch (error) {
+        console.error('Error fetching event details:', error);
+        res.status(500).json({ error: 'Could not reach the server' });
+    }
+});
+
+// for updating an event
+app.put('/api/events/:id', async (req, res) => {
+    try {
+        const eventId = req.params.id;
+        const { name, description, status, location, startDate, endDate, eventPhotoUrl, orgs, categories, schedules, galleryPhotos } = req.body;
+
+        const updatedEvent = await prisma.$transaction(async (tx) => {
+            
+            const existingSchedules = await tx.eventSchedule.findMany({ where: { eventId }, select: { id: true } });
+            const incomingScheduleIds = (schedules || []).filter(s => s.id).map(s => s.id);
+            const schedulesToDelete = existingSchedules.filter(es => !incomingScheduleIds.includes(es.id)).map(es => es.id);
+
+            if (schedulesToDelete.length > 0) {
+                await tx.eventSchedule.deleteMany({ where: { id: { in: schedulesToDelete } } });
+            }
+
+            for (const s of (schedules || [])) {
+                const scheduleDatePart = s.date ? s.date.split('T')[0] : new Date().toISOString().split('T')[0];
+                const startTimeISO = s.startTime ? new Date(`${scheduleDatePart}T${s.startTime}:00.000Z`) : null;
+                const endTimeISO = s.endTime ? new Date(`${scheduleDatePart}T${s.endTime}:00.000Z`) : null;
+
+                if (s.id) {
+                    await tx.eventSchedule.update({
+                        where: { id: s.id },
+                        data: {
+                            title: s.title,
+                            date: s.date ? new Date(s.date) : new Date(),
+                            startTime: startTimeISO,
+                            endTime: endTimeISO,
+                            location: s.location,
+                            description: s.description
+                        }
+                    });
+                } else {
+                    await tx.eventSchedule.create({
+                        data: {
+                            eventId,
+                            title: s.title || '',
+                            date: s.date ? new Date(s.date) : new Date(),
+                            startTime: startTimeISO,
+                            endTime: endTimeISO,
+                            location: s.location || '',
+                            description: s.description || ''
+                        }
+                    });
+                }
+            }
+
+            const existingPhotos = await tx.eventPhoto.findMany({ where: { eventId }, select: { id: true } });
+            const incomingPhotoIds = (galleryPhotos || []).filter(p => p.id).map(p => p.id);
+            const photosToDelete = existingPhotos.filter(ep => !incomingPhotoIds.includes(ep.id)).map(ep => ep.id);
+
+            if (photosToDelete.length > 0) {
+                await tx.eventPhoto.deleteMany({ where: { id: { in: photosToDelete } } });
+            }
+
+            for (const p of (galleryPhotos || [])) {
+                if (!p.photoUrl || p.photoUrl.trim() === '') continue;
+
+                if (p.id) {
+                    await tx.eventPhoto.update({
+                        where: { id: p.id },
+                        data: {
+                            photoUrl: p.photoUrl.trim(),
+                            caption: p.caption ? p.caption.trim() : ''
+                        }
+                    });
+                } else {
+                    await tx.eventPhoto.create({
+                        data: {
+                            eventId,
+                            photoUrl: p.photoUrl.trim(),
+                            caption: p.caption ? p.caption.trim() : ''
+                        }
+                    });
+                }
+            }
+
+            return await tx.event.update({
+                where: { id: eventId },
+                data: {
+                    name,
+                    description,
+                    status,
+                    location,
+                    eventPhotoUrl,
+                    startDate: startDate ? new Date(startDate) : null,
+                    endDate: endDate ? new Date(endDate) : null,
+                    orgsRelated: { set: (orgs || []).map(id => ({ id })) },
+                    categories: { set: (categories || []).map(id => ({ id })) }
+                },
+                include: {
+                    orgsRelated: true,
+                    categories: true,
+                    schedules: true,
+                    galleryPhotos: true
+                }
+            });
+        });
+
+        res.json(updatedEvent);
+    } catch (error) {
+        console.error('Error updating event:', error);
+        res.status(500).json({ error: 'Internal server error: ' + error.message });
+    }
+});
+
+//for creating new event
+app.post('/api/events', requireAuth(), async (req, res) => {
+    try {
+        const { name, description, status, location, startDate, endDate, eventPhotoUrl, orgs, categories, schedules, galleryPhotos } = req.body;
+        
+        const newEventId = nanoid(21);
+
+        const newEvent = await prisma.$transaction(async (tx) => {
+            return await tx.event.create({
+                data: {
+                    id: newEventId,
+                    name,
+                    description: description || '',
+                    status: status || 'Upcoming',
+                    location: location || '',
+                    eventPhotoUrl: eventPhotoUrl || '',
+                    startDate: startDate ? new Date(`${startDate.slice(0, 10)}T00:00:00.000Z`) : new Date(),
+                    endDate: endDate ? new Date(`${endDate.slice(0, 10)}T00:00:00.000Z`) : new Date(),
+                    createdById: req.user.id,
+                    orgsRelated: {
+                        connect: (orgs || []).map(id => ({ id }))
+                    },
+                    categories: {
+                        connect: (categories || []).map(id => ({ id }))
+                    },
+                    schedules: {
+                        create: (schedules || []).map(s => {
+                            const schedDatePart = s.date ? s.date.slice(0, 10) : new Date().toISOString().slice(0, 10);
+                            return {
+                                title: s.title || '',
+                                date: new Date(`${schedDatePart}T00:00:00.000Z`),
+                                startTime: s.startTime ? new Date(`${schedDatePart}T${s.startTime}:00.000Z`) : null,
+                                endTime: s.endTime ? new Date(`${schedDatePart}T${s.endTime}:00.000Z`) : null,
+                                location: s.location || '',
+                                description: s.description || ''
+                            };
+                        })
+                    },
+                    galleryPhotos: {
+                        create: (galleryPhotos || []).filter(p => p.photoUrl && p.photoUrl.trim() !== '').map(p => ({
+                            photoUrl: p.photoUrl.trim(),
+                            caption: p.caption ? p.caption.trim() : ''
+                        }))
+                    }
+                },
+                include: {
+                    orgsRelated: true,
+                    categories: true,
+                    schedules: true,
+                    galleryPhotos: true
+                }
+            });
+        });
+
+        res.status(201).json(newEvent);
+    } catch (error) {
+        console.error('Error creating event:', error);
+        res.status(500).json({ error: 'Internal server error: ' + error.message });
+    }
+});
+
+//for deleting events
+app.delete('/api/events/:id', requireAuth(), async (req, res) => {
+    try {
+        const { id } = req.params;
+        const existingEvent = await prisma.event.findUnique({
+            where: { id },
+            include: { orgsRelated: true }
+        });
+
+        if (!existingEvent) {
+            return res.status(404).json({ error: 'Event not found' });
+        }
+
+        await prisma.$transaction(async (tx) => {
+            await tx.eventSchedule.deleteMany({ where: { eventId: id } });
+            await tx.eventPhoto.deleteMany({ where: { eventId: id } });
+            await tx.event.delete({
+                where: { id }
+            });
+        });
+
+        res.json({ message: 'Event deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting event:', error);
+        res.status(500).json({ error: 'Failed to delete event: ' + error.message });
+    }
+});
+
+
+

@@ -5,6 +5,7 @@ const { PrismaLibSql } = require('@prisma/adapter-libsql');
 const adapter = new PrismaLibSql({ url: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
 const bcrypt = require('bcryptjs');
+const { nanoid } = require('nanoid');
 
 async function main() {
     const organizations = [
@@ -45,16 +46,22 @@ async function main() {
         // Demo accounts for testing
     const demoUsers = [
         { email: 'student@mmdc.edu', password: 'student123', name: 'Demo Student', role: 'student' },
-        { email: 'officer@mmdc.edu', password: 'officer123', name: 'Demo Officer', role: 'officer' },
-        { email: 'admin@mmdc.edu', password: 'admin123', name: 'Demo Admin', role: 'admin' },
+        { email: 'officer@mmdc.edu', password: 'officer123', name: 'Demo Officer', role: 'officer' ,
+            organizations: {
+                connect: [
+                    { id: 'digital-fort' }
+                ]
+            }
+        },
+        { email: 'admin@mmdc.edu', password: 'admin123', name: 'Demo Admin', role: 'admin'}
     ];
 
     for (const user of demoUsers) {
         const hashedPassword = await bcrypt.hash(user.password, 10);
         await prisma.user.upsert({
             where: { email: user.email },
-            update: { password: hashedPassword, name: user.name, role: user.role },
-            create: { email: user.email, password: hashedPassword, name: user.name, role: user.role },
+            update: { password: hashedPassword, name: user.name, role: user.role,organizations: user.organizations},
+            create: { email: user.email, password: hashedPassword, name: user.name, role: user.role,organizations: user.organizations },
         });
     }
 
@@ -138,6 +145,181 @@ async function main() {
             where: { id: announcement.id },
             update: {},
             create: announcement,
+        });
+    }
+
+
+    const demoCategories = [
+        { id: 'academic', text: 'Academic' },
+        { id: 'arts', text: 'Arts & Design' },
+        { id: 'journalism', text: 'Journalism' },
+        { id: 'sports', text: 'Sports' },
+        { id: 'technology', text: 'Technology' },
+    ];
+
+    for (const category of demoCategories) {
+        await prisma.category.upsert({
+            where: { id: category.id },
+            update: category,
+            create: category,
+        });
+    }
+
+
+    //ensure that seed or npm run setup is only run once, otherwise demo events will be duplicated
+    const demoEvents = [
+        {
+            id: '7vMGLwfss-scuLloOcd', //in the actual code, nanoid(21) will be called. demo nano ids only have 19 characters to avoid collisions more
+            name: 'Digital Consumption Art Exhibition',
+            description: "Ready to be immersed? The digital consumption art exhibition invites everyone with passion for visual media to view our talented students’ pieces!",
+            status: 'Upcoming',
+            startDate: new Date('2026-12-05T00:00:00.000Z'),
+            endDate: new Date('2026-12-05T00:00:00.000Z'),
+            eventPhotoUrl: 'assets/art-exhibit.jpg',
+            location: "Mapua Malayan Colleges Laguna",
+            
+            categories: {
+                connect: [
+                    { id: 'arts' },
+                ]
+            },
+            orgsRelated: {
+                connect: [
+                    { id: 'disenyo-malaya' }
+                ]
+            },
+            schedules: {
+                create: [
+                    {
+                        title: 'Grand Opening & Main Booth Fair',
+                        date: new Date('2026-12-05T00:00:00.000Z'),
+                        startTime: new Date('2026-12-05T09:00:00.000Z'),
+                        endTime: new Date('2026-12-05T10:00:00.000Z'),
+                        location: 'ETY Building Lobby',
+                        description: 'Perceive awesome art!'
+                    }
+                ]
+            },
+            galleryPhotos: {
+                create: [
+                    { photoUrl: 'assets/art-exhibit.jpg', caption: 'Exhibit Setup' }
+                ]
+            }
+        },
+
+        {
+            id: 'gJNvoByztucQP92_mqN', //in the actual code, nanoid(21) will be called. demo nano ids only have 19 characters to avoid collisions more
+            name: 'Student Organizations Fair',
+            description: "A collaboration between all of MMDC's organizations, this special event brings together the talents of all student groups. Join now to showcase your talents!",
+            status: 'Ongoing',
+            startDate: new Date('2026-11-26T00:00:00.000Z'),
+            endDate: new Date('2026-11-30T00:00:00.000Z'),
+            eventPhotoUrl: 'assets/student-fair.jpg',
+            location: "Mapua Malayan Digital College Luzon Hub",
+            
+            categories: {
+                connect: [
+                    { id: 'arts' },
+                    { id: 'journalism' },
+                    { id: 'academic' }
+                ]
+            },
+            orgsRelated: {
+                connect: [
+                    { id: 'disenyo-malaya' },
+                    { id: 'digital-fort' },
+                    { id: 'scholars-club' }
+                ]
+            },
+            schedules: {
+                create: [
+                    {
+                        title: 'Grand Opening & Main Booth Fair',
+                        date: new Date('2026-11-26T00:00:00.000Z'),
+                        startTime: new Date('2026-11-26T09:00:00.000Z'),
+                        endTime: new Date('2026-11-26T10:00:00.000Z'),
+                        location: 'Main Quad',
+                        description: 'Kickoff ceremony, welcome address, and opening of all general booth exhibits.'
+                    },
+                    {
+                        title: '"Behind the Headlines" Live Pitch & Workshop',
+                        date: new Date('2026-11-30T00:00:00.000Z'),
+                        startTime: new Date('2026-11-30T10:30:00.000Z'),
+                        endTime: new Date('2026-11-30T12:30:00.000Z'),
+                        location: 'Student Center 201',
+                        description: 'Interactive session on campus reporting, photojournalism basics, and pitch ideas.'
+                    },
+                    {
+                        title: 'Academic Bowl & Quiz Bee',
+                        date: new Date('2026-11-30T00:00:00.000Z'),
+                        startTime: new Date('2026-11-30T13:30:00.000Z'),
+                        endTime: new Date('2026-11-30T14:45:00.000Z'),
+                        location: 'Auditorium',
+                        description: 'Inter-departmental trivia challenge showcasing top academic talent across subjects.'
+                    },
+                    {
+                        title: 'Live Canvas & Interactive Mural Jam',
+                        date: new Date('2026-11-30T00:00:00.000Z'),
+                        startTime: new Date('2026-11-30T15:00:00.000Z'),
+                        endTime: new Date('2026-11-30T17:30:00.000Z'),
+                        location: 'Main Courtyard',
+                        description: 'Watch live painting demonstrations or mark your trace on the interactive campus mural.'
+                    }
+                ]
+            },
+            galleryPhotos: {
+                create: [
+                    { photoUrl: 'assets/student-fair.jpg', caption: 'Students at the workshop' },
+                    { photoUrl: 'assets/quizbee.jfif', caption: 'Quizbee setup at the auditorium' }
+                ]
+            }
+        },
+
+        {
+            id: 'ypy5DWATAa17D10HFh3', //in the actual code, nanoid(21) will be called. demo nano ids only have 19 characters to avoid collisions more
+            name: 'Introduction to Web Systems & Technology',
+            description: "Explore the core protocols and architecture powering modern online platforms in this engaging introductory session. Aspiring developers will gain essential insights into how network systems seamlessly connect users worldwide.",
+            status: 'Upcoming',
+            startDate: new Date('2026-12-05T00:00:00.000Z'),
+            endDate: new Date('2026-12-05T00:00:00.000Z'),
+            eventPhotoUrl: 'assets/web-system.jpg',
+            location: "Mapua Malayan Colleges Laguna",
+            
+            categories: {
+                connect: [
+                    { id: 'academic' }
+                ]
+            },
+            orgsRelated: {
+                connect: [
+                    { id: 'digital-fort' }
+                ]
+            },
+            schedules: {
+                create: [
+                    {
+                        title: 'Web Systems & Technology Seminar',
+                        date: new Date('2026-12-05T00:00:00.000Z'),
+                        startTime: new Date('2026-12-05T09:00:00.000Z'),
+                        endTime: new Date('2026-12-05T10:00:00.000Z'),
+                        location: 'Auditorium',
+                        description: 'A seminar learn core principles of IT.'
+                    }
+                ]
+            },
+            galleryPhotos: {
+                create: [
+                    { photoUrl: 'assets/quizbee.jfif', caption: 'Seminar setup at the auditorium' }
+                ]
+            }
+        }
+    ];
+
+    for (const event of demoEvents) {
+        await prisma.event.upsert({
+            where: { id: event.id },
+            update: event,
+            create: event,
         });
     }
 

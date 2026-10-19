@@ -13,15 +13,16 @@ datasource db {
 }
 
 model Organization {
-  id          String   @id
-  name        String
-  category    String
-  description String
-  photo       String?
-  link        String?
-  createdAt   DateTime @default(now())
-  members     User[]   @relation("Membership")
+  id            String      @id
+  name          String
+  category      String
+  description   String
+  photo         String?
+  link          String?
+  createdAt     DateTime    @default(now())
+  members       User[]      @relation("Membership")
   announcements Announcement[]
+  eventsRelated Event[]
 }
 
 model User {
@@ -33,6 +34,7 @@ model User {
   createdAt DateTime       @default(now())
   organizations Organization[] @relation("Membership")
   announcements Announcement[]
+  eventsCreated Event[]
 }
 
 model OrganizationRequest {
@@ -59,3 +61,67 @@ model Announcement {
   @@index([organizationId])
   @@index([authorId])
 }
+
+
+model Category {
+    id              String      @id @default(uuid())
+    text            String
+    eventsRelated   Event[]
+}
+
+
+model Event {
+    id              String          @id
+    name            String
+    description     String
+    status          EventStatus     @default(Upcoming)
+    startDate       DateTime
+    endDate         DateTime
+    eventPhotoUrl   String?
+    location        String
+
+    categories      Category[]
+    schedules       EventSchedule[]
+    orgsRelated     Organization[]
+    galleryPhotos   EventPhoto[]
+    
+    createdAt       DateTime        @default(now())
+    updatedAt       DateTime        @default(now())
+    createdById String?
+    createdBy   User?           @relation(fields: [createdById], references: [id], onDelete: SetNull)
+}
+
+
+enum EventStatus {
+    Ongoing
+    Upcoming
+    Finished
+}
+
+
+model EventSchedule {
+    id              String          @id @default(uuid())
+    eventId         String
+    event           Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
+    title           String
+    date            DateTime
+    startTime       DateTime
+    endTime         DateTime
+    location        String
+    description     String
+
+    @@index([eventId])
+}
+
+
+model EventPhoto {
+    id          String      @id @default(uuid())
+    eventId     String
+    event       Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
+    photoUrl    String
+    caption     String
+
+    @@index([eventId])
+}
+
+

@@ -201,7 +201,7 @@ if (quickActionLabels.length > 0) {
 
                 if (targetRadio) {
                     targetRadio.checked = true;
-                    targetRadio.dispatchEvent(new Event('change'));
+                    targetRadio.dispatchEvent(new Event('change', { bubbles: true }));
                 }
             }
         });
@@ -267,7 +267,7 @@ function normalizeAnnouncementRecord(record) {
         organizationName: record.organizationName || null,
         organizationLink: record.organizationLink || null,
         title: String(record.title || ''),
-        postedDate: record.postedDate || 'Posted on ' + new Date(record.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        postedDate: record.postedDate || 'Posted on ' + new Date(record.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }),
         content: content.length ? content : ['']
     };
 }
@@ -448,6 +448,8 @@ if (announcementDetailArticle) {
     });
 }
 
+
+
 // Join + Leave orgs
 // Runs on organization profile pages
 const joinButton = document.querySelector('#org-profile-banner .join-button');
@@ -617,6 +619,400 @@ if (registerForm) {
     });
 }
 
+
+// HOMEPAGE: Load upcoming rvents from the backend
+async function initHomeUpcomingEvents() {
+    const upcomingEventsContainer = document.querySelector('.home-upcoming-events-con');
+    if (!upcomingEventsContainer) return;
+
+    try {
+        const response = await fetch(API_BASE_URL + '/api/events');
+        if (!response.ok) throw new Error('Failed to fetch events');
+        const events = await response.json();
+
+        const upcomingEvents = events.slice(0, 3);
+
+        if (upcomingEvents.length === 0) {
+            upcomingEventsContainer.innerHTML = '<p style="text-align: center; color: #666;">No recent events at the moment.</p>';
+            return;
+        }
+
+        upcomingEventsContainer.innerHTML = upcomingEvents.map(event => {
+            const photo = event.eventPhotoUrl || 'assets/no-image.svg';
+            const detailUrl = `event-details.html?id=${encodeURIComponent(event.id)}`;
+            const location = event.location || 'No location indicated';
+
+            const startDate = new Date(event.startDate);
+            const endDate = event.endDate ? new Date(event.endDate) : null;
+            
+            const startFormatted = startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+            let dateString = startFormatted;
+            
+            if (endDate && startDate.toDateString() !== endDate.toDateString()) {
+                const endFormatted = endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+                dateString = `${startFormatted} – ${endFormatted}`;
+            }
+
+            return `
+                <a href="${detailUrl}" class="up-child" style="text-decoration: none; color: inherit; display: block;">
+                    <img class="event-photo" src="${escapeHtml(photo)}" alt="${escapeHtml(event.name)}">
+                    <div class="event-details">
+                        <p class="event-title">${escapeHtml(event.name)}</p>
+                        <div class="event-location">
+                            <img src="assets/location-gray-thin.svg" alt="">
+                            <span>${escapeHtml(location)}</span>
+                        </div>
+                        <div class="event-date" style="display: flex; align-items: center; gap: 6px;">
+                            <img src="assets/date-gray-thin.svg" alt="">
+                            <span>${escapeHtml(dateString)}</span>
+                        </div>
+                    </div>
+                </a>
+            `;
+        }).join('');
+
+    } catch (error) {
+        console.error('Could not load homepage upcoming events:', error);
+    }
+}
+
+initHomeUpcomingEvents();
+
+
+//EVENTS PAGE: fetching search categories from db
+async function loadEventCategoriesDropdown() {
+    const eventCategorySelect = document.getElementById('event-category');
+    if (!eventCategorySelect) return;
+
+    try {
+        const response = await fetch(API_BASE_URL + '/api/categories');
+        if (!response.ok) throw new Error('Failed to fetch categories');
+        const categories = await response.json();
+
+        const previousValue = eventCategorySelect.value || 'all';
+        let optionsHTML = '<option value="all">All Event Types</option>';
+        
+        categories.forEach(function (cat) {
+            optionsHTML += '<option value="' + escapeHtml(cat.id) + '">' + escapeHtml(cat.text) + '</option>';
+        });
+
+        eventCategorySelect.innerHTML = optionsHTML;
+        eventCategorySelect.value = Array.from(eventCategorySelect.options).some(opt => opt.value === previousValue) ? previousValue : 'all';
+    } catch (error) {
+        console.error('Could not load event categories:', error);
+        
+        const eventCategorySelect = document.getElementById('event-category');
+        if (eventCategorySelect) {
+            eventCategorySelect.innerHTML = '<option value="all">All Event Types</option>';
+            const errorOption = document.createElement('option');
+            errorOption.value = "";
+            errorOption.disabled = true;
+            errorOption.textContent = "Failed to load categories";
+            eventCategorySelect.appendChild(errorOption);
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    loadEventCategoriesDropdown();
+});
+
+
+//EVENTS PAGE: loading events list in events.html
+async function loadEventCards(retryCount = 1) {
+    const eventsListContainer = document.getElementById('events-list');
+    
+    if (!eventsListContainer) return;
+
+    try {
+        const response = await fetch(API_BASE_URL + '/api/events');
+        if (!response.ok) throw new Error('Failed to fetch events');
+        const events = await response.json();
+
+        //so when user navigates to events.html for the first time, no events message wont display immediately due to delay of fetching info and no need to refresh
+        if (events.length === 0 && retryCount > 0) {
+            setTimeout(() => loadEventCards(retryCount - 1), 500);
+            return;
+        }
+
+        if (events.length === 0) {
+            eventsListContainer.innerHTML = '';
+            if (noEventsMessage) noEventsMessage.style.display = 'block';
+            return;
+        }
+
+        if (noEventsMessage) noEventsMessage.style.display = 'none';
+
+        let htmlCards = '';
+
+        events.forEach(event => {
+            const status = event.status || 'No status indicated.';
+            
+            const categoryIds = event.categories.map(c => c.id).join(',');
+            const coverPhoto = event.eventPhotoUrl || 'assets/no-image.svg';
+
+            const startDate = new Date(event.startDate);
+            const endDate = event.endDate ? new Date(event.endDate) : null;
+
+            const startFormatted = startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+
+            let dateString = startFormatted;
+
+            if (endDate && startDate.toDateString() !== endDate.toDateString()) {
+                const endFormatted = endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+                dateString = `${startFormatted} – ${endFormatted}`;
+            }
+
+            const location = event.location || 'No location indicated.';
+
+            let categoriesHtml = '';
+            event.categories.forEach((cat, index) => {
+                if (index < 2) {
+                    categoriesHtml += `<div class="event-category">${escapeHtml(cat.text.toUpperCase())}</div>`;
+                }
+            });
+            if (event.categories.length > 2) {
+                const extraCount = event.categories.length - 2;
+                const tooltipText = event.categories.slice(2).map(c => c.text.toUpperCase()).join(', ');
+                categoriesHtml += `<div class="event-category" tabindex="0" data-tooltip="${escapeHtml(tooltipText)}">+${extraCount}</div>`;
+            }
+
+            let orgsHtml = '';
+            if (event.orgsRelated && event.orgsRelated.length > 0) {
+                const mainOrg = event.orgsRelated[0];
+                orgsHtml += `
+                    <div class="event-org">
+                        <img class="org-photo" src="${escapeHtml(mainOrg.photo || 'assets/no-image.svg')}" alt="">
+                        <span class="event-org-name">${escapeHtml(mainOrg.name)}</span>
+                    </div>
+                `;
+                if (event.orgsRelated.length > 1) {
+                    orgsHtml += `
+                        <div class="event-org">
+                            <span class="event-org-name">+${event.orgsRelated.length - 1}</span>
+                        </div>
+                    `;
+                }
+            }
+
+            htmlCards += `
+                <article class="event-card" data-status="${status}" data-categories="${categoryIds}">
+                    <div class="event-photo">
+                        <img class="event-photo" src="${escapeHtml(coverPhoto)}" alt="${escapeHtml(event.name)}">
+                        <div class="event-date">${escapeHtml(dateString)}
+                            &nbsp;<div class="circle"></div>&nbsp;
+                            <span class="event-status">${escapeHtml(status)}</span>
+                        </div>
+                    </div>
+                    <div class="event-body">
+                        <h3 class="event-title">${escapeHtml(event.name)}</h3>
+                        <div class="event-categories">
+                            ${categoriesHtml}
+                        </div>
+                        <p class="event-description">${escapeHtml(event.description)}</p>
+                        <div class="event-details">
+                            <!--<div>
+                                <img class="event-detail-icon" src="assets/up_event_clock.svg" alt="">
+                                <span>Varying</span>
+                            </div>-->
+                            <div class="event-location">
+                                <img class="event-detail-icon" src="assets/up_event_location.svg" alt="">
+                                <span>${escapeHtml(location)}</span>
+                            </div>
+                        </div>
+                        <div class="event-footer">
+                            <div class="event-orgs">
+                                ${orgsHtml}
+                            </div>
+                            <a href="event-details.html?id=${encodeURIComponent(event.id)}">
+                                <div class="view-details">View Details</div>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            `;
+        });
+
+        eventsListContainer.innerHTML = htmlCards;
+        requestAnimationFrame(() => {
+            applyEventFilters();
+        });
+
+    } catch (error) {
+        eventsListDidNotLoad();
+        console.error('Could not load events:', error);
+    }
+}
+
+function eventsListDidNotLoad() {
+    const failedMessage = document.getElementById("events-failed-message");
+
+    if (failedMessage) {
+        failedMessage.style.display = 'block';
+    }
+}
+
+
+
+//EVENT DETAILs PAGE: Fetch the clicked event's info
+const eventBanner = document.getElementById("event-info-banner");
+const eventContents = document.getElementById("event-info-content");
+
+if (eventBanner && eventContents) {
+    document.addEventListener('DOMContentLoaded', async () => {
+        const params = new URLSearchParams(window.location.search);
+        const requestedId = params.get('id');
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/events/${requestedId}`);
+            if (!response.ok) throw new Error('Failed to fetch event details');
+            const event = await response.json();
+
+            const eventTitle = document.querySelector('#event-info-banner .page-title');
+            const eventDesc = document.querySelector('#event-info-banner .desc');
+            const eventStatus = document.querySelector('#event-info-banner .event-status');
+            const eventDateSpan = document.querySelector('#event-info-banner .event-date span');
+            const eventCategories = document.querySelector('#event-info-banner .event-categories');
+            const eventSchedules = document.getElementById('schedules-list');
+            const eventGalleryContainer = document.querySelector('#event-gallery .gallery-con');
+            const eventOrgsContainer = document.querySelector('.involved-orgs');
+
+            if (eventBanner) {
+                if (eventTitle) eventTitle.textContent = event.name;
+                if (eventDesc) eventDesc.textContent = event.description;
+                if (eventStatus) {
+                    const statusText = event.status || 'No status indicated';
+                    eventStatus.innerHTML = `<div class="circle"></div>${escapeHtml(statusText)}`;
+                }
+                
+                if (eventDateSpan) {
+                    const eventStartDate = new Date(event.startDate);
+                    const eventEndDate = event.endDate ? new Date(event.endDate) : null;
+                    const startFormatted = eventStartDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+                    let dateString = startFormatted;
+                    if (eventEndDate && eventStartDate.toDateString() !== eventEndDate.toDateString()) {
+                        const endFormatted = eventEndDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+                        dateString = `${startFormatted} – ${endFormatted}`;
+                    }
+
+                    eventDateSpan.textContent = dateString;
+                }
+
+                if (eventCategories){
+                    eventCategories.innerHTML = event.categories.map(cat => 
+                        `<p class="event-info-category">${escapeHtml(cat.text)}</p>`
+                    ).join('');
+                }
+
+            }
+
+            if (eventContents){
+                if (eventSchedules){
+                    const uniqueDates = [...new Set(event.schedules.map(sched => new Date(sched.date).toISOString().split('T')[0]))];
+                    const eventDaysHtml = uniqueDates.map(dateKey => {
+                    
+                        const daySchedules = event.schedules.filter(sched => 
+                            new Date(sched.date).toISOString().split('T')[0] === dateKey
+                        );
+
+                        const formattedDate = new Date(dateKey).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' , timeZone: 'UTC'});
+
+                        const logsHtml = daySchedules.map(sched => {
+                            let timeString = 'No time indicated';
+                            if (sched.startTime && sched.endTime) {
+                                const start = new Date(sched.startTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'UTC' });
+                                const end = new Date(sched.endTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'UTC' });
+                                timeString = `${start} – ${end}`;
+                            }
+
+                            return `
+                                <div class="event-log">
+                                    <h2 class="log-title">${escapeHtml(sched.title)}</h2>
+                                    <div class="event-details">
+                                        <div class="event-time">
+                                            <img src="assets/up_event_clock.svg" alt="">
+                                            <span>${escapeHtml(timeString)}</span>
+                                        </div>
+                                        <div class="event-time">
+                                            <img src="assets/up_event_location.svg" alt="">
+                                            <span>${escapeHtml(sched.location || event.location || 'No location Indicated')}</span>
+                                        </div>
+                                    </div>
+                                    <span>${escapeHtml(sched.description || '')}</span>
+                                </div>
+                            `;
+                        }).join('');
+
+                        
+                        return `
+                            <div class="event-day">
+                                <div class="event-date">
+                                    <img src="assets/date-content.svg" alt="">
+                                    <span>${escapeHtml(formattedDate)}</span>
+                                </div>
+                                <div class="event-logs">
+                                    ${logsHtml}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    eventSchedules.innerHTML = eventDaysHtml;
+                }
+
+                if (eventGalleryContainer) {
+                    const galleryHtml = event.galleryPhotos.map(photo => {
+                        return `
+                            <div class="gallery-child">
+                                <img src="${escapeHtml(photo.photoUrl || "assets/no-image.svg")}" alt="${escapeHtml(photo.caption || event.name)}">
+                                <div class="overlay"></div>
+                                <span>${escapeHtml(photo.caption || '')}</span>
+                            </div>
+                        `;
+                    }).join('');
+
+                    eventGalleryContainer.innerHTML = galleryHtml;
+                }
+            }
+
+            if (eventOrgsContainer) {
+                const orgsHtml = event.orgsRelated.map(org => {
+                    const orgLink = org.link || `${org.id}.html`;
+                    const orgPhoto = org.photo || org.photoUrl || 'assets/no-image.svg';
+
+                    return `
+                        <a href="${escapeHtml(orgLink)}">
+                            <div class="involved-org">
+                                <img class="org-photo" src="${escapeHtml(orgPhoto)}" alt="">
+                                <span class="event-org-name">${escapeHtml(org.name)}</span>
+                            </div>
+                        </a>
+                    `;
+                }).join('');
+
+                eventOrgsContainer.innerHTML = orgsHtml;
+            }
+
+        } catch (error) {
+            eventDetailsNotFound();
+            console.error('Error loading event detail data:', error);
+        }
+    });
+}
+
+function eventDetailsNotFound() {
+    const eventTitle = document.querySelector('#event-info-banner .page-title');
+    const eventDesc = document.querySelector('#event-info-banner .desc');
+    const eventContentsDiv = document.getElementById('event-info-content');
+
+    if (eventTitle) eventTitle.textContent = 'Event Not Found';
+    if (eventDesc) eventDesc.textContent = 'We couldn’t find the event you were looking for. It may have been removed or the link is incorrect.';
+    if (eventContentsDiv) {
+        eventContentsDiv.innerHTML = '<p>Please return to the events page and select a valid event.<a href="events.html"> &nbsp;Back to Events</a></p>';
+    }
+}
+
+
 // EVENTS PAGE: Search + Filter Events
 const eventSearch = document.getElementById('event-search');
 const eventCategorySelect = document.getElementById('event-category');
@@ -626,53 +1022,60 @@ const statusFilterButtons = document.querySelectorAll('.event-status-filter');
 
 let selectedStatus = 'all';
 
-if (eventSearch && eventCategorySelect) {
+function applyEventFilters() {
+    if (!eventSearch || !eventCategorySelect) return;
+    
+    const searchTerm = eventSearch.value.trim().toLowerCase();
+    const selectedCategory = eventCategorySelect.value;
+    const currentEventCards = document.querySelectorAll('.event-card');
 
-    function applyEventFilters() {
-        const searchTerm = eventSearch.value.trim().toLowerCase();
-        const selectedCategory = eventCategorySelect.value;
+    let visibleCount = 0;
 
-        let visibleCount = 0;
+    currentEventCards.forEach(function (card) {
+        const title = card.querySelector('.event-title').textContent.toLowerCase();
+        const description = card.querySelector('.event-description').textContent.toLowerCase();
 
-        eventCards.forEach(function (card) {
-            const title = card.querySelector('.event-title').textContent.toLowerCase();
-            const description = card.querySelector('.event-description').textContent.toLowerCase();
+        const cardCategories = card.dataset.categories
+            ? card.dataset.categories.split(',').map(c => c.trim().toLowerCase())
+            : [];
 
-            const cardCategories = card.dataset.categories
-                ? card.dataset.categories.split(',').map(c => c.trim().toLowerCase())
-                : [];
+        const cardStatus = card.dataset.status
+            ? card.dataset.status.trim().toLowerCase()
+            : '';
 
-            const cardStatus = card.dataset.status
-                ? card.dataset.status.trim().toLowerCase()
-                : '';
+        const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
+        const matchesCategory = selectedCategory === 'all' || cardCategories.includes(selectedCategory.toLowerCase());
+        const matchesStatus = selectedStatus === 'all' || cardStatus === selectedStatus.toLowerCase();
 
-            const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
-            const matchesCategory = selectedCategory === 'all' || cardCategories.includes(selectedCategory.toLowerCase());
-            const matchesStatus = selectedStatus === 'all' || cardStatus === selectedStatus.toLowerCase();
+        const shouldShow = matchesSearch && matchesCategory && matchesStatus;
 
-            const shouldShow = matchesSearch && matchesCategory && matchesStatus;
-
-            if (shouldShow) {
-                card.style.display = '';
-                visibleCount++;
-            } else {
-                card.style.display = 'none';
-            }
-        });
-
-        if (noEventsMessage) {
-            noEventsMessage.style.display = visibleCount === 0 ? 'block' : 'none';
+        if (shouldShow) {
+            card.style.display = '';
+            visibleCount++;
+        } else {
+            card.style.display = 'none';
         }
+    });
+
+    if (noEventsMessage) {
+        noEventsMessage.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+}
+
+function initEventsPage() {
+    loadEventCards();
+
+    if (eventSearch) {
+        eventSearch.addEventListener('input', applyEventFilters);
+    }
+    if (eventCategorySelect) {
+        eventCategorySelect.addEventListener('change', applyEventFilters);
     }
 
-    eventSearch.addEventListener('input', applyEventFilters);
-    eventCategorySelect.addEventListener('change', applyEventFilters);
-
-    //for status filters
     statusFilterButtons.forEach(function (button) {
         function selectFilter() {
             statusFilterButtons.forEach(function (btn) {
-                btn.classList.format ? btn.classList.remove('active') : btn.classList.remove('active');
+                btn.classList.remove('active');
             });
             button.classList.add('active');
             selectedStatus = button.dataset.value;
@@ -681,7 +1084,6 @@ if (eventSearch && eventCategorySelect) {
 
         button.addEventListener('click', selectFilter);
 
-        //ensuring on enter press with a tab-focused status filter, the filter works
         button.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
@@ -690,6 +1092,14 @@ if (eventSearch && eventCategorySelect) {
         });
     });
 }
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initEventsPage);
+} else {
+    initEventsPage();
+}
+
+
 
 // DASHBOARD: "My Organizations" - fetched from the backend for the logged-in user
 const myOrganizationsList = document.getElementById('my-organizations-list');
@@ -853,51 +1263,81 @@ function escapeHtml(text) {
     return div.innerHTML.replace(/"/g, '&quot;');
 }
 
-// OFFICER: master data for Events
-const defaultOfficerEvents = [
-    {
-        id: "event-seed-1",
-        name: "Student Organization Fair",
-        description: "A collaboration between all of MMDC's organizations, this special event brings together the talents of all student groups. Join now to showcase your talents!",
-        dateStart: "2026-08-31",
-        dateEnd: "2026-08-31",
-        orgs: ["digital-fort", "disenyo-malaya", "scholars-club"],
-        postedDate: "Posted on Sept. 6, 2026",
-        schedules: [
-            {
-                title: "Grand Opening & Main Booth Fair",
-                date: "2026-08-31", startTime: "09:00", endTime: "10:00",
-                location: "Main Quad",
-                description: "Kickoff ceremony, welcome address, and opening of all general booth exhibits."
-            },
-            {
-                title: "\"Behind the Headlines\" Live Pitch & Workshop",
-                date: "2026-08-31", startTime: "10:30", endTime: "12:30",
-                location: "Student Center 201",
-                description: "Interactive session on campus reporting, photojournalism basics, and pitch ideas."
-            },
-            {
-                title: "Academic Bowl & Quiz Bee",
-                date: "2026-08-31", startTime: "13:30", endTime: "14:45",
-                location: "Auditorium",
-                description: "Inter-departmental trivia challenge showcasing top academic talent across subjects."
-            },
-            {
-                title: "Live Canvas & Interactive Mural Jam",
-                date: "2026-08-31", startTime: "15:00", endTime: "17:30",
-                location: "Main Courtyard",
-                description: "Watch live painting demonstrations or leave your mark on the interactive campus mural."
-            }
-        ]
+
+let categoriesData = [];
+
+async function fetchCategories() {
+    try {
+        const response = await fetch(API_BASE_URL + '/api/categories');
+        categoriesData = await response.json();
+    } catch (error) {
+        console.error('Could not load categories from the server:', error);
+        categoriesData = [];
     }
-];
-
-// Loaded from localStorage if existing, falls back to the defaults if not
-let officerEventsData = JSON.parse(localStorage.getItem('officerEvents')) || defaultOfficerEvents;
-
-function saveOfficerEvents() {
-    localStorage.setItem('officerEvents', JSON.stringify(officerEventsData));
 }
+fetchCategories();
+
+
+
+let officerEventsData = [];
+let currentUserOrgIds = [];
+const manageEventsList = document.getElementById('manage-events-list');
+
+async function loadOfficerEvents() {
+    if (!manageEventsList) return;
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) return;
+
+    try {
+        // need to fetch all events and the user's organizations too in order to not load any events that are not the user's responsibility
+        const [eventsResponse, myOrgsResponse] = await Promise.all([
+            fetch(API_BASE_URL + '/api/events'),
+            fetch(API_BASE_URL + '/api/users/me/organizations', {
+                headers: { Authorization: 'Bearer ' + authToken }
+            })
+        ]);
+
+        if (!eventsResponse.ok || !myOrgsResponse.ok) {
+            throw new Error('Failed to fetch officer events data');
+        }
+
+        const allEvents = await eventsResponse.json();
+        const myOrgs = await myOrgsResponse.json();
+        const myOrgIds = myOrgs.map(org => org.id);
+        currentUserOrgIds = myOrgIds;
+
+        renderNewEventOrgCheckboxes();
+
+        const managedEvents = allEvents.filter(event => {
+            if (!event.orgsRelated || event.orgsRelated.length === 0) return false;
+            return event.orgsRelated.some(org => myOrgIds.includes(org.id));
+        });
+
+        officerEventsData = managedEvents.map(event => ({
+            id: event.id,
+            name: event.name,
+            description: event.description,
+            status: event.status,
+            dateStart: event.startDate ? event.startDate.split('T')[0] : '',
+            dateEnd: event.endDate ? event.endDate.split('T')[0] : '',
+            location: event.location,
+            eventPhotoUrl: event.eventPhotoUrl,
+            orgs: event.orgsRelated ? event.orgsRelated.map(o => o.id) : [],
+            categories: event.categories ? event.categories.map(c => c.id) : [],
+            schedules: event.schedules || [],
+            galleryPhotos: event.galleryPhotos,
+            postedDate: event.createdAt ? new Date(event.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) : 'No recorded creation date.'
+        }));
+
+        renderManageEvents();
+
+    } catch (error) {
+        console.error('Error loading officer events:', error);
+        manageEventsList.innerHTML = '<p style="padding: 20px; text-align: center; color: red;">Failed to load your organization events.</p>';
+    }
+}
+
+const eventsLoaded = loadOfficerEvents();
 
 // Templates: turns an event/announcement object into HTML
 function createScheduleBlockHTML(schedule) {
@@ -917,22 +1357,60 @@ function createScheduleBlockHTML(schedule) {
     '</div>';
 }
 
+function createPhotoBlockHTML(photo) {
+    return '<div class="photo" data-id="' + (photo.id || '') + '">' +
+        '<div tabindex="0" class="remove-photo">✕ &nbsp; Remove </div>' +
+        '<div><h5>Photo URL</h5>' +
+            '<input type="text" name="photo-url" placeholder="Enter photo URL or asset path..." value="' + escapeHtml(photo.photoUrl || '') + '"></div>' +
+        '<div><h5>Caption</h5>' +
+            '<input type="text" name="photo-caption" placeholder="Enter photo caption..." value="' + escapeHtml(photo.caption || '') + '"></div>' +
+    '</div>';
+}
+
 function createOrgCheckboxGridHTML(selectedOrgIds) {
     return '<div class="org-checkbox-grid">' +
         organizationsData.map(function (org) {
-            const isChecked = selectedOrgIds.includes(org.id) ? ' checked' : '';
-            return '<label class="org-checkbox-item" tabindex="0">' +
+            const isUserOrg = currentUserOrgIds.includes(org.id);
+            const isChecked = (selectedOrgIds.includes(org.id) || isUserOrg) ? ' checked' : '';
+            const marker = isUserOrg ? ' user-owned-org' : '';
+            
+            return '<label class="org-checkbox-item' + marker + '" tabindex="0">' +
                 '<input type="checkbox" tabindex="-1" name="orgs" value="' + org.id + '"' + isChecked + '>' +
                 '<span>' + org.name + '</span>' +
             '</label>';
         }).join('') +
     '</div>';
 }
+function createCatCheckboxGridHTML(selectedCatIds) {
+    return '<div class="cat-checkbox-grid">' +
+        categoriesData.map(function (cat) {
+            const isChecked = selectedCatIds.includes(cat.id) ? ' checked' : '';
+            
+            return '<label class="cat-checkbox-item" tabindex="0">' +
+                '<input type="checkbox" tabindex="-1" name="cats" value="' + cat.id + '"' + isChecked + '>' +
+                '<span>' + escapeHtml(cat.text) + '</span>' +
+            '</label>';
+        }).join('') +
+    '</div>';
+}
+
+document.addEventListener('change', function (event) {
+    const checkbox = event.target;
+    
+    if (checkbox.name === 'orgs') {
+        const labelItem = checkbox.closest('.org-checkbox-item');
+        
+        if (labelItem && labelItem.classList.contains('user-owned-org') && !checkbox.checked) {
+            checkbox.checked = true;
+            alert("You cannot remove your own organization from an event you manage. Coordinate with other involved organizations to have your organization removed.");
+        }
+    }
+});
 
 // Dashboard org officer, make select involved organizations interactive with enter if tab-focused on, for both new event and edit event form
 document.addEventListener('keydown', function (e) {
     if (e.key === 'Enter' || e.key === ' ') {
-        const label = e.target.closest('.org-checkbox-item');
+        const label = e.target.closest('.org-checkbox-item') || e.target.closest('.cat-checkbox-item');
         if (label) {
             e.preventDefault();
             
@@ -940,31 +1418,80 @@ document.addEventListener('keydown', function (e) {
 
             if (checkbox) {
                 checkbox.checked = !checkbox.checked;
-                checkbox.dispatchEvent(new Event('change'));
+                checkbox.dispatchEvent(new Event('change', { bubbles: true }));
             }
         }
     }
 });
 
 function createEventListItemHTML(eventItem) {
+    const selectedOrgIds = eventItem.orgsRelated 
+        ? eventItem.orgsRelated.map(o => o.id) 
+        : (eventItem.orgs || []);
+
+    const startDate = eventItem.startDate ? eventItem.startDate.split('T')[0] : (eventItem.dateStart || '');
+    const endDate = eventItem.endDate ? eventItem.endDate.split('T')[0] : (eventItem.dateEnd || '');
+    const postedText = eventItem.postedDate || 'No recorded creation date.';
+
+    
+    let rawScheds = eventItem.schedules || [];
+    if (rawScheds.length === 0) {
+        rawScheds = [{ title: '', date: '', startTime: '', endTime: '', location: '', description: '' }];
+    }
+
+    const formattedSchedules = rawScheds.map(sched => ({
+        title: sched.title || '',
+        date: sched.date ? sched.date.split('T')[0] : '',
+        startTime: sched.startTime ? (sched.startTime.includes('T') ? sched.startTime.split('T')[1].substring(0,5) : sched.startTime) : '',
+        endTime: sched.endTime ? (sched.endTime.includes('T') ? sched.endTime.split('T')[1].substring(0,5) : sched.endTime) : '',
+        location: sched.location || '',
+        description: sched.description || ''
+    }));
+
+    let rawPhotos = eventItem.galleryPhotos || [];
+
+    const formattedPhotos = rawPhotos.map(photo => ({
+        photoUrl: photo.photoUrl || '',
+        caption: photo.caption || ''
+    }));
+
+    const selectedCatIds = eventItem.categories || [];
+
     return '<li data-id="' + eventItem.id + '">' +
         '<div class="manage-item-main has-date">' +
             '<h4>' + escapeHtml(eventItem.name) + '</h4>' +
-            '<p class="announcement-meta-date">' + eventItem.postedDate + '</p>' +
-            '<label tabindex="0" class="manage-action"><input type="checkbox" class="edit-toggle">Edit</label>' +
+            '<p class="event-meta-date">' + postedText + '</p>' +
+            '<span class="manage-actions">' +
+                '<label tabindex="0" class="manage-action"><input type="checkbox" class="edit-toggle">Edit</label>' +
+                '<button type="button" class="cancel-button delete-event">Delete</button>' +
+            '</span>' +
         '</div>' +
         '<div class="panel-edit-event quick-act-panel">' +
             '<form>' +
                 '<div><h4>Event Name</h4><input type="text" name="event-name" value="' + escapeHtml(eventItem.name) + '"></div>' +
-                '<div><h4>Event Description</h4><textarea name="event-description">' + escapeHtml(eventItem.description) + '</textarea></div>' +
-                '<div class="inline-section">' +
-                    '<div class="inline-part"><h4>Start Date</h4><input type="date" name="event-date-start" value="' + eventItem.dateStart + '"></div>' +
-                    '<div class="inline-part"><h4>End Date</h4><input type="date" name="event-date-end" value="' + eventItem.dateEnd + '"></div>' +
+                '<div><h4>Event Description</h4><textarea name="event-description">' + escapeHtml(eventItem.description || '') + '</textarea></div>' +
+                '<div><h4>Event Status</h4>' +
+                    '<select name="event-status">' +
+                        '<option value="Upcoming"' + (eventItem.status === 'Upcoming' ? ' selected' : '') + '>Upcoming</option>' +
+                        '<option value="Ongoing"' + (eventItem.status === 'Ongoing' ? ' selected' : '') + '>Ongoing</option>' +
+                        '<option value="Finished"' + (eventItem.status === 'Finished' ? ' selected' : '') + '>Finished</option>' +
+                    '</select>' +
                 '</div>' +
-                '<div><h4>Select Involved Organizations</h4>' + createOrgCheckboxGridHTML(eventItem.orgs) + '</div>' +
+                '<div><h4>Event Location</h4><input type="text" name="event-location" value="' + escapeHtml(eventItem.location) + '"></div>' +
+                '<div class="inline-section">' +
+                    '<div class="inline-part"><h4>Start Date</h4><input type="date" name="event-date-start" value="' + startDate + '"></div>' +
+                    '<div class="inline-part"><h4>End Date</h4><input type="date" name="event-date-end" value="' + endDate + '"></div>' +
+                '</div>' +
+                '<div><h4>Event Photo URL</h4><input type="text" name="event-photoUrl" value="' + escapeHtml(eventItem.eventPhotoUrl) + '"></div>' +
+                '<div><h4>Select Involved Organizations</h4>' + createOrgCheckboxGridHTML(selectedOrgIds) + '</div>' +
+                '<div><h4>Select Categories</h4>' + createCatCheckboxGridHTML(selectedCatIds) + '</div>' +
                 '<div class="event-programme-section">' +
-                    '<div tabindex="0" class="header"><h4>Programme Schedule</h4><div class="add-schedule">Add Schedule</div></div>' +
-                    '<div class="schedules">' + eventItem.schedules.map(createScheduleBlockHTML).join('') + '</div>' +
+                    '<div class="header"><h4>Programme Schedule</h4><div tabindex="0" class="add-schedule">Add Schedule</div></div>' +
+                    '<div class="schedules">' + formattedSchedules.map(createScheduleBlockHTML).join('') + '</div>' +
+                '</div>' +
+                '<div class="event-gallery-section">' +
+                    '<div class="header"><h4>Gallery</h4><div tabindex="0" class="add-photo">Add Photo</div></div>' +
+                    '<div class="gallery">' + formattedPhotos.map(createPhotoBlockHTML).join('') + '</div>' +
                 '</div>' +
                 '<div class="edit-actions">' +
                     '<button class="join-button" type="submit">Save Changes</button>' +
@@ -1007,23 +1534,22 @@ function createAnnouncementListItemHTML(announcement) {
 }
 
 // Render functions: rebuilds each list from its data array
-const manageEventsList = document.getElementById('manage-events-list');
 const manageAnnouncementsList = document.getElementById('manage-announcements-list');
-
-function renderManageEvents() {
-    if (!manageEventsList) return;
-    manageEventsList.innerHTML = officerEventsData.map(createEventListItemHTML).join('');
-}
 
 function renderManageAnnouncements() {
     if (!manageAnnouncementsList) return;
     manageAnnouncementsList.innerHTML = announcementsData.map(createAnnouncementListItemHTML).join('');
 }
 
-renderManageEvents();
-announcementsLoaded.then(renderManageAnnouncements);
+function renderManageEvents() {
+    if (!manageEventsList) return;
+    manageEventsList.innerHTML = officerEventsData.map(createEventListItemHTML).join('');
+}
 
-// Helpers: reads a form's current state back into a plain object
+
+announcementsLoaded.then(renderManageAnnouncements);
+eventsLoaded.then(renderManageEvents);
+
 function readSchedulesFromForm(formEl) {
     return Array.from(formEl.querySelectorAll('.schedule')).map(function (block) {
         return {
@@ -1050,38 +1576,131 @@ function trimScheduleBlocksToOne(formEl) {
     });
 }
 
+function readCatsFromForm(formEl) {
+    return Array.from(formEl.querySelectorAll('input[name="cats"]:checked')).map(function (checkbox) {
+        return checkbox.value;
+    });
+}
+
+function readPhotosFromForm(formEl) {
+    return Array.from(formEl.querySelectorAll('.gallery .photo')).map(function (block) {
+        return {
+            id: block.dataset.id || undefined,
+            photoUrl: block.querySelector('[name="photo-url"]').value.trim(),
+            caption: block.querySelector('[name="photo-caption"]').value.trim()
+        };
+    });
+}
+
 function todayFormatted() {
-    return 'Posted on ' + new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return 'Posted on ' + new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 }
 
 // Submit New Event
 const newEventForm = document.querySelector('#panel-new-event form');
-
 if (newEventForm) {
-    newEventForm.addEventListener('submit', function (event) {
+    newEventForm.addEventListener('submit', async function (event) {
         event.preventDefault();
+        
+        const validationError = validateEventForm(newEventForm);
+        if (validationError) {
+            alert(validationError);
+            return;
+        }
 
-        const eventName = newEventForm.querySelector('input[name="event-name"]').value.trim();
-        if (eventName === '') return;
-
-        officerEventsData.push({
-            id: 'event-' + Date.now(),
-            name: eventName,
+        const newEventPayload = {
+            name: newEventForm.querySelector('input[name="event-name"]').value.trim(),
             description: newEventForm.querySelector('textarea[name="event-description"]').value.trim(),
-            dateStart: newEventForm.querySelector('input[name="event-date-start"]').value,
-            dateEnd: newEventForm.querySelector('input[name="event-date-end"]').value,
+            status: newEventForm.querySelector('select[name="event-status"]').value,
+            location: newEventForm.querySelector('input[name="event-location"]').value.trim(),
+            startDate: newEventForm.querySelector('input[name="event-date-start"]').value,
+            endDate: newEventForm.querySelector('input[name="event-date-end"]').value,
+            eventPhotoUrl: newEventForm.querySelector('input[name="event-photoUrl"]').value.trim(),
             orgs: readOrgsFromForm(newEventForm),
+            categories: readCatsFromForm(newEventForm),
             schedules: readSchedulesFromForm(newEventForm),
-            postedDate: todayFormatted()
-        });
+            galleryPhotos: readPhotosFromForm(newEventForm)
+        };
 
-        saveOfficerEvents();
-        renderManageEvents();
+        try {
+            const token = localStorage.getItem('authToken');
+            const response = await fetch(API_BASE_URL + '/api/events', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify(newEventPayload)
+            });
 
-        trimScheduleBlocksToOne(newEventForm);
-        newEventForm.reset();
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'Failed to create event');
+
+            officerEventsData.unshift({
+                id: data.id,
+                name: data.name,
+                description: data.description,
+                status: data.status,
+                dateStart: data.startDate ? data.startDate.split('T')[0] : '',
+                dateEnd: data.endDate ? data.endDate.split('T')[0] : '',
+                location: data.location,
+                eventPhotoUrl: data.eventPhotoUrl,
+                orgs: data.orgsRelated ? data.orgsRelated.map(o => o.id) : newEventPayload.orgs,
+                categories: data.categories ? data.categories.map(c => c.id) : newEventPayload.categories,
+                schedules: data.schedules || newEventPayload.schedules,
+                galleryPhotos: data.galleryPhotos || newEventPayload.galleryPhotos,
+                postedDate: data.createdAt ? new Date(data.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) : todayFormatted()
+            });
+
+            renderManageEvents();
+            trimScheduleBlocksToOne(newEventForm);
+            newEventForm.reset();
+            renderNewEventOrgCheckboxes();
+            alert('Event published successfully!');
+        } catch (error) {
+            alert('Error creating event: ' + error.message);
+        }
     });
 }
+
+// Delete events from the database
+// code based on its announcement counterpart
+if (manageEventsList) {
+    manageEventsList.addEventListener('click', async function (event) {
+        const deleteButton = event.target.closest('.delete-event');
+        if (!deleteButton) return;
+        
+        const listItem = deleteButton.closest('li[data-id]');
+        if (!listItem) return;
+        
+        const eventId = listItem.dataset.id;
+        
+        if (!confirm('Delete this event? This action cannot be undone.')) return;
+        
+        try {
+            const token = localStorage.getItem('authToken');
+            const response = await fetch(API_BASE_URL + '/api/events/' + encodeURIComponent(eventId), {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            });
+
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'Failed to delete event');
+
+            officerEventsData = officerEventsData.filter(function (item) {
+                return item.id !== eventId;
+            });
+
+            renderManageEvents();
+            alert('Event deleted successfully.');
+        } catch (error) {
+            alert('Error deleting event: ' + error.message);
+        }
+    });
+}
+
 
 // Authenticated API helper for announcement create/update/delete.
 async function announcementApiRequest(path, options) {
@@ -1176,15 +1795,62 @@ document.addEventListener('submit', async function (event) {
         const eventItem = officerEventsData.find(function (item) { return item.id === itemId; });
         if (!eventItem) return;
 
-        eventItem.name = form.querySelector('input[name="event-name"]').value.trim();
-        eventItem.description = form.querySelector('textarea[name="event-description"]').value.trim();
-        eventItem.dateStart = form.querySelector('input[name="event-date-start"]').value;
-        eventItem.dateEnd = form.querySelector('input[name="event-date-end"]').value;
-        eventItem.orgs = readOrgsFromForm(form);
-        eventItem.schedules = readSchedulesFromForm(form);
+        const validationError = validateEventForm(form);
+        if (validationError) {
+            alert(validationError);
+            return;
+        }
 
-        saveOfficerEvents();
-        renderManageEvents();
+        const eventUpdateData = {
+            name: form.querySelector('input[name="event-name"]').value.trim(),
+            description: form.querySelector('textarea[name="event-description"]').value.trim(),
+            status: form.querySelector('select[name="event-status"]').value,
+            location: form.querySelector('input[name="event-location"]').value.trim(),
+            startDate: form.querySelector('input[name="event-date-start"]').value,
+            endDate: form.querySelector('input[name="event-date-end"]').value,
+            eventPhotoUrl: form.querySelector('input[name="event-photoUrl"]').value.trim(),
+            orgs: readOrgsFromForm(form),
+            categories: readCatsFromForm(form),
+            schedules: readSchedulesFromForm(form),
+            galleryPhotos: readPhotosFromForm(form)
+        };
+
+        if (!eventUpdateData.name) {
+            alert('Please enter an event name.');
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('authToken');
+            const response = await fetch(API_BASE_URL + '/api/events/' + encodeURIComponent(itemId), {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify(eventUpdateData)
+            });
+
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'Failed to update event');
+
+            eventItem.name = data.name;
+            eventItem.description = data.description;
+            eventItem.status = data.status;
+            eventItem.location = data.location;
+            eventItem.eventPhotoUrl = data.eventPhotoUrl;
+            eventItem.dateStart = data.startDate ? data.startDate.split('T')[0] : '';
+            eventItem.dateEnd = data.endDate ? data.endDate.split('T')[0] : '';
+            eventItem.orgs = data.orgsRelated ? data.orgsRelated.map(o => o.id) : eventUpdateData.orgs;
+            eventItem.categories = data.categories ? data.categories.map(c => c.id) : eventUpdateData.categories;
+            eventItem.schedules = data.schedules || eventUpdateData.schedules;
+            eventItem.galleryPhotos = data.galleryPhotos || eventUpdateData.galleryPhotos;
+
+            renderManageEvents();
+            alert('Event updated successfully.');
+        } catch (error) {
+            alert(error.message);
+        }
     } else {
         const announcementItem = announcementsData.find(function (item) { return item.id === itemId; });
         if (!announcementItem) return;
@@ -1210,16 +1876,60 @@ document.addEventListener('submit', async function (event) {
     }
 });
 
+function validateEventForm(formEl) {
+    const nameVal = formEl.querySelector('input[name="event-name"]').value.trim();
+    const descVal = formEl.querySelector('textarea[name="event-description"]').value.trim();
+    const locationVal = formEl.querySelector('input[name="event-location"]').value.trim();
+    const startDateVal = formEl.querySelector('input[name="event-date-start"]').value;
+    const endDateVal = formEl.querySelector('input[name="event-date-end"]').value;
+    const photoUrlVal = formEl.querySelector('input[name="event-photoUrl"]').value.trim();
+    const selectedOrgs = readOrgsFromForm(formEl);
+    const schedules = readSchedulesFromForm(formEl);
+    const galleryPhotos = readPhotosFromForm(formEl);
+
+    if (!nameVal) return 'Event Name: This field is required and cannot be empty.';
+    if (!descVal) return 'Event Description: This field is required and cannot be empty.';
+    if (!locationVal) return 'Event Location: This field is required and cannot be empty.';
+    if (!startDateVal) return 'Start Date: Please select a valid start date.';
+    if (!endDateVal) return 'End Date: Please select a valid end date.';
+    if (startDateVal > endDateVal) return 'Date Range Error: Start Date cannot be further than (after) the End Date.';
+    if (!photoUrlVal) return 'Event Photo URL: This field is required.';
+    if (selectedOrgs.length === 0) return 'Involved Organizations: Please select at least one organization.';
+
+    for (let i = 0; i < schedules.length; i++) {
+        const sched = schedules[i];
+        const schedNum = i + 1;
+
+        if (!sched.title) return `Programme Schedule #${schedNum} (Title): Schedule title is required.`;
+        if (!sched.date) return `Programme Schedule #${schedNum} (Date): Schedule date is required.`;
+        if (sched.date < startDateVal || sched.date > endDateVal) {
+            return `Programme Schedule #${schedNum} (Date): Schedule date must fall within the event's Start Date and End Date range.`;
+        }
+        if (!sched.startTime) return `Programme Schedule #${schedNum} (Start Time): Start time is required.`;
+        if (!sched.endTime) return `Programme Schedule #${schedNum} (End Time): End time is required.`;
+        if (sched.startTime >= sched.endTime) return `Programme Schedule #${schedNum} (Times): Start Time must be earlier than the End Time.`;
+        if (!sched.location) return `Programme Schedule #${schedNum} (Location): Schedule location is required.`;
+    }
+
+    for (let j = 0; j < galleryPhotos.length; j++) {
+        const photo = galleryPhotos[j];
+        const photoNum = j + 1;
+
+        if (!photo.photoUrl) {
+            return `Gallery Photo #${photoNum} (Photo URL): Photo URL is required. You may click "Remove" if you do not wish to include this photo block.`;
+        }
+    }
+
+    return null;
+}
+
+
 // Generates the New Event form's checkbox grid on page load
 // (fixes the old hardcoded checkboxes that used mismatched org ids)
-const newEventOrgCheckboxes = document.getElementById('new-event-org-checkboxes');
-if (newEventOrgCheckboxes) {
-    newEventOrgCheckboxes.innerHTML = organizationsData.map(function (org) {
-        return '<label tabindex="0" class="org-checkbox-item">' +
-            '<input tabindex="-1" type="checkbox" name="orgs" value="' + org.id + '">' +
-            '<span>' + org.name + '</span>' +
-        '</label>';
-    }).join('');
+function renderNewEventOrgCheckboxes() {
+    const newEventOrgCheckboxes = document.getElementById('new-event-org-checkboxes');
+    if (!newEventOrgCheckboxes) return;
+    newEventOrgCheckboxes.innerHTML = createOrgCheckboxGridHTML(currentUserOrgIds);
 }
 
 // Cancel
@@ -1231,31 +1941,69 @@ document.addEventListener('click', function (event) {
     if (toggle) toggle.checked = false;
 });
 
-// Add Schedule
-document.addEventListener('click', function (event) {
-    if (!event.target.classList.contains('add-schedule')) return;
 
-    const schedulesContainer = event.target.closest('.event-programme-section').querySelector('.schedules');
+function addScheduleFrontend(element) {
+    const programmeSection = element.closest('.event-programme-section');
+    if (!programmeSection) return;
+    
+    const schedulesContainer = programmeSection.querySelector('.schedules');
     const firstSchedule = schedulesContainer.querySelector('.schedule');
+    if (!firstSchedule) return;
 
     const newSchedule = firstSchedule.cloneNode(true);
     newSchedule.querySelectorAll('input').forEach(function (input) { input.value = ''; });
     newSchedule.querySelectorAll('textarea').forEach(function (textarea) { textarea.value = ''; });
 
     schedulesContainer.appendChild(newSchedule);
+}
+
+function removeScheduleFrontend(element) {
+    const scheduleBlock = element.closest('.schedule');
+    if (!scheduleBlock) return;
+    
+    const schedulesContainer = scheduleBlock.closest('.schedules');
+    if (!schedulesContainer) return;
+    
+    const allSchedules = schedulesContainer.querySelectorAll('.schedule');
+    if (allSchedules.length > 1) {
+        scheduleBlock.remove();
+    } else{
+        alert("Event must have at least one schedule.");
+    }
+}
+
+document.addEventListener('click', function (event) {
+    const addBtn = event.target.closest('.add-schedule');
+    if (addBtn) addScheduleFrontend(addBtn);
 });
 
-// Remove Schedule
-document.addEventListener('click', function (event) {
-    if (!event.target.classList.contains('remove-schedule')) return;
-
-    const schedulesContainer = event.target.closest('.schedules');
-    const allSchedules = schedulesContainer.querySelectorAll('.schedule');
-
-    if (allSchedules.length > 1) {
-        event.target.closest('.schedule').remove();
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+        const addBtn = e.target.closest('.add-schedule');
+        if (addBtn) {
+            e.preventDefault();
+            addScheduleFrontend(addBtn);
+        }
     }
 });
+
+
+document.addEventListener('click', function (event) {
+    const removeBtn = event.target.closest('.remove-schedule');
+    if (removeBtn) removeScheduleFrontend(removeBtn);
+});
+
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+        const removeBtn = e.target.closest('.remove-schedule');
+        if (removeBtn) {
+            e.preventDefault();
+            removeScheduleFrontend(removeBtn);
+        }
+    }
+});
+
+
 
 
 //for toggling the menu using enter
@@ -1263,8 +2011,6 @@ const menuToggle = document.querySelector('.menu-checkbox');
 const menuBtn = document.querySelector('.mobile-menu-btn');
 
 if (menuBtn && menuToggle) {
-    console.log("Hamburger menu script loaded successfully!");
-
     menuBtn.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
@@ -1289,6 +2035,60 @@ document.addEventListener('keydown', function (e) {
         }
     }
 });
+
+
+function addPhotoFrontend(element) {
+    const gallerySection = element.closest('.event-gallery-section');
+    if (!gallerySection) return;
+    
+    const galleryContainer = gallerySection.querySelector('.gallery');
+    const firstPhoto = galleryContainer.querySelector('.photo');
+    
+    if (!firstPhoto) {
+        galleryContainer.innerHTML = createPhotoBlockHTML({ photoUrl: '', caption: '' });
+        return;
+    }
+    
+    const newPhoto = firstPhoto.cloneNode(true);
+    newPhoto.querySelectorAll('input').forEach(function (input) { input.value = ''; });
+    galleryContainer.appendChild(newPhoto);
+}
+
+
+function removePhotoFrontend(element) {
+    const photoBlock = element.closest('.photo');
+    if (!photoBlock) return;
+    
+    const galleryContainer = photoBlock.closest('.gallery');
+    if (!galleryContainer) return;
+    
+    photoBlock.remove();
+}
+
+document.addEventListener('click', function (event) {
+    const addPhotoBtn = event.target.closest('.add-photo');
+    if (addPhotoBtn) addPhotoFrontend(addPhotoBtn);
+
+    const removePhotoBtn = event.target.closest('.remove-photo');
+    if (removePhotoBtn) removePhotoFrontend(removePhotoBtn);
+});
+
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+        const addPhotoBtn = e.target.closest('.add-photo');
+        if (addPhotoBtn) {
+            e.preventDefault();
+            addPhotoFrontend(addPhotoBtn);
+        }
+        const removePhotoBtn = e.target.closest('.remove-photo');
+        if (removePhotoBtn) {
+            e.preventDefault();
+            removePhotoFrontend(removePhotoBtn);
+        }
+    }
+});
+
+
 
 // ALL PAGES: header auth button (Log In/Log Out) to reflect login state
 const authButton = document.getElementById('auth-button');
