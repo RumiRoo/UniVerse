@@ -67,7 +67,7 @@ These are also listed on the login page.
 ## Troubleshooting
 
 - "Failed to fetch" or organizations don't load: the server isn't running. Repeat step 5.
-- Want the demo data back (e.g. the two registration requests)? Stop the server and run `npm run setup` again, then `npm start`.
+- Want the demo data back (e.g. the two registration requests)? Stop the server and run `npx prisma migrate reset`, `npx prisma generate`, then `npm run setup` again, then `npm start`.
 - Port 3000 already in use: close the other program using it, or restart your computer.
 
 ### Group 24 (Developers)
