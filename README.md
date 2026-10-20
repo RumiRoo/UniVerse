@@ -48,6 +48,18 @@ A browser-based student organization management app designed to centralize stude
 
 6. Open `frontend/login.html` in your browser (double-click the file).
 
+## For developers
+
+| Command | When to use it |
+|---|---|
+| `npm install` | After pulling changes that touch `package.json` |
+| `npm run setup` | After pulling changes to the database (`schema.prisma`, new migrations, or `seed.js`). It is safe to run again. |
+| `npm run dev` | While coding. Restarts the server automatically when you save a file. |
+| `npm start` | Plain start (no auto-restart). Restart it yourself after editing server code. |
+
+To wipe everything and start fresh (this erases ALL data, including registered accounts):
+`npx prisma migrate reset`, then `npx prisma generate`, then `npm run setup`.
+
 ## Demo accounts
 
 | Role    | Email             | Password   |
@@ -69,6 +81,8 @@ These are also listed on the login page.
 - "Failed to fetch" or organizations don't load: the server isn't running. Repeat step 5.
 - Want the demo data back (e.g. the two registration requests)? Stop the server and run `npx prisma migrate reset`, `npx prisma generate`, then `npm run setup` again, then `npm start`.
 - Port 3000 already in use: close the other program using it, or restart your computer.
+
+---
 
 ### Group 24 (Developers)
 - Ghian Renzen Arboleda
