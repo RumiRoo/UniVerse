@@ -19,7 +19,9 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/organizations', async (req, res) => {
-    const organizations = await prisma.organization.findMany();
+    const organizations = await prisma.organization.findMany({
+            include: { _count: { select: { members: true } } },
+        });
     res.json(organizations);
 });
 
@@ -173,7 +175,8 @@ app.get('/api/admin/stats', requireAuth('admin'), async (req, res) => {
     const users = await prisma.user.count();
     const students = await prisma.user.count({ where: { role: 'student' } });
     const pendingRequests = await prisma.organizationRequest.count();
-    res.json({ organizations, users, students, pendingRequests });
+        const upcomingEvents = await prisma.event.count({ where: { status: 'Upcoming' } });
+    res.json({ organizations, users, students, pendingRequests, upcomingEvents });
 });
 
 // Remove an existing organization (Admin only)
