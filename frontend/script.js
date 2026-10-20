@@ -16,6 +16,8 @@ async function fetchOrganizations() {
     }
     initOrganizationsPageUI();
     initHomeFeaturedUI();
+        renderNewEventOrgCheckboxes();
+        renderManageEvents();
     refreshAnnouncementOrgOptions();
     renderManageAnnouncements();
 }
@@ -1026,7 +1028,7 @@ function applyEventFilters() {
     if (!eventSearch || !eventCategorySelect) return;
     
     const searchTerm = eventSearch.value.trim().toLowerCase();
-    const selectedCategory = eventCategorySelect.value;
+    const selectedCategory = eventCategorySelect.value || 'all';
     const currentEventCards = document.querySelectorAll('.event-card');
 
     let visibleCount = 0;
@@ -1270,6 +1272,8 @@ async function fetchCategories() {
     try {
         const response = await fetch(API_BASE_URL + '/api/categories');
         categoriesData = await response.json();
+            renderNewEventCatCheckboxes();
+            renderManageEvents();
     } catch (error) {
         console.error('Could not load categories from the server:', error);
         categoriesData = [];
@@ -1930,6 +1934,13 @@ function renderNewEventOrgCheckboxes() {
     const newEventOrgCheckboxes = document.getElementById('new-event-org-checkboxes');
     if (!newEventOrgCheckboxes) return;
     newEventOrgCheckboxes.innerHTML = createOrgCheckboxGridHTML(currentUserOrgIds);
+}
+
+// Generates the New Event form's category checkboxes
+function renderNewEventCatCheckboxes() {
+    const container = document.getElementById('new-event-cat-checkboxes');
+    if (!container) return;
+    container.innerHTML = createCatCheckboxGridHTML([]);
 }
 
 // Cancel
