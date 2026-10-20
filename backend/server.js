@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const { PrismaClient } = require('./generated/prisma');
 const { PrismaLibSql } = require('@prisma/adapter-libsql');
-const { nanoid } = require('nanoid');
+const { randomUUID } = require('crypto');
 
 const app = express();
 app.use(express.json());
@@ -398,10 +398,53 @@ app.get('/api/events/:id', async (req, res) => {
     }
 });
 
+// EVENTS: permission helpers
+// Only officers and admins can create, edit, or delete events
+function requireEventManager(req, res, next) {
+    requireAuth()(req, res, function () {
+        if (!['officer', 'admin'].includes(req.user.role)) {
+            return res.status(403).json({ error: 'Only officers and admins can manage events' });
+        }
+        next();
+    });
+}
+
+// IDs of the organizations the given user belongs to
+async function getUserOrgIds(userId) {
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        include: { organizations: true },
+    });
+    return user ? user.organizations.map((org) => org.id) : [];
+}
+
 // for updating an event
-app.put('/api/events/:id', async (req, res) => {
+app.put('/api/events/:id', requireEventManager, async (req, res) => {
     try {
-        const eventId = req.params.id;
+                const eventId = req.params.id;
+
+        // Officers can only edit events that involve their own org.
+        // They also can't remove their own org. from the event
+        if (req.user.role === 'officer') {
+            const existing = await prisma.event.findUnique({
+                where: { id: eventId },
+                include: { orgsRelated: true }
+            });
+            if (!existing) return res.status(404).json({ error: 'Event not found' });
+
+            const myOrgIds = await getUserOrgIds(req.user.id);
+            const myOrgsOnEvent = existing.orgsRelated
+                .map((org) => org.id)
+                .filter((id) => myOrgIds.includes(id));
+            const newOrgIds = req.body.orgs || [];
+
+            if (myOrgsOnEvent.length === 0) {
+                return res.status(403).json({ error: 'You can only edit events involving your organization' });
+            }
+            if (!myOrgsOnEvent.every((id) => newOrgIds.includes(id))) {
+                return res.status(403).json({ error: 'You cannot remove your own organization from an event' });
+            }
+        }
         const { name, description, status, location, startDate, endDate, eventPhotoUrl, orgs, categories, schedules, galleryPhotos } = req.body;
 
         const updatedEvent = await prisma.$transaction(async (tx) => {
@@ -506,11 +549,26 @@ app.put('/api/events/:id', async (req, res) => {
 });
 
 //for creating new event
-app.post('/api/events', requireAuth(), async (req, res) => {
+app.post('/api/events', requireEventManager, async (req, res) => {
     try {
         const { name, description, status, location, startDate, endDate, eventPhotoUrl, orgs, categories, schedules, galleryPhotos } = req.body;
         
-        const newEventId = nanoid(21);
+            if (!name || !Array.isArray(orgs) || orgs.length === 0) {
+                return res.status(400).json({ error: 'Event name and at least one organization are required' });
+        }
+
+        // Officers must be in an organization, and that organization must be selected
+        if (req.user.role === 'officer') {
+            const myOrgIds = await getUserOrgIds(req.user.id);
+            if (myOrgIds.length === 0) {
+                return res.status(403).json({ error: 'Join an organization before posting events' });
+            }
+            if (!myOrgIds.every((id) => orgs.includes(id))) {
+                return res.status(403).json({ error: 'Your organization must be selected for this event' });
+            }
+        }
+
+        const newEventId = randomUUID();
 
         const newEvent = await prisma.$transaction(async (tx) => {
             return await tx.event.create({
@@ -567,7 +625,7 @@ app.post('/api/events', requireAuth(), async (req, res) => {
 });
 
 //for deleting events
-app.delete('/api/events/:id', requireAuth(), async (req, res) => {
+app.delete('/api/events/:id', requireEventManager, async (req, res) => {
     try {
         const { id } = req.params;
         const existingEvent = await prisma.event.findUnique({
@@ -577,6 +635,15 @@ app.delete('/api/events/:id', requireAuth(), async (req, res) => {
 
         if (!existingEvent) {
             return res.status(404).json({ error: 'Event not found' });
+        }
+
+        // Officers can only delete events involving their own organization
+        if (req.user.role === 'officer') {
+            const myOrgIds = await getUserOrgIds(req.user.id);
+            const involvesMyOrg = existingEvent.orgsRelated.some((org) => myOrgIds.includes(org.id));
+            if (!involvesMyOrg) {
+                return res.status(403).json({ error: 'You can only delete events involving your organization' });
+            }
         }
 
         await prisma.$transaction(async (tx) => {
@@ -593,6 +660,3 @@ app.delete('/api/events/:id', requireAuth(), async (req, res) => {
         res.status(500).json({ error: 'Failed to delete event: ' + error.message });
     }
 });
-
-
-
