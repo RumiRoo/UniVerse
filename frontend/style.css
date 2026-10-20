@@ -3,7 +3,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap');
 
 /*----------------------------
-General
+            General
 ------------------------------*/
 
 *, *::before, *::after {
@@ -502,7 +502,7 @@ Home - Upcoming Events Section
     margin-top: 1rem;
 
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 1.25rem;
 }
 
@@ -3252,3 +3252,15 @@ form textarea:focus {
     padding: 12px 16px;
 }
 
+/* Help text under form fields */
+.field-hint {
+    margin: 6px 0 0;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: #6b6477;
+}
+.field-hint code {
+    background: #efeaf5;
+    border-radius: 4px;
+    padding: 1px 5px;
+}

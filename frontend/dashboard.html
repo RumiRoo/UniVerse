@@ -111,14 +111,7 @@
 
                     <section class="org-section">
                         <h2>My Organization</h2>
-                        <div class="officer-org-card">
-                            <img class="org-photo" src="assets/the-digital-fort.jpeg" alt="The Digital Fort logo">
-                            <div class="officer-org-info">
-                                <p class="org-title">The Digital Fort</p>
-                                <p class="org-category">Journalism</p>
-                                <p class="officer-org-meta">42 Members</p>
-                            </div>
-                        </div>
+                        <div id="officer-org-list"></div>
                     </section>
 
                     <section class="org-section">
@@ -165,7 +158,8 @@
                                     </div>
                                     <div>
                                         <h4>Event Photo URL</h4>
-                                        <input type="text" name="event-photoUrl" placeholder="Enter event phoyo URL...">
+                                        <input type="text" name="event-photoUrl" placeholder="e.g. assets/my-event.jpg or https://.../photo.jpg">
+                                        <p class="field-hint">ⓘ Use an image file inside <code>assets/</code> (e.g. <code>assets/my-event.jpg</code>) or a direct link to an image ending in .jpg, .png or .webp. Web page links and Google Drive share links won't work.</p>
                                     </div>    
                                     <div>
                                         <h4>Select Involved Organizations</h4>
@@ -290,7 +284,7 @@
                                 <p class="stat-label">Students</p>
                             </div>
                             <div class="stat-tile">
-                                <p class="stat-number">3</p>
+                                <p class="stat-number" id="stat-upcoming-events">3</p>
                                 <p class="stat-label">Upcoming Events</p>
                             </div>
                             <div class="stat-tile">

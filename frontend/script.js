@@ -632,7 +632,10 @@ async function initHomeUpcomingEvents() {
         if (!response.ok) throw new Error('Failed to fetch events');
         const events = await response.json();
 
-        const upcomingEvents = events.slice(0, 3);
+        const upcomingEvents = events
+                    .filter(function (e) { return e.status !== 'Finished'; })
+                    .sort(function (a, b) { return new Date(a.startDate) - new Date(b.startDate); })
+                    .slice(0, 3);
 
         if (upcomingEvents.length === 0) {
             upcomingEventsContainer.innerHTML = '<p style="text-align: center; color: #666;">No recent events at the moment.</p>';
@@ -1211,6 +1214,9 @@ async function loadAdminStats() {
 
     if (orgsEl) orgsEl.textContent = stats.organizations;
     if (usersEl) usersEl.textContent = stats.students;
+
+        const upcomingEl = document.getElementById('stat-upcoming-events');
+        if (upcomingEl) upcomingEl.textContent = stats.upcomingEvents;
 }
 
 // Only runs on the dashboard and only for admins (other roles would get a 403)
@@ -1380,7 +1386,7 @@ function createOrgCheckboxGridHTML(selectedOrgIds) {
             
             return '<label class="org-checkbox-item' + marker + '" tabindex="0">' +
                 '<input type="checkbox" tabindex="-1" name="orgs" value="' + org.id + '"' + isChecked + '>' +
-                '<span>' + org.name + '</span>' +
+                '<span>' + escapeHtml(org.name) + '</span>' +
             '</label>';
         }).join('') +
     '</div>';
@@ -1486,7 +1492,8 @@ function createEventListItemHTML(eventItem) {
                     '<div class="inline-part"><h4>Start Date</h4><input type="date" name="event-date-start" value="' + startDate + '"></div>' +
                     '<div class="inline-part"><h4>End Date</h4><input type="date" name="event-date-end" value="' + endDate + '"></div>' +
                 '</div>' +
-                '<div><h4>Event Photo URL</h4><input type="text" name="event-photoUrl" value="' + escapeHtml(eventItem.eventPhotoUrl) + '"></div>' +
+                '<div><h4>Event Photo URL</h4><input type="text" name="event-photoUrl" value="' + escapeHtml(eventItem.eventPhotoUrl) + '">' +
+                    '<p class="field-hint">ⓘ Use an image file inside <code>assets/</code> (e.g. <code>assets/my-event.jpg</code>) or a direct link to an image ending in .jpg, .png or .webp.</p></div>' +
                 '<div><h4>Select Involved Organizations</h4>' + createOrgCheckboxGridHTML(selectedOrgIds) + '</div>' +
                 '<div><h4>Select Categories</h4>' + createCatCheckboxGridHTML(selectedCatIds) + '</div>' +
                 '<div class="event-programme-section">' +
@@ -1928,9 +1935,37 @@ function validateEventForm(formEl) {
 }
 
 
+// Officer dashboard: "My Organization" cards from the officer's real organizations
+function renderOfficerOrgCards() {
+    const container = document.getElementById('officer-org-list');
+    if (!container) return;
+
+    const myOrgs = organizationsData.filter(function (org) {
+        return currentUserOrgIds.includes(org.id);
+    });
+
+    if (myOrgs.length === 0) {
+        container.innerHTML = '<p class="no-results" style="display: block;">You are not part of any organization yet.</p>';
+        return;
+    }
+
+    container.innerHTML = myOrgs.map(function (org) {
+        const members = org._count ? org._count.members : 0;
+        return '<div class="officer-org-card">' +
+            '<img class="org-photo" src="' + (org.photo || 'assets/no-image.svg') + '" alt="' + escapeHtml(org.name) + ' logo">' +
+            '<div class="officer-org-info">' +
+                '<p class="org-title">' + escapeHtml(org.name) + '</p>' +
+                '<p class="org-category">' + getCategoryLabel(org.category) + '</p>' +
+                '<p class="officer-org-meta">' + members + (members === 1 ? ' Member' : ' Members') + '</p>' +
+            '</div>' +
+        '</div>';
+    }).join('');
+}
+
 // Generates the New Event form's checkbox grid on page load
 // (fixes the old hardcoded checkboxes that used mismatched org ids)
 function renderNewEventOrgCheckboxes() {
+    renderOfficerOrgCards();
     const newEventOrgCheckboxes = document.getElementById('new-event-org-checkboxes');
     if (!newEventOrgCheckboxes) return;
     newEventOrgCheckboxes.innerHTML = createOrgCheckboxGridHTML(currentUserOrgIds);
@@ -2100,6 +2135,16 @@ document.addEventListener('keydown', function (e) {
 });
 
 
+// ALL PAGES: if an event, organization or gallery image fails to load,placeholder is shown
+document.addEventListener('error', function (event) {
+    const img = event.target;
+    if (!img || img.tagName !== 'IMG') return;
+    if (!img.matches('.event-photo, .org-photo, .gallery-child img')) return;
+    if (img.dataset.fallbackApplied) return;   // never loop if the placeholder itself fails
+
+    img.dataset.fallbackApplied = 'true';
+    img.src = 'assets/no-image.svg';
+}, true);
 
 // ALL PAGES: header auth button (Log In/Log Out) to reflect login state
 const authButton = document.getElementById('auth-button');
