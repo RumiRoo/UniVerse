@@ -111,14 +111,7 @@
 
                     <section class="org-section">
                         <h2>My Organization</h2>
-                        <div class="officer-org-card">
-                            <img class="org-photo" src="assets/the-digital-fort.jpeg" alt="The Digital Fort logo">
-                            <div class="officer-org-info">
-                                <p class="org-title">The Digital Fort</p>
-                                <p class="org-category">Journalism</p>
-                                <p class="officer-org-meta">42 Members</p>
-                            </div>
-                        </div>
+                        <div id="officer-org-list"></div>
                     </section>
 
                     <section class="org-section">
@@ -142,6 +135,17 @@
                                         <h4>Event Description</h4>
                                         <textarea name="event-description" placeholder="Enter event description..."></textarea>
                                     </div>
+                                    <div><h4>Event Status</h4>
+                                        <select name="event-status">
+                                            <option value="Upcoming" selected>Upcoming</option>
+                                            <option value="Ongoing">Ongoing</option>
+                                            <option value="Finished">Finished</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <h4>Event Location</h4>
+                                        <input type="text" name="event-location" placeholder="Enter event location...">
+                                    </div>
                                     <div class="inline-section">
                                         <div class="inline-part">
                                             <h4>Start Date</h4>
@@ -151,11 +155,22 @@
                                             <h4>End Date</h4>
                                             <input type="date" name="event-date-end" >
                                         </div>
+                                    </div>
+                                    <div>
+                                        <h4>Event Photo URL</h4>
+                                        <input type="text" name="event-photoUrl" placeholder="e.g. assets/my-event.jpg or https://.../photo.jpg">
+                                        <p class="field-hint">ⓘ Use an image file inside <code>assets/</code> (e.g. <code>assets/my-event.jpg</code>) or a direct link to an image ending in .jpg, .png or .webp. Web page links and Google Drive share links won't work.</p>
                                     </div>    
                                     <div>
                                         <h4>Select Involved Organizations</h4>
                                         <div class="org-checkbox-grid" id="new-event-org-checkboxes">
                                             <!--script.js, rendered from organizationsData-->
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4>Select Categories</h4>
+                                        <div class="cat-checkbox-grid" id="new-event-cat-checkboxes">
+                                            <!-- rendered from script.js-->
                                         </div>
                                     </div>
                                     <div class="event-programme-section">
@@ -194,7 +209,19 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>                    
+                                    </div>  
+                                    <div class="event-gallery-section">
+                                        <div class="header"><h4>Gallery</h4><div tabindex="0" class="add-photo">Add Photo</div></div>
+                                        <div class="gallery">
+                                            <div class="photo" data-id="">
+                                                <div tabindex="0" class="remove-photo">✕ &nbsp; Remove </div>
+                                                <div><h5>Photo URL</h5>
+                                                    <input type="text" name="photo-url" placeholder="Enter photo URL or asset path..."></div>
+                                                <div><h5>Caption</h5>
+                                                    <input type="text" name="photo-caption" placeholder="Enter photo caption..."></div>
+                                            </div>
+                                        </div>
+                                    </div>                  
                                     <button class="join-button" type="submit">Submit New Event</button>
                                 </form>
                             </div>
@@ -257,7 +284,7 @@
                                 <p class="stat-label">Students</p>
                             </div>
                             <div class="stat-tile">
-                                <p class="stat-number">3</p>
+                                <p class="stat-number" id="stat-upcoming-events">3</p>
                                 <p class="stat-label">Upcoming Events</p>
                             </div>
                             <div class="stat-tile">
