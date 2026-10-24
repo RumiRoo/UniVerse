@@ -5,7 +5,6 @@ const { PrismaLibSql } = require('@prisma/adapter-libsql');
 const adapter = new PrismaLibSql({ url: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
 const bcrypt = require('bcryptjs');
-const { nanoid } = require('nanoid');
 
 async function main() {
     const organizations = [
@@ -165,11 +164,9 @@ async function main() {
         });
     }
 
-
-    //ensure that seed or npm run setup is only run once, otherwise demo events will be duplicated
     const demoEvents = [
         {
-            id: '7vMGLwfss-scuLloOcd', //in the actual code, nanoid(21) will be called. demo nano ids only have 19 characters to avoid collisions more
+            id: '7vMGLwfss-scuLloOcd',
             name: 'Digital Consumption Art Exhibition',
             description: "Ready to be immersed? The digital consumption art exhibition invites everyone with passion for visual media to view our talented students’ pieces!",
             status: 'Upcoming',
@@ -208,7 +205,7 @@ async function main() {
         },
 
         {
-            id: 'gJNvoByztucQP92_mqN', //in the actual code, nanoid(21) will be called. demo nano ids only have 19 characters to avoid collisions more
+            id: 'gJNvoByztucQP92_mqN',
             name: 'Student Organizations Fair',
             description: "A collaboration between all of MMDC's organizations, this special event brings together the talents of all student groups. Join now to showcase your talents!",
             status: 'Ongoing',
@@ -276,7 +273,7 @@ async function main() {
         },
 
         {
-            id: 'ypy5DWATAa17D10HFh3', //in the actual code, nanoid(21) will be called. demo nano ids only have 19 characters to avoid collisions more
+            id: 'ypy5DWATAa17D10HFh3',
             name: 'Introduction to Web Systems & Technology',
             description: "Explore the core protocols and architecture powering modern online platforms in this engaging introductory session. Aspiring developers will gain essential insights into how network systems seamlessly connect users worldwide.",
             status: 'Upcoming',
@@ -318,7 +315,7 @@ async function main() {
     for (const event of demoEvents) {
         await prisma.event.upsert({
             where: { id: event.id },
-            update: event,
+            update: {},
             create: event,
         });
     }
@@ -327,6 +324,9 @@ async function main() {
 }
 
 main()
-    .catch((e) => console.error(e))
+    .catch((e) => {
+        console.error(e);
+        process.exitCode = 1;
+    })
     .finally(() => prisma.$disconnect());
     
