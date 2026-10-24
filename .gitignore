@@ -15,3 +15,5 @@ backend/dev.db-journal
 
 # Local patch instructions
 PATCH-INSTRUCTIONS.txt
+
+node_modules
