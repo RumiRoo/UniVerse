@@ -12,11 +12,12 @@ app.use(cors());
 
 const adapter = new PrismaLibSql({ url: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-app.get('/', (req, res) => {
-    res.send('UniVerse backend is running!');
-});
+// For Render deployment (external testing)
+// Serves the frontend pages so the deployed app is one link (pages + API together)
+const path = require('path');
+app.use(express.static(path.join(__dirname, '..', 'frontend')));
 
 app.get('/api/organizations', async (req, res) => {
     const organizations = await prisma.organization.findMany({
