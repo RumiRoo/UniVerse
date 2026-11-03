@@ -4,22 +4,116 @@
 // loaded from backend
 const API_BASE_URL = 'http://localhost:3000';
 
+// FEEDBACK HELPERS: friendly error cards, loading text and toast messages
+const NETWORK_ERROR_MESSAGE = 'We couldn\u2019t reach the server. Please check that the backend is running and try again.';
+
+// Works like fetch() but if the server can't be reached at all (offline or wrong address for ex.)
+// it throws a friendly error tagged as a network error
+async function apiFetch(url, options) {
+    try {
+        return await fetch(url, options);
+    } catch (error) {
+        const networkError = new Error(NETWORK_ERROR_MESSAGE);
+        networkError.isNetworkError = true;
+        throw networkError;
+    }
+}
+
+function isNetworkError(error) {
+    return Boolean(error && error.isNetworkError);
+}
+
+// Replaces a list area with a short "Loading..." line (used while retrying)
+function showLoadingState(container, whatLoading) {
+    if (!container) return;
+    container.innerHTML = '<p class="loading-message" role="status">Loading ' + escapeHtml(whatLoading) + '\u2026</p>';
+}
+
+// Replaces a list area with an error card and a "Try again" button
+// retryFunction is optional: w/o it, the button reloads the page
+function showErrorCard(container, error, whatFailed, retryFunction) {
+    if (!container) return;
+    const message = isNetworkError(error)
+        ? NETWORK_ERROR_MESSAGE
+        : 'Something went wrong on our end. Please try again in a moment.';
+
+    container.innerHTML =
+        '<div class="error-card" role="alert">' +
+            '<p class="error-card-title">Couldn\u2019t load ' + escapeHtml(whatFailed) + '</p>' +
+            '<p class="error-card-message">' + escapeHtml(message) + '</p>' +
+            '<button type="button" class="error-card-retry">Try again</button>' +
+        '</div>';
+
+    container.querySelector('.error-card-retry').addEventListener('click', function () {
+        if (retryFunction) {
+            showLoadingState(container, whatFailed);
+            retryFunction();
+        } else {
+            window.location.reload();
+        }
+    });
+}
+
+// Runs an async loader and shows an error card (with retry) in the container if it fails
+function runLoader(loaderFunction, container, whatFailed) {
+    return loaderFunction().catch(function (error) {
+        console.error('Could not load ' + whatFailed + ':', error);
+        showErrorCard(container, error, whatFailed, function () {
+            runLoader(loaderFunction, container, whatFailed);
+        });
+    });
+}
+
+// Small message at the bottom of the screen (replaces browser pop-ups). Can be clicked to dismiss
+// With no type given, a message containing "successfully" is green and everything else is red
+function showToast(message, type) {
+    message = String(message);
+    type = type || (/successfully/i.test(message) ? 'success' : 'error');
+
+    let region = document.getElementById('toast-region');
+    if (!region) {
+        region = document.createElement('div');
+        region.id = 'toast-region';
+        document.body.appendChild(region);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = 'toast toast-' + type;
+    toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+    toast.textContent = message;
+    toast.addEventListener('click', function () { toast.remove(); });
+    region.appendChild(toast);
+
+    setTimeout(function () { toast.remove(); }, type === 'error' ? 8000 : 4000);
+}
+
 let organizationsData = [];
 
 async function fetchOrganizations() {
+    let loadError = null;
     try {
-        const response = await fetch(API_BASE_URL + '/api/organizations');
+        const response = await apiFetch(API_BASE_URL + '/api/organizations');
+        if (!response.ok) throw new Error('Organizations API returned ' + response.status);
         organizationsData = await response.json();
     } catch (error) {
         console.error('Could not load organizations from the server:', error);
         organizationsData = [];
+        loadError = error;
     }
     initOrganizationsPageUI();
     initHomeFeaturedUI();
-        renderNewEventOrgCheckboxes();
-        renderManageEvents();
+    renderNewEventOrgCheckboxes();
+    renderManageEvents();
     refreshAnnouncementOrgOptions();
     renderManageAnnouncements();
+
+    // If loading fails, this replaces the empty lists with an error card
+    if (loadError) {
+        const noResults = document.getElementById('no-results-message');
+        if (noResults) noResults.style.display = 'none';
+        showErrorCard(document.getElementById('organizations-list'), loadError, 'organizations', fetchOrganizations);
+        showErrorCard(document.querySelector('.home-featured-orgs-con'), loadError, 'featured organizations', fetchOrganizations);
+    }
 }
 
 // Organization Cards: converts stored category value into displayed text in teh frontend
@@ -275,16 +369,19 @@ function normalizeAnnouncementRecord(record) {
 }
 
 let announcementsData = defaultAnnouncementsData.map(normalizeAnnouncementRecord);
+let announcementsLoadError = null;
 
 async function loadAnnouncementsFromAPI() {
     try {
-        const response = await fetch(API_BASE_URL + '/api/announcements');
+        const response = await apiFetch(API_BASE_URL + '/api/announcements');
         if (!response.ok) throw new Error('Announcements API returned ' + response.status);
         const records = await response.json();
         announcementsData = records.map(normalizeAnnouncementRecord);
+        announcementsLoadError = null;
     } catch (error) {
-        console.error('Could not load announcements from the server. Using demo announcements for display:', error);
-        announcementsData = defaultAnnouncementsData.map(normalizeAnnouncementRecord);
+        console.error('Could not load announcements from the server:', error);
+        announcementsData = [];
+        announcementsLoadError = error;
     }
     refreshAnnouncementOrgOptions();
     return announcementsData;
@@ -370,7 +467,15 @@ if (announcementSearchInput && announcementOrgSelect && announcementsListEl) {
         renderAnnouncements(filtered);
     }
 
-    announcementsLoaded.then(applyAnnouncementFilters);
+    announcementsLoaded.then(function () {
+        if (announcementsLoadError) {
+            if (noAnnouncementsMessage) noAnnouncementsMessage.style.display = 'none';
+            showErrorCard(announcementsListEl, announcementsLoadError, 'announcements');
+            return;
+        }
+        applyAnnouncementFilters();
+    });
+
     announcementSearchInput.addEventListener('input', applyAnnouncementFilters);
     announcementOrgSelect.addEventListener('change', applyAnnouncementFilters);
 
@@ -388,6 +493,10 @@ function initHomeRecentAnnouncements() {
     const container = document.querySelector('.home-recent-announce-con');
     if (!container) return;
 
+    if (announcementsLoadError) {
+        showErrorCard(container, announcementsLoadError, 'recent announcements');
+        return;
+    }
     container.innerHTML = announcementsData.slice(0, 2).map(function (announcement) {
         const detailUrl = 'announcement-details.html?id=' + encodeURIComponent(announcement.id);
         const orgInfo = getOrgDisplayInfo(announcement.org);
@@ -418,7 +527,13 @@ if (announcementDetailArticle) {
         const metaSpans = document.querySelectorAll('.announcement-meta span');
         const contentContainer = document.querySelector('.announcement-detail-content');
 
-        if (announcement) {
+        if (announcementsLoadError) {
+            label.textContent = 'ANNOUNCEMENT';
+            title.textContent = 'Couldn\u2019t load this announcement';
+            meta.style.display = 'none';
+            showErrorCard(contentContainer, announcementsLoadError, 'this announcement');
+
+        } else if (announcement) {
             const orgInfo = getOrgDisplayInfo(announcement.org);
             label.textContent = orgInfo.name.toUpperCase();
             title.textContent = announcement.title;
@@ -467,7 +582,7 @@ if (joinButton) {
 
     // On page load: asks the server whether the user has already joined that particular org
     if (authToken) {
-        fetch(API_BASE_URL + '/api/users/me/organizations', {
+        apiFetch(API_BASE_URL + '/api/users/me/organizations', {
             headers: { Authorization: 'Bearer ' + authToken }
         })
             .then(function (response) { return response.json(); })
@@ -495,7 +610,7 @@ if (joinButton) {
         const action = isJoined ? 'leave' : 'join';
 
         try {
-            const response = await fetch(API_BASE_URL + '/api/organizations/' + orgId + '/' + action, {
+            const response = await apiFetch(API_BASE_URL + '/api/organizations/' + orgId + '/' + action, {
                 method: 'POST',
                 headers: { Authorization: 'Bearer ' + authToken }
             });
@@ -509,9 +624,11 @@ if (joinButton) {
                 window.location.href = 'login.html';
             } else {
                 console.error('Join/Leave failed with status', response.status);
+                                  showToast('Could not ' + action + ' this organization. Please try again.');
             }
         } catch (error) {
             console.error('Could not reach the server:', error);
+                          showToast(error.message);
         }
     });
 }
@@ -557,7 +674,7 @@ if (loginForm) {
         const password = loginForm.querySelector('[name="login-password"]').value;
 
         try {
-            const response = await fetch(API_BASE_URL + '/api/auth/login', {
+            const response = await apiFetch(API_BASE_URL + '/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
@@ -590,7 +707,7 @@ if (registerForm) {
         const password = registerForm.querySelector('[name="register-password"]').value;
 
         try {
-            const response = await fetch(API_BASE_URL + '/api/auth/register', {
+            const response = await apiFetch(API_BASE_URL + '/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, email, password }),
@@ -604,7 +721,7 @@ if (registerForm) {
             }
 
             // Registered successfully
-            const loginResponse = await fetch(API_BASE_URL + '/api/auth/login', {
+            const loginResponse = await apiFetch(API_BASE_URL + '/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
@@ -616,7 +733,7 @@ if (registerForm) {
 
             window.location.href = 'dashboard.html';
         } catch (error) {
-            showAuthError('Could not reach the server. Check if the backend running');
+            showAuthError('Could not reach the server. Is the backend running?');
         }
     });
 }
@@ -628,7 +745,7 @@ async function initHomeUpcomingEvents() {
     if (!upcomingEventsContainer) return;
 
     try {
-        const response = await fetch(API_BASE_URL + '/api/events');
+        const response = await apiFetch(API_BASE_URL + '/api/events');
         if (!response.ok) throw new Error('Failed to fetch events');
         const events = await response.json();
 
@@ -678,6 +795,7 @@ async function initHomeUpcomingEvents() {
 
     } catch (error) {
         console.error('Could not load homepage upcoming events:', error);
+                showErrorCard(upcomingEventsContainer, error, 'upcoming events', initHomeUpcomingEvents);
     }
 }
 
@@ -690,7 +808,7 @@ async function loadEventCategoriesDropdown() {
     if (!eventCategorySelect) return;
 
     try {
-        const response = await fetch(API_BASE_URL + '/api/categories');
+        const response = await apiFetch(API_BASE_URL + '/api/categories');
         if (!response.ok) throw new Error('Failed to fetch categories');
         const categories = await response.json();
 
@@ -730,7 +848,7 @@ async function loadEventCards(retryCount = 1) {
     if (!eventsListContainer) return;
 
     try {
-        const response = await fetch(API_BASE_URL + '/api/events');
+        const response = await apiFetch(API_BASE_URL + '/api/events');
         if (!response.ok) throw new Error('Failed to fetch events');
         const events = await response.json();
 
@@ -844,17 +962,18 @@ async function loadEventCards(retryCount = 1) {
         });
 
     } catch (error) {
-        eventsListDidNotLoad();
+        eventsListDidNotLoad(error);
         console.error('Could not load events:', error);
     }
 }
 
-function eventsListDidNotLoad() {
-    const failedMessage = document.getElementById("events-failed-message");
+function eventsListDidNotLoad(error) {
+    const eventsListContainer = document.getElementById('events-list');
+    const failedMessage = document.getElementById('events-failed-message');
 
-    if (failedMessage) {
-        failedMessage.style.display = 'block';
-    }
+    if (failedMessage) failedMessage.style.display = 'none';
+    if (noEventsMessage) noEventsMessage.style.display = 'none';
+    showErrorCard(eventsListContainer, error, 'events', function () { loadEventCards(); });
 }
 
 
@@ -869,7 +988,7 @@ if (eventBanner && eventContents) {
         const requestedId = params.get('id');
 
         try {
-            const response = await fetch(`${API_BASE_URL}/api/events/${requestedId}`);
+            const response = await apiFetch(`${API_BASE_URL}/api/events/${requestedId}`);
             if (!response.ok) throw new Error('Failed to fetch event details');
             const event = await response.json();
 
@@ -999,13 +1118,23 @@ if (eventBanner && eventContents) {
             }
 
         } catch (error) {
-            eventDetailsNotFound();
+              if (isNetworkError(error)) { eventDetailsLoadFailed(error); } else { eventDetailsNotFound(); }
             console.error('Error loading event detail data:', error);
         }
     });
 }
 
-function eventDetailsNotFound() {
+  function eventDetailsLoadFailed(error) {
+      const eventTitle = document.querySelector('#event-info-banner .page-title');
+      const eventDesc = document.querySelector('#event-info-banner .desc');
+      const eventContentsDiv = document.getElementById('event-info-content');
+
+      if (eventTitle) eventTitle.textContent = 'Couldn\u2019t load this event';
+      if (eventDesc) eventDesc.textContent = '';
+      showErrorCard(eventContentsDiv, error, 'this event');
+  }
+
+  function eventDetailsNotFound() {
     const eventTitle = document.querySelector('#event-info-banner .page-title');
     const eventDesc = document.querySelector('#event-info-banner .desc');
     const eventContentsDiv = document.getElementById('event-info-content');
@@ -1114,7 +1243,7 @@ if (myOrganizationsList) {
     const dashboardAuthToken = localStorage.getItem('authToken');
 
     if (dashboardAuthToken) {
-        fetch(API_BASE_URL + '/api/users/me/organizations', {
+        apiFetch(API_BASE_URL + '/api/users/me/organizations', {
             headers: { Authorization: 'Bearer ' + dashboardAuthToken }
         })
             .then(function (response) {
@@ -1134,6 +1263,7 @@ if (myOrganizationsList) {
             })
             .catch(function (error) {
                 console.error('Could not load your organizations:', error);
+                                showErrorCard(myOrganizationsList, error, 'your organizations');
             });
     }
 }
@@ -1153,7 +1283,7 @@ async function adminFetch(path, options) {
         options.headers || {}
     );
 
-    const response = await fetch(API_BASE_URL + path, options);
+    const response = await apiFetch(API_BASE_URL + path, options);
 
     if (response.status === 401) {
         localStorage.removeItem('authToken');
@@ -1168,14 +1298,18 @@ async function adminFetch(path, options) {
 }
 
 function createRequestCardHTML(request) {
+    const detailsId = 'request-details-' + request.id;
+
     return '<div class="request-card" data-id="' + request.id + '">' +
         '<div class="request-info">' +
             '<p class="request-title">' + escapeHtml(request.name) + '</p>' +
             '<p class="request-meta">' + getCategoryLabel(request.category) + ' \u00b7 Submitted by ' + escapeHtml(request.submittedBy || 'Unknown') + '</p>' +
+            '<button type="button" class="request-details-toggle" aria-expanded="false" aria-controls="' + detailsId + '">Show details</button>' +
+            '<p class="request-description" id="' + detailsId + '" hidden>' + escapeHtml(request.description || 'No description provided.') + '</p>' +
         '</div>' +
         '<div class="request-actions">' +
-            '<a href="#" class="button join-button request-approve">Approve</a>' +
-            '<a href="#" class="button light-button request-reject">Reject</a>' +
+            '<a href="#" role="button" class="button join-button request-approve" aria-label="Approve ' + escapeHtml(request.name) + '">Approve</a>' +
+            '<a href="#" role="button" class="button light-button request-reject" aria-label="Reject ' + escapeHtml(request.name) + '">Reject</a>' +
         '</div>' +
     '</div>';
 }
@@ -1185,8 +1319,8 @@ function createAdminOrgListItemHTML(org) {
         '<div class="manage-item-main">' +
             '<span>' + escapeHtml(org.name) + ' - ' + getCategoryLabel(org.category) + '</span>' +
             '<span class="manage-actions">' +
-                '<a href="' + (org.link || 'organizations.html') + '" class="manage-action">View </a>' +
-                '<a href="#" class="manage-action manage-action-danger">Remove</a>' +
+                '<a href="' + (org.link || 'organizations.html') + '" class="manage-action" aria-label="View ' + escapeHtml(org.name) + '">View </a>' +
+                '<a href="#" role="button" class="manage-action manage-action-danger" aria-label="Remove ' + escapeHtml(org.name) + '">Remove</a>' +
             '</span>' +
         '</div>' +
     '</li>';
@@ -1201,7 +1335,7 @@ async function loadAdminRequests() {
 
 async function loadAdminOrganizations() {
     // The route is public so a simple fetch is used
-    const response = await fetch(API_BASE_URL + '/api/organizations');
+    const response = await apiFetch(API_BASE_URL + '/api/organizations');
     const orgs = await response.json();
     adminOrgList.innerHTML = orgs.map(createAdminOrgListItemHTML).join('');
 }
@@ -1224,11 +1358,27 @@ let adminUser = null;
 try { adminUser = JSON.parse(localStorage.getItem('authUser')); } catch (e) {}
 
 if (requestList && adminOrgList && adminUser && adminUser.role === 'admin') {
-    loadAdminRequests().catch(function (error) { console.error(error); });
-    loadAdminOrganizations().catch(function (error) { console.error(error); });
-    loadAdminStats().catch(function (error) { console.error(error); });
+    runLoader(loadAdminRequests, requestList, 'registration requests');
+    runLoader(loadAdminOrganizations, adminOrgList, 'organizations');
+    loadAdminStats().catch(function (error) {
+        console.error(error);
+        ['stat-organizations', 'stat-users', 'stat-upcoming-events'].forEach(function (id) {
+            const tile = document.getElementById(id);
+            if (tile) tile.textContent = '\u2014';
+        });
+    });
 
     requestList.addEventListener('click', async function (event) {
+        const toggleButton = event.target.closest('.request-details-toggle');
+        if (toggleButton) {
+            const details = document.getElementById(toggleButton.getAttribute('aria-controls'));
+            const isOpen = toggleButton.getAttribute('aria-expanded') === 'true';
+            toggleButton.setAttribute('aria-expanded', String(!isOpen));
+            toggleButton.textContent = isOpen ? 'Show details' : 'Hide details';
+            if (details) details.hidden = isOpen;
+            return;
+        }
+
         const approveClicked = event.target.classList.contains('request-approve');
         const rejectClicked = event.target.classList.contains('request-reject');
         if (!approveClicked && !rejectClicked) return;
@@ -1239,11 +1389,12 @@ if (requestList && adminOrgList && adminUser && adminUser.role === 'admin') {
 
         try {
             await adminFetch('/api/admin/requests/' + requestId + '/' + action, { method: 'POST' });
+                          showToast('Request ' + (action === 'approve' ? 'approved' : 'rejected') + ' successfully.');
             await loadAdminRequests();
             await loadAdminOrganizations();
             await loadAdminStats();
         } catch (error) {
-            alert(error.message);   // i.e., "An organization with this name already exists"
+            showToast(error.message);   // i.e., "An organization with this name already exists"
         }
     });
 
@@ -1256,10 +1407,11 @@ if (requestList && adminOrgList && adminUser && adminUser.role === 'admin') {
 
         try {
             await adminFetch('/api/organizations/' + li.dataset.id, { method: 'DELETE' });
+                          showToast('Organization removed successfully.');
             await loadAdminOrganizations();
             await loadAdminStats();
         } catch (error) {
-            alert(error.message);
+            showToast(error.message);
         }
     });
 }
@@ -1276,7 +1428,7 @@ let categoriesData = [];
 
 async function fetchCategories() {
     try {
-        const response = await fetch(API_BASE_URL + '/api/categories');
+        const response = await apiFetch(API_BASE_URL + '/api/categories');
         categoriesData = await response.json();
             renderNewEventCatCheckboxes();
             renderManageEvents();
@@ -1290,6 +1442,12 @@ fetchCategories();
 
 
 let officerEventsData = [];
+let officerEventsLoadError = null;
+
+function retryOfficerEvents() {
+    officerEventsLoadError = null;
+    loadOfficerEvents();
+}
 let currentUserOrgIds = [];
 const manageEventsList = document.getElementById('manage-events-list');
 
@@ -1301,8 +1459,8 @@ async function loadOfficerEvents() {
     try {
         // need to fetch all events and the user's organizations too in order to not load any events that are not the user's responsibility
         const [eventsResponse, myOrgsResponse] = await Promise.all([
-            fetch(API_BASE_URL + '/api/events'),
-            fetch(API_BASE_URL + '/api/users/me/organizations', {
+            apiFetch(API_BASE_URL + '/api/events'),
+            apiFetch(API_BASE_URL + '/api/users/me/organizations', {
                 headers: { Authorization: 'Bearer ' + authToken }
             })
         ]);
@@ -1343,7 +1501,9 @@ async function loadOfficerEvents() {
 
     } catch (error) {
         console.error('Error loading officer events:', error);
-        manageEventsList.innerHTML = '<p style="padding: 20px; text-align: center; color: red;">Failed to load your organization events.</p>';
+        officerEventsLoadError = error;
+        renderOfficerOrgCards();
+                showErrorCard(manageEventsList, error, 'your organization events', retryOfficerEvents);
     }
 }
 
@@ -1412,7 +1572,7 @@ document.addEventListener('change', function (event) {
         
         if (labelItem && labelItem.classList.contains('user-owned-org') && !checkbox.checked) {
             checkbox.checked = true;
-            alert("You cannot remove your own organization from an event you manage. Coordinate with other involved organizations to have your organization removed.");
+            showToast("You cannot remove your own organization from an event you manage. Coordinate with other involved organizations to have your organization removed.");
         }
     }
 });
@@ -1472,8 +1632,8 @@ function createEventListItemHTML(eventItem) {
             '<h4>' + escapeHtml(eventItem.name) + '</h4>' +
             '<p class="event-meta-date">' + postedText + '</p>' +
             '<span class="manage-actions">' +
-                '<label tabindex="0" class="manage-action"><input type="checkbox" class="edit-toggle">Edit</label>' +
-                '<button type="button" class="cancel-button delete-event">Delete</button>' +
+                '<label tabindex="0" class="manage-action"><input type="checkbox" class="edit-toggle" aria-label="Edit event ' + escapeHtml(eventItem.name) + '">Edit</label>' +
+                '<button type="button" class="cancel-button delete-event" aria-label="Delete event ' + escapeHtml(eventItem.name) + '">Delete</button>' +
             '</span>' +
         '</div>' +
         '<div class="panel-edit-event quick-act-panel">' +
@@ -1526,8 +1686,8 @@ function createAnnouncementListItemHTML(announcement) {
             '<h4>' + escapeHtml(announcement.title) + '</h4>' +
             '<p class="announcement-meta-date">' + escapeHtml(announcement.postedDate) + '</p>' +
             '<span class="manage-actions">' +
-                '<label tabindex="0" class="manage-action"><input type="checkbox" class="edit-toggle">Edit</label>' +
-                '<button type="button" class="cancel-button delete-announcement">Delete</button>' +
+                '<label tabindex="0" class="manage-action"><input type="checkbox" class="edit-toggle" aria-label="Edit announcement ' + escapeHtml(announcement.title) + '">Edit</label>' +
+                '<button type="button" class="cancel-button delete-announcement" aria-label="Delete announcement ' + escapeHtml(announcement.title) + '">Delete</button>' +
             '</span>' +
         '</div>' +
         '<div class="panel-edit-event quick-act-panel">' +
@@ -1549,11 +1709,16 @@ const manageAnnouncementsList = document.getElementById('manage-announcements-li
 
 function renderManageAnnouncements() {
     if (!manageAnnouncementsList) return;
+    if (announcementsLoadError) {
+        showErrorCard(manageAnnouncementsList, announcementsLoadError, 'announcements');
+        return;
+    }
     manageAnnouncementsList.innerHTML = announcementsData.map(createAnnouncementListItemHTML).join('');
 }
 
 function renderManageEvents() {
     if (!manageEventsList) return;
+    if (officerEventsLoadError) return;   // keeps the error card instead of wiping it with an empty list
     manageEventsList.innerHTML = officerEventsData.map(createEventListItemHTML).join('');
 }
 
@@ -1615,7 +1780,7 @@ if (newEventForm) {
         
         const validationError = validateEventForm(newEventForm);
         if (validationError) {
-            alert(validationError);
+            showToast(validationError);
             return;
         }
 
@@ -1635,7 +1800,7 @@ if (newEventForm) {
 
         try {
             const token = localStorage.getItem('authToken');
-            const response = await fetch(API_BASE_URL + '/api/events', {
+            const response = await apiFetch(API_BASE_URL + '/api/events', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1667,9 +1832,9 @@ if (newEventForm) {
             trimScheduleBlocksToOne(newEventForm);
             newEventForm.reset();
             renderNewEventOrgCheckboxes();
-            alert('Event published successfully!');
+            showToast('Event published successfully!');
         } catch (error) {
-            alert('Error creating event: ' + error.message);
+            showToast('Error creating event: ' + error.message);
         }
     });
 }
@@ -1690,7 +1855,7 @@ if (manageEventsList) {
         
         try {
             const token = localStorage.getItem('authToken');
-            const response = await fetch(API_BASE_URL + '/api/events/' + encodeURIComponent(eventId), {
+            const response = await apiFetch(API_BASE_URL + '/api/events/' + encodeURIComponent(eventId), {
                 method: 'DELETE',
                 headers: {
                     'Authorization': 'Bearer ' + token
@@ -1705,9 +1870,9 @@ if (manageEventsList) {
             });
 
             renderManageEvents();
-            alert('Event deleted successfully.');
+            showToast('Event deleted successfully.');
         } catch (error) {
-            alert('Error deleting event: ' + error.message);
+            showToast('Error deleting event: ' + error.message);
         }
     });
 }
@@ -1722,7 +1887,7 @@ async function announcementApiRequest(path, options) {
     const token = localStorage.getItem('authToken');
     if (token) headers.Authorization = 'Bearer ' + token;
 
-    const response = await fetch(API_BASE_URL + path, Object.assign({}, options, { headers }));
+    const response = await apiFetch(API_BASE_URL + path, Object.assign({}, options, { headers }));
     const data = await response.json().catch(function () { return {}; });
 
     if (!response.ok) {
@@ -1749,7 +1914,7 @@ if (newAnnounceForm) {
 
         const payload = announcementFormPayload(newAnnounceForm);
         if (!payload.title || payload.content.length === 0) {
-            alert('Please enter an announcement title and description.');
+            showToast('Please enter an announcement title and description.');
             return;
         }
 
@@ -1761,9 +1926,9 @@ if (newAnnounceForm) {
             announcementsData.unshift(normalizeAnnouncementRecord(created));
             renderManageAnnouncements();
             newAnnounceForm.reset();
-            alert('Announcement published successfully.');
+            showToast('Announcement published successfully.');
         } catch (error) {
-            alert(error.message + '\nMake sure you are logged in as an officer or admin and that the backend is running.');
+            showToast(error.message + '\nMake sure you are logged in as an officer or admin and that the backend is running.');
         }
     });
 }
@@ -1784,9 +1949,9 @@ if (manageAnnouncementsList) {
             });
             announcementsData = announcementsData.filter(function (item) { return item.id !== listItem.dataset.id; });
             renderManageAnnouncements();
-            alert('Announcement deleted.');
+            showToast('Announcement deleted.');
         } catch (error) {
-            alert(error.message);
+            showToast(error.message);
         }
     });
 }
@@ -1808,7 +1973,7 @@ document.addEventListener('submit', async function (event) {
 
         const validationError = validateEventForm(form);
         if (validationError) {
-            alert(validationError);
+            showToast(validationError);
             return;
         }
 
@@ -1827,13 +1992,13 @@ document.addEventListener('submit', async function (event) {
         };
 
         if (!eventUpdateData.name) {
-            alert('Please enter an event name.');
+            showToast('Please enter an event name.');
             return;
         }
 
         try {
             const token = localStorage.getItem('authToken');
-            const response = await fetch(API_BASE_URL + '/api/events/' + encodeURIComponent(itemId), {
+            const response = await apiFetch(API_BASE_URL + '/api/events/' + encodeURIComponent(itemId), {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1858,9 +2023,9 @@ document.addEventListener('submit', async function (event) {
             eventItem.galleryPhotos = data.galleryPhotos || eventUpdateData.galleryPhotos;
 
             renderManageEvents();
-            alert('Event updated successfully.');
+            showToast('Event updated successfully.');
         } catch (error) {
-            alert(error.message);
+            showToast(error.message);
         }
     } else {
         const announcementItem = announcementsData.find(function (item) { return item.id === itemId; });
@@ -1868,7 +2033,7 @@ document.addEventListener('submit', async function (event) {
 
         const payload = announcementFormPayload(form);
         if (!payload.title || payload.content.length === 0) {
-            alert('Please enter an announcement title and description.');
+            showToast('Please enter an announcement title and description.');
             return;
         }
 
@@ -1880,9 +2045,9 @@ document.addEventListener('submit', async function (event) {
             const updatedIndex = announcementsData.findIndex(function (item) { return item.id === itemId; });
             if (updatedIndex !== -1) announcementsData[updatedIndex] = normalizeAnnouncementRecord(updated);
             renderManageAnnouncements();
-            alert('Announcement updated successfully.');
+            showToast('Announcement updated successfully.');
         } catch (error) {
-            alert(error.message);
+            showToast(error.message);
         }
     }
 });
@@ -1940,6 +2105,10 @@ function renderOfficerOrgCards() {
     const container = document.getElementById('officer-org-list');
     if (!container) return;
 
+    if (officerEventsLoadError) {
+        showErrorCard(container, officerEventsLoadError, 'your organizations', retryOfficerEvents);
+        return;
+    }
     const myOrgs = organizationsData.filter(function (org) {
         return currentUserOrgIds.includes(org.id);
     });
@@ -2014,7 +2183,7 @@ function removeScheduleFrontend(element) {
     if (allSchedules.length > 1) {
         scheduleBlock.remove();
     } else{
-        alert("Event must have at least one schedule.");
+        showToast("Event must have at least one schedule.");
     }
 }
 
@@ -2169,3 +2338,36 @@ if (authButton) {
         });
     }
 }
+
+// ACCESSIBILITY: ARIA labels and states for areas that load their content from the server
+(function setupDashboardAria() {
+    // Gives each loaded area a name so screen readers can say what the group of cards is
+    const areas = [
+        { id: 'my-organizations-list', label: 'Your organizations' },
+        { id: 'officer-org-list', label: 'Your organization details' },
+        { id: 'request-list', label: 'Pending registration requests' },
+        { id: 'admin-org-list', label: 'Registered organizations' },
+        { id: 'manage-events-list', label: 'Events you can manage' },
+        { id: 'manage-announcements-list', label: 'Announcements you can manage' }
+    ];
+
+    areas.forEach(function (area) {
+        const element = document.getElementById(area.id);
+        if (!element) return;
+
+        element.setAttribute('aria-label', area.label);
+        if (element.tagName !== 'UL' && element.tagName !== 'OL') element.setAttribute('role', 'group');
+
+        // Marked busy until the server data (or an error card) has been placed inside it
+        element.setAttribute('aria-busy', 'true');
+        const observer = new MutationObserver(function () {
+            element.setAttribute('aria-busy', 'false');
+            observer.disconnect();
+        });
+        observer.observe(element, { childList: true });
+        setTimeout(function () { element.setAttribute('aria-busy', 'false'); }, 10000);   // safety net
+    });
+
+    // Login/register errors announced as soon as they appear
+    if (authErrorMessage) authErrorMessage.setAttribute('role', 'alert');
+})();
