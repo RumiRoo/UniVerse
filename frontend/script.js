@@ -2,7 +2,10 @@
 // For every organization on the app:
 // Organizations page, the Dashboard's "My Organizations", and anywhere
 // loaded from backend
-const API_BASE_URL = 'http://localhost:3000';
+// On device, API is at localhost:3000; once deployed, the pages and the API share one address
+const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:')
+    ? 'http://localhost:3000'
+    : '';
 
 // FEEDBACK HELPERS: friendly error cards, loading text and toast messages
 const NETWORK_ERROR_MESSAGE = 'We couldn\u2019t reach the server. Please check that the backend is running and try again.';
