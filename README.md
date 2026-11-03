@@ -43,8 +43,9 @@ A browser-based student organization management app designed to centralize stude
 
        npm run dev
 
-   You should see: `Server running at http://localhost:3000`
-   Leave this terminal open while you use the app.
+   - You should see: `Server running at http://localhost:3000`
+   - Leave the terminal open while using the app.
+   - Open ``http://localhost:3000`` in your browser to use the app.
 
 6. Open `frontend/login.html` in your browser (double-click the file).
 
