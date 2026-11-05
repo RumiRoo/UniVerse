@@ -1209,6 +1209,14 @@ function initEventsPage() {
         eventCategorySelect.addEventListener('change', applyEventFilters);
     }
 
+    const eventFilterForm = eventSearch ? eventSearch.closest('form') : null;
+    if (eventFilterForm) {
+        eventFilterForm.addEventListener('submit', function (event) {
+            event.preventDefault();   // stops the page from reloading and resetting the filters
+            applyEventFilters();
+        });
+    }
+
     statusFilterButtons.forEach(function (button) {
         function selectFilter() {
             statusFilterButtons.forEach(function (btn) {
