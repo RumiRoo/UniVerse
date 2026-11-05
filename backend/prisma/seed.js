@@ -208,7 +208,7 @@ async function main() {
             id: 'gJNvoByztucQP92_mqN',
             name: 'Student Organizations Fair',
             description: "A collaboration between all of MMDC's organizations, this special event brings together the talents of all student groups. Join now to showcase your talents!",
-            status: 'Ongoing',
+            status: 'Upcoming',
             startDate: new Date('2026-11-26T00:00:00.000Z'),
             endDate: new Date('2026-11-30T00:00:00.000Z'),
             eventPhotoUrl: 'assets/student-fair.jpg',
