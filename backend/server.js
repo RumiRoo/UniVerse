@@ -126,6 +126,7 @@ app.get('/api/users/me/organizations', requireAuth(), async (req, res) => {
         where: { id: req.user.id },
         include: { organizations: true },
     });
+    if (!user) return res.status(401).json({ error: 'Account no longer exists. Please log in again.' });
     res.json(user.organizations);
 });
 
