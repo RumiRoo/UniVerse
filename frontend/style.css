@@ -3338,3 +3338,11 @@ form textarea:focus {
 .request-details-toggle:focus-visible { outline: 2px solid currentColor; outline-offset: 1px; }
 .request-description { margin: 8px 0 0; font-size: 0.85rem; }
 .request-description[hidden] { display: none; }
+
+/* Dropdowns: always render light, with readable text */
+select,
+select option {
+    color-scheme: light;
+    color: #1a1a1a;
+    background-color: #ffffff;
+}
